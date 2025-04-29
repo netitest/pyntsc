@@ -1,0 +1,55 @@
+Metadata-Version: 2.1
+Name: pytestcenter
+Version: 25.06.11.5101
+Summary: Python Object-Oriented Library to Automate Netitest Network Testing Instruments 
+Home-page: http://www.netitest.com
+Author: Haifeng Li
+Author-email: hfli@netitest.com
+License: Apache Software License
+Keywords: netitest,supernova,darkbird,jmeter,ddos,ntsc,pyntsc,keysight,ixia,ixnetwork,ixload,spirent,testcenter,stc,avalanche,trex,xena,l2l3,l4l7,l27,tg,traffic generator,test automation,automation api
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Natural Language :: English
+Classifier: Intended Audience :: Developers
+Classifier: Operating System :: OS Independent
+Classifier: Topic :: Software Development :: Testing
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Description-Content-Type: text/markdown
+License-File: LICENSE
+License-File: AUTHORS
+Requires-Dist: requests 
+Requires-Dist: ipaddress
+
+# Python Object-Oriented Library to Automate Netitest Network Testing Instruments
+
+## Functionality
+The current version supports the following management and operations:
+
+- Connect and manage network testing instruments of Netitest Technology Co., Ltd. like Supernova or DarkBird
+- Create and update project/case/object/resource
+- Load/Save json configuration, Configure Network and Get/Set attributes 
+- Start/Monitor/Stop test case
+- Generate/Download statistics in various formats, including PDF, Word, and HTML.
+
+## Installation
+
+pip install pyntsc
+
+**Prerequisite**
+
+- Supernova or DarkBird Network Testing Instruments
+
+## Getting started
+Under examples you will find some basic samples. See inside for more info.
+
+## Documentation
+http://www.netitest.com
+
+## Contact
+Any question or feature request at hfli@netitest.com
+
+## Change Log
+[ChangeLog.md](ChangeLog.md)

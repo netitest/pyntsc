@@ -1,0 +1,6 @@
+include AUTHORS   
+include INSTALLER   
+include LICENSE
+include README.md
+recursive-include ntsc * 
+
