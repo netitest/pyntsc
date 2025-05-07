@@ -23,6 +23,9 @@ pip install pyntsc
 ## Getting started
 Under examples you will find some basic samples. See inside for more info.
 
+## Source Code
+https://github.com/netitest/pyntsc
+
 ## Documentation
 http://www.netitest.com
 

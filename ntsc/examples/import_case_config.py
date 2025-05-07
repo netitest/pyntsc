@@ -1,4 +1,4 @@
-import ntsc_v8 as ntsc
+import ntsc
 # Step 1: Create a task
 # Step 2: Check whether it is possible to connect to the server.
 # Step 3: Perform user login to obtain access rights to the interface.
@@ -6,4 +6,4 @@ import ntsc_v8 as ntsc
 project1 = ntsc.CreateProject()
 project1.Connect("192.168.15.100", 80)
 session = project1.Login("admin", "admin")
-project1.import_case("HttpCps_TP_admin_20250424-16_25_55.zip", "HttpCps")
+project1.import_case("20250506-10_08_22.zip", "Ipv4FragAttack")
