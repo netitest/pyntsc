@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
    
 setup(
     name="pyntsc",
-    version="25.06.12.5118",
+    version="25.06.14.5133",
     author="Beijing Netitest Technology Co., Ltd.",
     author_email="hfli@netitest.com",
     description="Python Object-Oriented Library to Automate Netitest Network Testing Instruments",

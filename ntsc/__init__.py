@@ -1,6 +1,6 @@
-from pyntsc.ntsc import *
+from .ntsc import *
 
 TYPE_2_OBJECT = {
-    "createproject": pyntsc.ntsc.CreateProject,
-    "testcase": pyntsc.ntsc.TestCase,
+    "createproject": ntsc.CreateProject,
+    "testcase": ntsc.TestCase,
 }
