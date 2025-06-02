@@ -34,6 +34,41 @@ EnglishChineseDict = {
     "FrameBytes": "帧长(字节)"
 }
 
+# the same as web menu
+CaseClassifyDict = {
+    "L4-7ProtocolTest": ["HttpCps", "HttpForceCps", "HttpCc", "HttpThroughput", "HttpsCps", "HttpsCc", "HttpsThroughput",
+                         "SSLHandshake", "Http2Cps", "Http2Throughput", "Http3Cps", "Http3Throughput", "WebSocketRps",
+                         "BrowserTrafficTest", "RtspPps", "RtspPq", "RtspPc", "RtpVideo", "RtpAudio", "Hls", "Rtmp",
+                         "GB28181", "MailSmtp", "MailSmtps", "MailPop3", "MailImap", "ModbusCps", "ModbusThroughput",
+                         "ModbusCc", "OPCUACps", "OPCUAThroughput", "OPCUACc", "S7COMMCps", "S7COMMThroughput", "S7COMMCc",
+                         "IEC61850_MMSCps", "IEC61850_MMSThroughput", "IEC61850_MMSCc", "S7", "Dnp3", "IEC61850", "UdpPps",
+                         "TurboTcp", "TcpThroughput", "PostgreSql", "MySQL", "MqttCps", "Ftp", "Ldap", "Ssh", "Rdp", "Telnet",
+                         "UdpPayload", "Ntp", "Handle", "Tftp", "Radius", "DHCPv4", "DHCPv6", "TcpDns", "UdpDns", "DnsOverHttps",
+                         "DnsOverTls", "Sip", "SslVpnCc", "PrivStreamCps", "PrivStream", "PrivStreamCc", "MixedTraffic"],
+    "L2-3ProtocolTest": ["Rip", "RIPng", "Ospfv2", "Ospfv3", "BGPv4", "BGPv6", "ISISv4", "ISISv6", "Igmp", "Mld", "Pim",
+                         "PimSm", "PimSsm", "PcapResend", "PPPoEHttpAuth", "MplsLdpSession", "MPLSIPVPN", "L3EVPNOverSRv6",
+                         "VPWSOverSRv6", "VPLSOverSRv6", "VXLAN", "Netconf", "L2TP", "LACP", "LLDP", "Rfc2544Throughput",
+                         "Rfc2544Latency", "Rfc2544LossRate", "Rfc2544BackToBack", "Rfc2889AddressLearnRate", "Rfc2889AddressCacheCapacity",
+                         "Rfc2889ForwardingRates", "Rfc3918Throughput", "Rfc3918GroupForwardMatrix", "IPSecRemoteAccess",
+                         "IPSecTunnelCc", "IPSecThroughput", "StreamTemplate", "FastTrafficReplay"],
+    "PrivateNetTest": ["RoCEv2Perftest", "RoCEv2Cps", "RoCEv2Throughput", "RoCEv2CCL", "RoCEv2ExceptionTest", "RoCEv2NakFloodingAttack",
+                       "RoCEv2CpsAttack", "SignalingSimulationTestNode", "SignalingSimulationTestProcess", "SignalingSimulationTestDataStatistics",
+                       "ElementSimulationTestManagement", "ElementSimulationScriptManagement", "BaseStationConnThroughput",
+                       "PC5VehicleToVehicleInteraction", "UuVehicleCloudInteraction"],
+    "NetSecurityTest": ["VulnerabilityScanner", "WebScanner", "NetworkDiscovery", "WeakPasswordDetection", "Ipv4FragAttack",
+                        "ICMPSinglePacketAttack", "IGMPv4SinglePacketAttack", "ARPv4SinglePacketAttack", "TCPSinglePacketAttack",
+                        "UDPSinglePacketAttack", "UDPPayloadAttack", "SipSinglePacketAttack", "DnsServiceAttack", "DnsAmplificationAttack",
+                        "SSDPAttack", "NtpAmplificationAttack", "MemcachedAmplificationAttack", "UnknownProtocolSinglePacketAttack",
+                        "HttpRequestFlood", "HttpsFlood", "HTTPSlowRequestFlood", "MultiTypeFlood", "TcpSessionFlood",
+                        "TCPWinnuke", "HttpMultipleRequest", "HttpRecursionRequest", "HttpConcurrentSlowRead", "HttpConcurrentSlowRequest",
+                        "UnicastStorm", "BroadcastStorm", "MulticastStorm", "SVStormTest", "GooseStormTest", "MmsConnectStorm",
+                        "LLDPStormTest", "AttackReplay", "EncryptionAndDecryptionVerification", "GMT0018", "FirewallPolicy",
+                        "MaliciousCodeCheck", "AdvancedFuzzing", "WebSiteScan", "ScenarioDescrptionLanguage", "DynamicProtectionTest"],
+    "TestAnalysisTool": ["XinChuang", "Sysbench", "FloatingPointComputingPower", "StreamMemoryTest", "Fio", "VdbenchDiskPerfTest",
+                         "Jmeter", "IPerfThroughput", "AbNginxCps", "UPerfCc", "CaptureForward", "PcapParser", "ConcurrentScanCheck",
+                         "ProbeCall"]
+}
+
 
 class LoggerUtils:
     _logger = None
@@ -144,6 +179,287 @@ class ToolsUtils:
             return True
         else:
             return False
+
+    @staticmethod
+    def is_non_dpdk_test_type(test_type):
+        non_dpdk_list = [
+            "Jmeter",
+            "AbNginxCps",
+            "AbNginxCc",
+            "IPerfThroughput",
+            "AdvancedFuzzing",
+            "ScenarioDescrptionLanguage",
+            "VulnerabilityScanner",
+            "WebScanner",
+            "NetworkDiscovery",
+            "FirewallPolicy",
+            "IPv6ConformanceTest",
+            "IPSecRemoteAccess",
+            "IPSecTunnelCc",
+            "IPSecThroughput",
+            "SslVpnCc",
+            "GMT0018",
+            "Netconf",
+            "AutoTestAccessPolicy",
+            "UPerfCc",
+            "SystemMonitor",
+            "DynamicProtectionTest",
+            "WebSiteScan",
+            "ProbeCall",
+            "Sysbench",
+            "VdbenchDiskPerfTest",
+            "Fio",
+            "FloatingPointComputingPower",
+            "StreamMemoryTest",
+            "WeakPasswordDetection",
+        ]
+
+        if test_type in non_dpdk_list:
+            return True
+
+        return False
+
+    @staticmethod
+    def is_dpdk_test_type(test_type):
+        test_type_list = [
+            "HttpCps",
+            "HttpsCps",
+            "HttpCc",
+            "HttpsCc",
+            "HttpRps",
+            "HttpsRps",
+            "HttpThroughput",
+            "HttpsThroughput",
+            "HttpHts",
+            "HttpsHts",
+            "Http2Cps",
+            "Http3Cps",
+            "Http3Throughput",
+            "SSLHandshake",
+            "Http2Throughput",
+            "Private",
+            "PacketAssembly",
+            "StreamTemplate",
+            "TcpConnection",
+            "TcpThroughput",
+            "TurboTcp",
+            "UdpPps",
+            "UdpPayload",
+            "AttackReplay",
+            "TrafficReplay",
+            "FastTrafficReplay",
+            "ICSReplay",
+            "MailSmtp",
+            "MailSmtps",
+            "PostgreSql",
+            "MailPop3",
+            "MailImap",
+            "Ipv46SinglePacketFlood",
+            "Ipv4SinglePacketFlood",
+            "UDPv4SinglePacketAttack",
+            "UDPv6SinglePacketAttack",
+            # 合并v4v6
+            "UDPSinglePacketAttack",
+            "ARPv4SinglePacketAttack",
+            "IGMPv4SinglePacketAttack",
+            "TCPv4SinglePacketAttack",
+            "TCPv6SinglePacketAttack",
+            # 合并v4v6
+            "TCPSinglePacketAttack",
+            "ICMPv4SinglePacketAttack",
+            "ICMPv6SinglePacketAttack",
+            # 合并v4v6
+            "ICMPSinglePacketAttack",
+            "UnknownProtocolSinglePacketAttack",
+            "DnsAmplificationAttack",
+            "NtpAmplificationAttack",
+            "DnsServiceAttack",
+            "TcpSessionFlood",
+            'TCPWinnuke',
+            "HttpRequestFlood",
+            "HttpMultipleRequest",
+            "HttpRecursionRequest",
+            "HttpConcurrentSlowRead",
+            "HttpConcurrentSlowRequest",
+            "HttpsFlood",
+            "HttpSessionFlood",
+            "ConcurrentSessionFlood",
+            "UdpDns",
+            "MixedTraffic",
+            "Rfc2544BaseValue",
+            "Rfc2544Throughput",
+            "Rfc2544Latency",
+            "Rfc2544LossRate",
+            "Rfc2544BackToBack",
+            "Rfc2889AddressCacheCapacity",
+            "Rfc2889AddressLearnRate",
+            "Rfc2889ForwardingRates",
+            "Rfc3918Latency",
+            "Rfc3918GroupForwardMatrix",
+            "Rfc3918v6GroupForwardMatrix",
+            "Rfc3511IpThroughput",
+            "Rfc3511Cc",
+            "Rfc3511Cr",
+            "Rfc3511Tsr",
+            "Rfc3511Tfr",
+            "Rfc3511IpFragmentation",
+            "Rfc3511DosHandling",
+            "Rfc3511IllegalHandling",
+            "Rfc3511Latency",
+            "IPSecRemoteAccess",
+            "IPSecTunnelCc",
+            "IPSecThroughput",
+            "IPSecSiteToSite",
+            "Ftp",
+            "Tftp",
+            "Rtsp",
+            "RtspPps",
+            "RtspPc",
+            "RtspPq",
+            "RtspPtr",
+            "RtpVideo",
+            "RtpAudio",
+            "Ntp",
+            "Radius",
+            "Dhcp",
+            "DHCPv4",
+            "DHCPv6",
+            "IPoE",
+            "IPoeHttpAuth",
+            "PPPoEHttpAuth",
+            "L2TP",
+            "Igmp",
+            "Mld",
+            "Ldap",
+            "PacketCapture",
+            "CaptureForward",
+            "FirewallAttack",
+            "FirewallMalware",
+            "Modbus",
+            "Dnp3",
+            "ConcurrentScanCheck",
+            "MaliciousCodeCheck",
+            "MultiTypeFlood",
+            "MySQL",
+            "MQTT",
+            "Choice5GMCI",
+            "Sip",
+            "Ipv4FragAttack",
+            "PrivStream",
+            "IEC61850_MMSCc",
+            "IEC61850_MMSCps",
+            "IEC61850_MMSThroughput",
+            "IEC61850",
+            "DB_PostgreSQL",
+            "DB_Oracle",
+            "DB_MySQL",
+            "DB_MongoDB",
+            "Rip",
+            "VXLAN",
+            "Ospfv2",
+            "Ospfv3",
+            "Handle",
+            "RIPng",
+            "MplsLdpSession",
+            "DnsHttp",
+            "Ssh",
+            "Rdp",
+            "DnsOverHttps",
+            "Telnet",
+            "Rtmp",
+            "Samba",
+            "Hls",
+            "H323",
+            "Rfc3918Throughput",
+            "ICS_IEC60870_5_104",
+            "ICS_IEC61850_GOOSE",
+            "ICS_IEC61850_MMS",
+            "ICS_OPC_UA_DA",
+            "ICS_SIEMENS_S7",
+            "BGPv4",
+            "BGPv6",
+            "ModbusCps",
+            "OPCUA",
+            "S7COMM",
+            "S7COMMCps",
+            "S7COMMCc",
+            "S7COMMThroughput",
+            "MPLSIPVPN",
+            "L3EVPNOverSRv6",
+            "EVPNVPWSOverSRv6",
+            "EVPNVPLSOverSRv6",
+            "ModbusThroughput",
+            "ModbusCc",
+            "OPCUACc",
+            "OPCUAThroughput",
+            "OPCUACps",
+            "ISISv4",
+            "ISISv6",
+            "LACP",
+            "LLDP",
+            "Gpro",
+            "PrivStreamCps",
+            "PrivStreamCc",
+            "TrafficStream",
+            "UnicastStorm",
+            "BroadcastStorm",
+            "MulticastStorm",
+            "WebSocketRps",
+            "UDPPayloadAttack",
+            "TcpDns",
+            "GB28181",
+            "GMT0018",
+            "Netconf",
+            "5gSip",
+            "S7",
+            "MemcachedAmplificationAttack",
+            "SSDPAttack",
+            "MmsConnectStorm",
+            "SVStormTest",
+            "LLDPStormTest",
+            "SystemMonitor",
+            "GooseStormTest",
+            "HTTPSlowRequestFlood",
+            "PcapResend",
+            "SipSinglePacketAttack",
+            "DnsOverTls",
+            "RoCEv2",
+            "HttpForceCps",
+            "HttpOverlapCps",
+            "VPWSOverSRv6",
+            "VPLSOverSRv6",
+            "Pim",
+            "RoCEv2Throughput",
+            "PimSm",
+            "RoCEv2CCL",
+            "PimSsm",
+            "PSNOutOfOrderSttack",
+            "ICRCErrorAttack",
+            "RoCEv2ExceptionTest",
+            "RoCEv2NakFloodingAttack",
+            "SatelliteHttpsCc",
+            "SatelliteHttpCc",
+            "SatelliteHttpsCps",
+            "SatelliteHttpCps",
+            "SatelliteRtspPps",
+            "SatelliteRtpVideo",
+            "SatelliteRtpAudio",
+            "SatelliteUdpPps",
+            "SatelliteTcpThroughout",
+            "SatelliteHttpThroughout",
+            "SatelliteHttpsThroughout",
+            "SatelliteTurboTcp",
+            "BaseStationConnCps",
+            "BaseStationConnCc",
+            "BaseStationConnThroughput",
+            "TrafficGenerator",
+            "RoCEv2CpsAttack",
+            "MqttCps"
+        ]
+        if test_type in test_type_list:
+            return True
+
+        return False
 
     @staticmethod
     def to_dict(instance):
@@ -1126,7 +1442,10 @@ class ClientSubnet(BaseSubnet):
 
         # When the server type is selected as "Port", specify the server port and the server subnet number
         self.SubnetServicePort = 'port2'
-        self.PeerServerSubnet = '1'
+        if version == 4:
+            self.PeerServerSubnet = '1'
+        else:
+            self.PeerServerSubnet = '2'
         self.SubnetRole = 'client'
         if dut_role == "Proxy":
             # The proxy mode should incorporate the IP address of the proxy service.
@@ -2271,7 +2590,6 @@ class NetworkZoneDict:
         Args:
             args (tuple): The tuple of the subnet attribute dictionary to be configured
             port_config_list (list): The list of network port objects needs to be modified
-            dut_role (str): Type of tested equipment
         """
         for arg_dict in args:
             for key, val_dict in arg_dict.items():
@@ -2364,14 +2682,1532 @@ class PortStreamTemplate:
 
 
 class BaseLoads:
-    def __init__(self):
+    def __init__(self, test_type):
+        if ToolsUtils.is_dpdk_test_type(test_type):
+            # The current user's memory occupancy
+            self.UserApplyMemoryMB = 28
+            # Memory consumption during use case execution
+            self.CaseAssignMemoryGB = 28
+            # The proportion of large page memory usage in the test cases execution
+            self.DPDKHugeMemoryPct = 40
 
-        # The current user's memory occupancy
-        self.UserApplyMemoryMB = 28
-        # Memory consumption during use case execution
-        self.CaseAssignMemoryGB = 28
-        # The proportion of large page memory usage in the test cases execution
-        self.DPDKHugeMemoryPct = 40
+        loads_callback_dict = {
+            "HttpCps": self._handle_http_cps_loads_config,
+            "HttpForceCps": self._handle_http_force_cps_loads_config,
+            "HttpCc": self._handle_http_cc_loads_config,
+            "HttpThroughput": self._handle_http_throughput_loads_config,
+            "UdpPps": self._handle_udp_pps_loads_config,
+            "TurboTcp": self._handle_turbo_tcp_loads_config,
+            "MultiTypeFlood": self._handle_multi_type_flood_loads_config,
+            "TcpSessionFlood": self._handle_tcp_session_flood_loads_config,
+            "TCPWinnuke": self._handle_tcp_winnuke_loads_config,
+            "HttpMultipleRequest": self._handle_http_multiple_request_loads_config,
+            "HttpRecursionRequest": self._handle_http_recursion_request_loads_config,
+            "Rfc2544Throughput": self._handle_rfc2544_throughput_loads_config,
+            "Rfc2544Latency": self._handle_rfc2544_latency_loads_config,
+            "Rfc2544LossRate": self._handle_rfc2544_loss_rate_loads_config,
+            "Rfc2544BackToBack": self._handle_rfc2544_back_to_back_loads_config,
+            "Ipv4FragAttack": self._handle_ipv4_frag_attack_loads_config,
+            "ICMPSinglePacketAttack": self._handle_icmp_single_packet_attack_loads_config,
+            "IGMPv4SinglePacketAttack": self._handle_igmpv4_single_packet_attack_loads_config,
+            "ARPv4SinglePacketAttack": self._handle_arpv4_single_packet_attack_loads_config,
+            "TCPSinglePacketAttack": self._handle_tcp_single_packet_attack_loads_config,
+            "UDPSinglePacketAttack": self._handle_udp_single_packet_attack_loads_config,
+            "UDPPayloadAttack": self._handle_udp_payload_attack_loads_config,
+            "SipSinglePacketAttack": self._handle_sip_single_packet_attack_loads_config,
+            "DnsServiceAttack": self._handle_dns_service_attack_loads_config,
+            "DnsAmplificationAttack": self._handle_dns_amplification_attack_loads_config,
+            "SSDPAttack": self._handle_ssdp_attack_loads_config,
+            "NtpAmplificationAttack": self._handle_ntp_amplification_attack_loads_config,
+            "MemcachedAmplificationAttack": self._handle_memcached_amplification_attack_loads_config,
+            "UnknownProtocolSinglePacketAttack": self._handle_unknown_protocol_single_packet_attack_loads_config,
+            "HttpRequestFlood": self._handle_http_request_flood_loads_config,
+            "HttpsFlood": self._handle_https_flood_loads_config,
+            "HTTPSlowRequestFlood": self._handle_httpslow_request_flood_loads_config,
+            "HttpConcurrentSlowRead": self._handle_http_concurrent_slow_read_loads_config,
+            "HttpConcurrentSlowRequest": self._handle_http_concurrent_slow_request_loads_config,
+            "UnicastStorm": self._handle_unicast_storm_loads_config,
+            "MulticastStorm": self._handle_multicast_storm_loads_config,
+            "BroadcastStorm": self._handle_broadcast_storm_loads_config,
+            "SVStormTest": self._handle_sv_storm_test_loads_config,
+            "GooseStormTest": self._handle_goose_storm_test_loads_config,
+            "MmsConnectStorm": self._handle_mms_connect_storm_loads_config,
+            "LLDPStormTest": self._handle_lldp_storm_test_loads_config,
+            "VulnerabilityScanner": self._handle_vulnerability_scanner_loads_config,
+            "WebScanner": self._handle_web_scanner_loads_config,
+            "NetworkDiscovery": self._handle_network_discovery_loads_config,
+            "HttpsCps": self._handle_https_cps_loads_config,
+            "HttpsCc": self._handle_https_cc_loads_config,
+            "HttpsThroughput": self._handle_https_throughput_loads_config,
+            "SSLHandshake": self._handle_ssl_handshake_loads_config,
+            "AdvancedFuzzing": self._handle_advanced_fuzzing_loads_config,
+            "BGPv4": self._handle_bgpv4_loads_config,
+            "BGPv6": self._handle_bgpv6_loads_config,
+            "ScenarioDescrptionLanguage": self._handle_scenario_description_language_loads_config,
+            "WeakPasswordDetection": self._handle_weak_password_detection_loads_config,
+        }
+
+        callback = loads_callback_dict.get(test_type)
+        if callback:
+            callback()
+        else:
+            pass
+
+    def _handle_http_cps_loads_config(self):
+        self.SimUser = 20
+        self.HttpRequestTimeoutSecond = 10000
+        self.HttpTranscationStatistics = "no"
+        self.HttpPercentageLatencyStat = "no"
+        self.HttpRequestHashSize = 512
+        self.CookieTrafficRatio = 100
+        self.SendPktStatEn = "no"
+        self.HttpOverLapMode = "user"
+        self.HttpThinkTimeMode = "fixed"
+        self.MaxThinkTime = 37500
+        self.MinThinkTime = 1
+        self.ThinkTime = 37500
+        self.HttpThinkTimeMaxCc = 4000000
+        self.HttpNewSessionTotal = 0
+        self.HttpMaxRequest = 0
+        self.HttpNewConnReqNum = 0
+        self.NewTcpEachRequrest = "no"
+        self.HttpPipelineEn = "no"
+        self.SimuserFixReq = "no"
+        self.HttpRedirectNewTcpEn = "no"
+        self.HttpLogTraffic = "no"
+        self.OnlyRecordAbnormalResponse = "no"
+        self.OnlyRecordAssertFailed = "no"
+        self.HttpTrafficLogCount = 1000
+        self.HttpWebURLIpStatEn = "no"
+        self.HttpWebStatIPNum = 10
+
+    def _handle_http_force_cps_loads_config(self):
+        self.OnlyRecordAbnormalResponse = "no"
+        self.HttpTranscationStatistics = "no"
+        self.HttpThinkTimeMode = "fixed"
+        self.ThinkTime = 37500
+        self.MinThinkTime = 1
+        self.NewTcpEachRequrest = "no"
+        self.CookieTrafficRatio = 100
+        self.HttpTrafficLogCount = 1000
+        self.HttpThinkTimeMaxCc = 1000000
+        self.HttpOverLapMode = "none"
+        self.HttpRequestTimeoutSecond = 10000
+        self.OnlyRecordAssertFailed = "no"
+        self.HttpWebStatIPNum = 10
+        self.HttpWebURLIpStatEn = "no"
+        self.HttpPercentageLatencyStat = "no"
+        self.MaxThinkTime = 37500
+        self.HttpLogTraffic = "no"
+        self.HttpRequestHashSize = 512
+        self.HttpCpsSuccessRateTarget = 0
+
+    def _handle_http_cc_loads_config(self):
+        self.OnlyRecordAbnormalResponse = "no"
+        self.HttpTranscationStatistics = "no"
+        self.HttpThinkTimeMode = "fixed"
+        self.ThinkTime = 0
+        self.MinThinkTime = 1
+        self.CookieTrafficRatio = 100
+        self.ConcurrentConnection = 6975000
+        self.HttpTrafficLogCount = 1000
+        self.HttpRequestTimeoutSecond = 10000
+        self.OnlyRecordAssertFailed = "no"
+        self.SimUser = 256
+        self.DelayResponse = "no"
+        self.HttpPercentageLatencyStat = "no"
+        self.MaxThinkTime = 37500
+        self.HttpSendRequestMode = "each"
+        self.HttpLogTraffic = "no"
+        self.HttpCcOperationPolicy = "no"
+        self.ReConnCount = 0
+        self.HttpRequestHashSize = 512
+
+    def _handle_http_throughput_loads_config(self):
+        self.OnlyRecordAbnormalResponse = "no"
+        self.HttpTranscationStatistics = "no"
+        self.HttpThinkTimeMode = "fixed"
+        self.ThinkTime = 0
+        self.MinThinkTime = 1
+        self.CookieTrafficRatio = 100
+        self.HttpTrafficLogCount = 1000
+        self.HttpRequestTimeoutSecond = 10000
+        self.OnlyRecordAssertFailed = "no"
+        self.SimUser = 256
+        self.DelayResponse = "no"
+        self.HttpPercentageLatencyStat = "no"
+        self.MaxThinkTime = 37500
+        self.HttpLogTraffic = "no"
+        self.HttpCcOperationPolicy = "no"
+        self.ReConnCount = 0
+        self.HttpRequestHashSize = 512
+
+    def _handle_udp_pps_loads_config(self):
+        self.RecvPacketCount = "16"
+        self.SimuserSendPPS = 1
+        self.UdpEcho = "disable"
+        self.BurstPacketCount = "32"
+        self.FragIdAccumulates = "no"
+        self.PacketPayloadPolicy = "Fixed"
+        self.PolicyChangeCarrier = "Port"
+        self.FirstPacketSentDelay = 1
+        self.Latency = "disable"
+        self.MaxIPFrag = 4
+        self.SpecifyPayloadValue = "00"
+        self.SimuserSendPacketSecond = 0
+        self.SimUser = 256
+        self.UDPSendPacketCount = 0
+        self.DualFlowMode = "disable"
+        self.IPv4FlagsDF = 0
+        self.FrameSizePolicy = {
+            "SizeChangeMode": "Fixed",
+            "FrameSizeFormat": 1518
+        }
+
+    def _handle_turbo_tcp_loads_config(self):
+        self.SimUser = 256
+
+    def _handle_multi_type_flood_loads_config(self):
+        self.SimUser = 256
+
+    def _handle_tcp_session_flood_loads_config(self):
+        self.SimUser = 256
+
+    def _handle_tcp_winnuke_loads_config(self):
+        self.SimUser = 256
+
+    def _handle_http_multiple_request_loads_config(self):
+        self.SimUser = 256
+
+    def _handle_http_recursion_request_loads_config(self):
+        self.SimUser = 256
+
+    def _handle_rfc2544_throughput_loads_config(self):
+        # The number of UDP streams
+        self.SimUser = 256
+        # Delay jitter calculation
+        self.Latency = "disable"
+        # Flow direction; the available values are: enable, disable, both.
+        # "enable" indicates two-way; "disable" indicates one-way; "both" means first one-way, then two-way
+        self.DualFlowMode = "disable"
+
+        # Load transformation type; the available values are: Fixed, Random, Custom, Stream
+        self.PacketPayloadPolicy = "Fixed"
+        # When the load transformation type is set to custom load, the load content needs to be configured.
+        self.PacketPayloadValue = "0xFF"
+        # When the type of load transformation is fixed load, random load or custom load, this item needs to be specified.
+        self.FrameSizePolicy = {
+            # Frame length transformation mode; the available values are: List, Step, Random, iMix.
+            "SizeChangeMode": "List",
+            # The format of the List value is: 64, 128; The format of the Step value is: 64-128|+64
+            # The format of the Random value is: 128-256
+            "FrameSizeFormat": "64,128"
+        }
+        # Number of retry attempts for testing
+        self.MaximumIterativeCycle = 1
+
+        self.CycleDurationPolicy = {
+            # Duration adjustment method
+            "CycleDurationMode": "Fixed",
+            # The unit of test duration; the available values are: TimeSecond, PacketCount
+            "CycleDurationUnit": "TimeSecond",
+            # When the unit of test duration is seconds of sent traffic, the initial sending time period in seconds needs to be specified.
+            "InitialCycleSecond": "60",
+            # When the unit of the test duration is the number of sent messages, the initial number of sent messages field needs to be specified.
+            "InitialCyclePacket": "10000",
+            "MinimumCycleSecond": "0.000064",
+            "MinimumCyclePacket": "1",
+            "MaximumCycleSecond": "60",
+            "MaximumCyclePacket": "10000",
+            "SecondResolution": "0.1",
+            "PacketResolution": "100",
+            "AcceptableLossRate": "0"
+        }
+        # The duration of aging
+        self.AgingTime = 5
+
+        self.SendSpeedPolicy = {
+            # Load Iteration Mode ; the available values are: Binary, Step, Mixed, OptStep.
+            "SpeedIterateMode": "Binary",
+            # Rate Lower Limit (%)
+            # When the load iteration mode is selected as binary search or the optimization step size, the value of this item can be modified.
+            "LowerSpeedRate": "1",
+            # Rate limit (%)
+            # When the load iteration mode is selected as step size, binary search or hybrid method , the value of this item can be modified.
+            "UpperSpeedRate": "100",
+            # Initial rate (%)
+            "InitialSpeedRate": "100",
+            # Rate step (%)
+            # When the load iteration mode is selected as step size or hybrid method, the value of this item can be modified.
+            "UpDownStepRate": "10",
+            # the search accuracy (%)
+            # When the load iteration mode is selected as binary search, hybrid method or optimization step size, the value of this item can be modified.
+            "ResolutionRate": "1",
+            # Binary search for percentage (%)
+            # When the load iteration mode is selected as binary search or hybrid method, the value of this item can be modified.
+            "BisectionBackoff": "50",
+            # Acceptable packet loss rate
+            "AcceptableLossRate": "0"
+        }
+        self.CorrectLossRateCycle = -1
+        # Message sending rate
+        self.BurstPacketCount = 32
+
+    def _handle_rfc2544_latency_loads_config(self):
+        self.SimUser = 256
+
+        self.Latency = "enable"
+        self.DelayType = "LIFO"
+        self.DualFlowMode = "enable"
+
+        self.PacketPayloadPolicy = "Fixed"
+        self.PacketPayloadValue = "0xFF"
+
+        self.FrameSizePolicy = {
+            "SizeChangeMode": "List",
+            "FrameSizeFormat": "64,128"
+        }
+
+        self.MaximumIterativeCycle = 1
+
+        self.CycleDurationPolicy = {
+            "CycleDurationMode": "Fixed",
+            "CycleDurationUnit": "TimeSecond",
+            "InitialCycleSecond": "10",
+            "InitialCyclePacket": "10000",
+            "MinimumCycleSecond": "0.000064",
+            "MinimumCyclePacket": "1",
+            "MaximumCycleSecond": "60",
+            "MaximumCyclePacket": "10000",
+            "SecondResolution": "0.1",
+            "PacketResolution": "100",
+            "AcceptableLossRate": "0"
+        }
+
+        self.FilterAction = "Drop"
+        self.AgingTime = 5
+
+        self.LoadLimitPolicy = {
+            "LoadLimitUnit": "percent",
+            "LoadLimitMode": "Step",
+            "LoadLimitFormat": "10-50|+10"
+        }
+
+        self.BurstPacketCount = 32
+        self.LoopBackLinkLatency = "no"
+        self.DisplayFailWhenLoss = "yes"
+        self.AcceptablePacketLossRate = -1
+
+    def _handle_rfc2544_loss_rate_loads_config(self):
+        # The number of UDP streams
+        self.SimUser = 256
+
+        self.Latency = "disable"
+        # Flow direction; the available values are: enable, disable, both.
+        # "enable" indicates two-way; "disable" indicates one-way; "both" means first one-way, then two-way
+        self.DualFlowMode = "disable"
+
+        # Load transformation type; the available values are: Fixed, Random, Custom, Stream
+        self.PacketPayloadPolicy = "Fixed"
+        # When the load transformation type is set to custom load, the load content needs to be configured.
+        self.PacketPayloadValue = "0xFF"
+        # When the type of load transformation is fixed load, random load or custom load, this item needs to be specified.
+        self.FrameSizePolicy = {
+            # Frame length transformation mode; the available values are: List, Step, Random, iMix.
+            "SizeChangeMode": "List",
+            # The format of the List value is: 64, 128; The format of the Step value is: 64-128|+64
+            # The format of the Random value is: 128-256
+            "FrameSizeFormat": "64,128,256,512,1024,1280,1518"
+        }
+
+        # Number of retry attempts for testing
+        self.MaximumIterativeCycle = 20
+        self.CycleDurationPolicy = {
+            # Duration adjustment method
+            "CycleDurationMode": "Fixed",
+            # The unit of test duration; the available values are: TimeSecond, PacketCount
+            "CycleDurationUnit": "TimeSecond",
+            # When the unit of test duration is seconds of sent traffic, the initial sending time period in seconds needs to be specified.
+            "InitialCycleSecond": "60",
+            # When the unit of the test duration is the number of sent messages, the initial number of sent messages field needs to be specified.
+            "InitialCyclePacket": "10000",
+            "MinimumCycleSecond": "0.000064",
+            "MinimumCyclePacket": "1",
+            "MaximumCycleSecond": "60",
+            "MaximumCyclePacket": "10000",
+            "SecondResolution": "0.1",
+            "PacketResolution": "100",
+            "AcceptableLossRate": "0"
+        }
+        # The duration of aging
+        self.AgingTime = 5
+
+        self.LoadLimitPolicy = {
+            # Unit of rate load; the available values are: percent, fps, bps, kbps, mbps, Bps
+            "LoadLimitUnit": "percent",
+            # Rate load mode; the available values are: Step, Random, List, FrameSpeedRate
+            "LoadLimitMode": "Step",
+            # The format of the Step value is 10-50|+10; The format of the Random value is 10-50
+            # The format of the List value is 10,20,50;
+            # The format of the FrameSpeedRate value is 10,20,50; At this point, the number of rate lists needs to be equal to that of frame length lists.
+            "LoadLimitFormat": "10-50|+10"
+        }
+        # Message sending rate
+        self.BurstPacketCount = 32
+        # Packet loss indicates failure.
+        self.DisplayFailWhenLoss = "yes"
+
+    def _handle_rfc2544_back_to_back_loads_config(self):
+        # The number of UDP streams
+        self.SimUser = 256
+
+        self.Latency = "disable"
+        # "enable" indicates two-way; "disable" indicates one-way; "both" means first one-way, then two-way
+        self.DualFlowMode = "disable"
+
+        # Load transformation type; the available values are: Fixed, Random, Custom, Stream
+        self.PacketPayloadPolicy = "Fixed"
+        # When the load transformation type is set to custom load, the load content needs to be configured.
+        self.PacketPayloadValue = "0xFF"
+        # When the type of load transformation is fixed load, random load or custom load, this item needs to be specified.
+        self.FrameSizePolicy = {
+            # Frame length transformation mode; the available values are: List, Step, Random, iMix.
+            "SizeChangeMode": "List",
+            # The format of the List value is: 64, 128; The format of the Step value is: 64-128|+64
+            # The format of the Random value is: 128-256
+            "FrameSizeFormat": "64,128,256,512,1024,1280,1518"
+        }
+
+        # Number of retry attempts for testing
+        self.MaximumIterativeCycle = 20
+        self.CycleDurationPolicy = {
+            # Duration adjustment method
+            "CycleDurationMode": "Fixed",
+            # The unit of test duration; the available values are: TimeSecond, PacketCount
+            "CycleDurationUnit": "TimeSecond",
+            # When the unit of test duration is seconds of sent traffic, the initial sending time period in seconds needs to be specified.
+            "InitialCycleSecond": "60",
+            # When the unit of the test duration is the number of sent messages, the initial number of sent messages field needs to be specified.
+            "InitialCyclePacket": "10000",
+            "MinimumCycleSecond": "0.000064",
+            "MinimumCyclePacket": "1",
+            "MaximumCycleSecond": "60",
+            "MaximumCyclePacket": "10000",
+            "SecondResolution": "0.1",
+            "PacketResolution": "100",
+            "AcceptableLossRate": "0"
+        }
+        # The duration of aging
+        self.AgingTime = 5
+
+        self.LoadLimitPolicy = {
+            # Unit of rate load; the available values are: percent, fps, bps, kbps, mbps, Bps
+            "LoadLimitUnit": "percent",
+            # Rate load mode; the available values are: Step, Random, List, FrameSpeedRate
+            "LoadLimitMode": "List",
+            # The format of the Step value is 10-50|+10; The format of the Random value is 10-50
+            # The format of the List value is 10,20,50;
+            # The format of the FrameSpeedRate value is 10,20,50; At this point, the number of rate lists needs to be equal to that of frame length lists.
+            "LoadLimitFormat": "100"
+        }
+        # Message sending rate
+        self.BurstPacketCount = 32
+        # Packet loss indicates failure.
+        self.DisplayFailWhenLoss = "yes"
+        self.CorrectLossRateCycle = -1
+        self.UpDownGranularity = -1
+
+    def _handle_ipv4_frag_attack_loads_config(self):
+        self.DDoSTypeTrafficStat = "no"
+        self.MulticastIp = "225.1.1.10"
+        self.DDosTypes = {
+            "TEARDROP_UDP_FLOOD": 100
+        }
+
+    def _handle_icmp_single_packet_attack_loads_config(self):
+        self.SimUser = 256
+        self.DDosDelayStart = 0
+        self.ICMP_REQUEST_FLOOD_FRAME = 68
+        self.DDoSTypeTrafficStat = "no"
+        self.DDosTypes = {
+            "ICMP_REQUEST_FLOOD": 100
+        }
+
+    def _handle_igmpv4_single_packet_attack_loads_config(self):
+        self.SimUser = 256
+        self.MulticastIp = "225.1.1.10"
+        self.IGMPV3_RESPONSE_FLOOD_FRAME = 68
+        self.DDoSTypeTrafficStat = "no"
+        self.DDosTypes = {
+            "IGMPV3_RESPONSE_FLOOD": 100
+        }
+
+    def _handle_arpv4_single_packet_attack_loads_config(self):
+        self.SimUser = 256
+        self.DDoSTypeTrafficStat = "no"
+        self.DDosTypes = {
+            "ARP_REQUEST_FLOOD": 100
+        }
+        self.ARP_REQUEST_FLOOD_FRAME = 68
+
+    def _handle_tcp_single_packet_attack_loads_config(self):
+        self.SimUser = 256
+        self.DDoSTypeTrafficStat = "no"
+        self.DDosDelayStart = 0
+        self.DDosTypes = {
+            "SYN_FLOOD": 100
+        }
+        self.SYN_FLOOD_FRAME = 68
+
+    def _handle_udp_single_packet_attack_loads_config(self):
+        self.SimUser = 256
+        self.MulticastIp = "225.1.1.10"
+        self.DDoSTypeTrafficStat = "no"
+        self.DDosDelayStart = 0
+        self.DDosTypes = {
+            "UDP_FLOOD": 100
+        }
+        self.UDP_FLOOD_FRAME = 68
+
+    def _handle_udp_payload_attack_loads_config(self):
+        self.SimUser = 1
+        self.DDoSTypeTrafficStat = "no"
+        self.DDosDelayStart = 0
+
+    def _handle_sip_single_packet_attack_loads_config(self):
+        self.SimUser = 256
+        self.FromName = "sip:+460001111100001"
+        self.ToName = "sip:+460001111100002"
+        self.ImsHost = "ims.mnc011.mcc460.3gppnetwork.org"
+        self.DDoSTypeTrafficStat = "no"
+        self.DDosTypes = {
+            "SIP_INVITE_FLOOD": 100
+        }
+
+    def _handle_dns_service_attack_loads_config(self):
+        self.DDoSTypeTrafficStat = "no"
+        self.DDosDelayStart = 0
+        self.SimUser = 256
+
+    def _handle_dns_amplification_attack_loads_config(self):
+        self.DDoSTypeTrafficStat = "no"
+        self.DDosDelayStart = 0
+        self.DNSQueryTimeOut = 1000
+
+    def _handle_ssdp_attack_loads_config(self):
+        self.SimUser = 256
+        self.DDoSTypeTrafficStat = "no"
+        self.DDosDelayStart = 0
+        self.AttackStute = "Multi"
+        self.SsdpMulticastStormIp = "239.255.255.250"
+        self.SsdpMulticastStormIpIpv6 = "FF02::C"
+        self.SsdpMultiPort = "1900"
+        self.DNSQueryTimeOut = 1000
+        self.SSDPAmpDDos = "no"
+
+    def _handle_ntp_amplification_attack_loads_config(self):
+        self.SimUser = 256
+        self.DDoSTypeTrafficStat = "no"
+        self.DDosDelayStart = 0
+        self.NTPMonlistTimeout = "500"
+        self.NTPAmpDDos = "no"
+
+    def _handle_memcached_amplification_attack_loads_config(self):
+        self.SimUser = 256
+        self.DDoSTypeTrafficStat = "no"
+        self.DDosDelayStart = 0
+        self.IPv4AttackDstIpAddr = "17.1.2.2"
+        self.IPv6AttackDstIpAddr = "3ffe:0:17:2::1:3"
+        self.MemcachedCacheSize = 9000
+        self.MemAmpDDos = "no"
+
+    def _handle_unknown_protocol_single_packet_attack_loads_config(self):
+        self.SimUser = 256
+        self.DDoSTypeTrafficStat = "no"
+        self.UNKNOWN_PROTOCOL_ATTACK = 100
+        self.UNKNOWN_PROTOCOL_ATTACK_FRAME = 1500
+        self.DDosTypes = {
+            "UNKNOWN_PROTOCOL_ATTACK": 100
+        }
+
+    def _handle_http_request_flood_loads_config(self):
+        self.SimUser = 256
+        self.HTTPAttackRecord = 0
+        self.DDosDelayStart = 0
+        self.HttpTranscationStatistics = "no"
+        self.DDosModel = "no"
+        self.HttpRequestTimeoutSecond = 5000
+        self.HttpRequestHashSize = 512
+        self.HttpMaxRequest = 0
+
+    def _handle_https_flood_loads_config(self):
+        self.DDosDelayStart = 0
+        self.SimUser = 256
+
+    def _handle_httpslow_request_flood_loads_config(self):
+        self.SimUser = 256
+        self.DDosDelayStart = 0
+        self.HTTPUnusualHeader = "yes"
+        self.SlowReqContentLength = "0"
+        self.HttpRequestTimeoutSecond = 10000
+        self.RequestFloodSendCount = 1
+        self.SegmentSendIntervalUsecond = 0
+        self.HttpRequestHashSize = 512
+
+    def _handle_http_concurrent_slow_read_loads_config(self):
+        self.SimUser = 256
+        self.HttpRequestTimeoutSecond = 5000
+        self.ConcurrentConnection = 8000000
+
+    def _handle_http_concurrent_slow_request_loads_config(self):
+        self.SimUser = 256
+        self.HttpRequestTimeoutSecond = 5000
+        self.ConcurrentConnection = 8000000
+        self.ReConnCount = 60
+
+    def _handle_unicast_storm_loads_config(self):
+        self.SimUser = 256
+        self.FrameSizePolicy = {
+            "SizeChangeMode": "Fixed",
+            "FrameSizeFormat": 64
+        }
+        self.PingEnable = "no"
+        self.PingInterval = 5
+
+    def _handle_multicast_storm_loads_config(self):
+        self.SimUser = 256
+        self.FrameSizePolicy = {
+            "SizeChangeMode": "Fixed",
+            "FrameSizeFormat": 64
+        }
+        self.PingEnable = "no"
+        self.PingInterval = 5
+
+    def _handle_broadcast_storm_loads_config(self):
+        self.SimUser = 256
+        self.PingEnable = "no"
+        self.PingInterval = 5
+
+    def _handle_sv_storm_test_loads_config(self):
+        self.ChangeMacAddrEnable = "no"
+        self.SvAPPIDChangeEn = "no"
+        self.SvIDChangeEn = "no"
+        self.FrameSizePolicy = {
+            "SizeChangeMode": "Fixed",
+            "FrameSizeFormat": 79
+        }
+        self.Latency = "enable"
+        self.PingEnable = "no"
+        self.PingInterval = 5
+        self.GooseDstMacMix = "01:0C:CD:04:00:01"
+        self.GooseDstMacMax = "01:0C:CD:04:01:FF"
+        self.AppIDMix = "0x4000"
+        self.AppIDMax = "0xFFFF"
+        self.SimUser = 256
+
+    def _handle_goose_storm_test_loads_config(self):
+        self.ChangeMacAddrEnable = "no"
+        self.ChangeStEnable = "no"
+        self.ChangeSqEnable = "no"
+        self.PingEnable = "no"
+        self.PingInterval = 5
+        self.DstMacRangeMix = "01:0C:CD:04:00:01"
+        self.DstMacRangeMax = "01:0C:CD:04:01:FF"
+        self.SqRangeMix = "0"
+        self.SqRangeMax = "65535"
+        self.StEnableMix = "0"
+        self.StEnableMax = "65535"
+        self.SimUser = 256
+
+    def _handle_mms_connect_storm_loads_config(self):
+        self.SimUser = 32
+        self.PayloadStreamLoopCount = 0
+        self.GproRequestTimeoutSecond = 5
+        self.PingEnable = "no"
+        self.PingInterval = 5
+
+    def _handle_lldp_storm_test_loads_config(self):
+        self.LLDPTestType = "0"
+        self.PingEnable = "no"
+        self.PingInterval = 5
+        self.SimUser = 256
+
+    def _handle_vulnerability_scanner_loads_config(self):
+        self.Scan = "Full and fast"
+        self.Qod = 70
+        self.Remark = ""
+
+    def _handle_web_scanner_loads_config(self):
+        self.TestPauseSecond = 0
+        self.ScanTuningOptions = "0123456789abcdef"
+        self.EncodingEvasion = ""
+        self.SslForceMode = "no"
+        self.BackgroundStream = "no"
+
+    def _handle_network_discovery_loads_config(self):
+        self.ScanConfig = "Intense scan"
+        self.ScriptConfiguration = {}
+        self.TestSpeed = "-T4"
+        self.MinRate = "auto"
+        self.FixedValue = 10000
+
+    def _handle_https_cps_loads_config(self):
+        self.SimUser = 20
+        self.HttpRequestTimeoutSecond = 100000
+        self.HttpTranscationStatistics = "no"
+        self.HttpPercentageLatencyStat = "no"
+        self.HttpRequestHashSize = 512
+        self.CookieTrafficRatio = 100
+        self.CoreRunMode = "mt"
+        self.HttpRedirectNewTcpEn = "no"
+        self.HttpOverLapMode = "none"
+        self.HttpThinkTimeMode = "fixed"
+        self.MaxThinkTime = 37500
+        self.MinThinkTime = 1
+        self.ThinkTime = 37500
+        self.HttpThinkTimeMaxCc = 100000
+        self.HttpNewSessionTotal = 0
+        self.HttpMaxRequest = 0
+        self.HttpNewConnReqNum = 0
+        self.NewTcpEachRequrest = "no"
+        self.HttpLogTraffic = "no"
+        self.OnlyRecordAbnormalResponse = "no"
+        self.OnlyRecordAssertFailed = "no"
+        self.HttpTrafficLogCount = 1000
+        self.HttpWebURLIpStatEn = "no"
+        self.HttpWebStatIPNum = 10
+        self.ExtendedMasterSecret = "no"
+        self.SSLExtServerName = ""
+        self.SSLEMSen = "yes"
+        self.SSLMtE = "yes"
+        self.CertificateRevocationList = "no"
+        self.CRLFilePath = ""
+        self.SSLCommonNameCheck = "no"
+        self.SSLVerifyCNHostName = ""
+        self.SSLDebugLevel = 0
+        self.FisecCardLogLevel = 3
+        self.FisecCardSM2Engine = 1
+        self.FisecCardSM3Engine = 1
+        self.FisecCardSM4Engine = 1
+        self.FisecCardRandomEngine = 1
+
+    def _handle_https_cc_loads_config(self):
+        self.SimUser = 32
+        self.HttpRequestTimeoutSecond = 100000
+        self.HttpTranscationStatistics = "no"
+        self.HttpPercentageLatencyStat = "no"
+        self.HttpRequestHashSize = 512
+        self.CookieTrafficRatio = 100
+        self.DutSslOffload = "disable"
+        self.ConcurrentConnection = 200000
+        self.DelayResponse = "no"
+        self.HttpThinkTimeMode = "fixed"
+        self.MaxThinkTime = 37500
+        self.MinThinkTime = 1
+        self.ThinkTime = 0
+        self.HttpSendRequestMode = "each"
+        self.ReConnCount = 0
+        self.HttpCcOperationPolicy = "no"
+        self.HttpLogTraffic = "no"
+        self.OnlyRecordAbnormalResponse = "no"
+        self.OnlyRecordAssertFailed = "no"
+        self.HttpTrafficLogCount = 1000
+        self.ExtendedMasterSecret = "no"
+        self.SSLExtServerName = ""
+        self.SSLEMSen = "yes"
+        self.SSLMtE = "yes"
+        self.CertificateRevocationList = "no"
+        self.CRLFilePath = ""
+        self.SSLCommonNameCheck = "no"
+        self.SSLVerifyCNHostName = ""
+        self.SSLDebugLevel = 0
+        self.FisecCardLogLevel = 3
+        self.FisecCardSM2Engine = 1
+        self.FisecCardSM3Engine = 1
+        self.FisecCardSM4Engine = 1
+        self.FisecCardRandomEngine = 1
+        self.HttpRedirectNewTcpEn = "no"
+
+    def _handle_https_throughput_loads_config(self):
+        self.SimUser = 20
+        self.HttpRequestTimeoutSecond = 100000
+        self.HttpTranscationStatistics = "no"
+        self.HttpPercentageLatencyStat = "no"
+        self.HttpRequestHashSize = 512
+        self.CookieTrafficRatio = 100
+        self.DelayResponse = "no"
+        self.HttpThinkTimeMode = "fixed"
+        self.MaxThinkTime = 37500
+        self.MinThinkTime = 1
+        self.ThinkTime = 0
+        self.ReConnCount = 0
+        self.HttpCcOperationPolicy = "no"
+        self.HttpLogTraffic = "no"
+        self.OnlyRecordAbnormalResponse = "no"
+        self.OnlyRecordAssertFailed = "no"
+        self.HttpTrafficLogCount = 1000
+        self.ExtendedMasterSecret = "no"
+        self.SSLExtServerName = ""
+        self.SSLEMSen = "yes"
+        self.SSLMtE = "yes"
+        self.CertificateRevocationList = "no"
+        self.CRLFilePath = ""
+        self.SSLCommonNameCheck = "no"
+        self.SSLVerifyCNHostName = ""
+        self.SSLDebugLevel = 0
+        self.FisecCardLogLevel = 3
+        self.FisecCardSM2Engine = 1
+        self.FisecCardSM3Engine = 1
+        self.FisecCardSM4Engine = 1
+        self.FisecCardRandomEngine = 1
+        self.HttpRedirectNewTcpEn = "no"
+
+    def _handle_ssl_handshake_loads_config(self):
+        self.SimUser = 20
+        self.HttpTranscationStatistics = "no"
+        self.HttpPercentageLatencyStat = "no"
+        self.HttpRequestHashSize = 512
+        self.CookieTrafficRatio = 100
+        self.CoreRunMode = "mt"
+        self.HttpNewSessionTotal = 0
+        self.ExtendedMasterSecret = "no"
+        self.SSLExtServerName = ""
+        self.SSLEMSen = "yes"
+        self.SSLMtE = "yes"
+        self.CertificateRevocationList = "no"
+        self.CRLFilePath = ""
+        self.SSLCommonNameCheck = "no"
+        self.SSLVerifyCNHostName = ""
+        self.SSLDebugLevel = 0
+        self.FisecCardLogLevel = 3
+        self.FisecCardSM2Engine = 1
+        self.FisecCardSM3Engine = 1
+        self.FisecCardSM4Engine = 1
+        self.FisecCardRandomEngine = 1
+        self.HttpRedirectNewTcpEn = "no"
+
+    def _handle_advanced_fuzzing_loads_config(self):
+        self.SleepTime = 0
+        self.RestartThreshold = 3
+        self.RestartSleepTime = 2
+        self.IndexStart = 1
+        self.IndexEnd = 30000
+        self.FuzzDbKeepOnlyNPassCases = 10
+        self.ReuseTargetConnection = "no"
+        self.Checksum = "no"
+        self.ChecksumValue = "0x3a"
+        self.CheckDataReceivedEachRequest = "no"
+        self.ReceiveDataAfterFuzz = "no"
+
+    def _handle_bgpv4_loads_config(self):
+        self.SimUser = 256
+        self.PolicyChangeCarrier = "Port"
+        self.PacketPayloadPolicy = "Fixed"
+        self.FrameSizePolicy = {
+            "SizeChangeMode": "Fixed",
+            "FrameSizeFormat": 64
+        }
+        self.PacketMaxCount = "10000"
+        self.BurstPacketCount = "1"
+
+    def _handle_bgpv6_loads_config(self):
+        self.SimUser = 256
+        self.PolicyChangeCarrier = "Port"
+        self.PacketPayloadPolicy = "Fixed"
+        self.FrameSizePolicy = {
+            "SizeChangeMode": "Fixed",
+            "FrameSizeFormat": 80
+        }
+        self.PacketMaxCount = "10000"
+        self.BurstPacketCount = "1"
+
+    def _handle_scenario_description_language_loads_config(self):
+        self.SendWaitTime = 0
+        self.SendNumCyles = 1
+        self.ScenarioTimeout = 20
+        self.ScenarioInterval = 1
+        self.SockRecvTimeout = 15
+
+    def _handle_weak_password_detection_loads_config(self):
+        self.WeakAgreementType = "ftp"
+        self.SpecifiedUserEnable = "no"
+        self.SpecifiedUser = "admin"
+        self.SpecifiedPasswordEnable = "no"
+        self.SpecifiedPassword = "admin"
+        self.EmptyPasswordEnable = "no"
+        self.UsernameEntityEnable = "no"
+        self.UsernameReverseEnable = "no"
+        self.UserDictionary = "无"
+        self.PasswordDictionary = "无"
+        self.SingleThreadCount = 16
+        self.GlobalThreadCount = 64
+        self.RequestTimedOut = 32
+        self.SslConnectEnable = "no"
+
+    def set_send_wait_time(self, value):
+        self.SendWaitTime = value
+
+    def set_send_num_cyles(self, value):
+        self.SendNumCyles = value
+
+    def set_scenario_timeout(self, value):
+        self.ScenarioTimeout = value
+
+    def set_scenario_interval(self, value):
+        self.ScenarioInterval = value
+
+    def set_sock_recv_timeout(self, value):
+        self.SockRecvTimeout = value
+
+    def set_sim_user(self, value):
+        self.SimUser = value
+
+    def set_policy_change_carrier(self, value):
+        self.PolicyChangeCarrier = value
+
+    def set_packet_payload_policy(self, value):
+        self.PacketPayloadPolicy = value
+
+    def set_frame_size_policy(self, value):
+        self.FrameSizePolicy = value
+
+    def set_packet_max_count(self, value):
+        self.PacketMaxCount = value
+
+    def set_burst_packet_count(self, value):
+        self.BurstPacketCount = value
+
+    def set_sleep_time(self, value):
+        self.SleepTime = value
+
+    def set_restart_threshold(self, value):
+        self.RestartThreshold = value
+
+    def set_restart_sleep_time(self, value):
+        self.RestartSleepTime = value
+
+    def set_index_start(self, value):
+        self.IndexStart = value
+
+    def set_index_end(self, value):
+        self.IndexEnd = value
+
+    def set_fuzz_db_keep_only_n_pass_cases(self, value):
+        self.FuzzDbKeepOnlyNPassCases = value
+
+    def set_reuse_target_connection(self, value):
+        self.ReuseTargetConnection = value
+
+    def set_checksum(self, value):
+        self.Checksum = value
+
+    def set_checksum_value(self, value):
+        self.ChecksumValue = value
+
+    def set_check_data_received_each_request(self, value):
+        self.CheckDataReceivedEachRequest = value
+
+    def set_receive_data_after_fuzz(self, value):
+        self.ReceiveDataAfterFuzz = value
+
+    def set_http_transcation_statistics(self, value):
+        self.HttpTranscationStatistics = value
+
+    def set_http_percentage_latency_stat(self, value):
+        self.HttpPercentageLatencyStat = value
+
+    def set_http_request_hash_size(self, value):
+        self.HttpRequestHashSize = value
+
+    def set_cookie_traffic_ratio(self, value):
+        self.CookieTrafficRatio = value
+
+    def set_core_run_mode(self, value):
+        self.CoreRunMode = value
+
+    def set_http_new_session_total(self, value):
+        self.HttpNewSessionTotal = value
+
+    def set_extended_master_secret(self, value):
+        self.ExtendedMasterSecret = value
+
+    def set_ssl_ext_server_name(self, value):
+        self.SSLExtServerName = value
+
+    def set_ssl_ems_en(self, value):
+        self.SSLEMSen = value
+
+    def set_ssl_mte(self, value):
+        self.SSLMtE = value
+
+    def set_certificate_revocation_list(self, value):
+        self.CertificateRevocationList = value
+
+    def set_crl_file_path(self, value):
+        self.CRLFilePath = value
+
+    def set_ssl_common_name_check(self, value):
+        self.SSLCommonNameCheck = value
+
+    def set_ssl_verify_cn_host_name(self, value):
+        self.SSLVerifyCNHostName = value
+
+    def set_ssl_debug_level(self, value):
+        self.SSLDebugLevel = value
+
+    def set_fisec_card_log_level(self, value):
+        self.FisecCardLogLevel = value
+
+    def set_fisec_card_sm2_engine(self, value):
+        self.FisecCardSM2Engine = value
+
+    def set_fisec_card_sm3_engine(self, value):
+        self.FisecCardSM3Engine = value
+
+    def set_fisec_card_sm4_engine(self, value):
+        self.FisecCardSM4Engine = value
+
+    def set_fisec_card_random_engine(self, value):
+        self.FisecCardRandomEngine = value
+
+    def set_http_redirect_new_tcp_en(self, value):
+        self.HttpRedirectNewTcpEn = value
+
+    def set_http_request_timeout_second(self, value):
+        self.HttpRequestTimeoutSecond = value
+
+    def set_delay_response(self, value):
+        self.DelayResponse = value
+
+    def set_http_think_time_mode(self, value):
+        self.HttpThinkTimeMode = value
+
+    def set_max_think_time(self, value):
+        self.MaxThinkTime = value
+
+    def set_min_think_time(self, value):
+        self.MinThinkTime = value
+
+    def set_think_time(self, value):
+        self.ThinkTime = value
+
+    def set_re_conn_count(self, value):
+        self.ReConnCount = value
+
+    def set_http_cc_operation_policy(self, value):
+        self.HttpCcOperationPolicy = value
+
+    def set_http_log_traffic(self, value):
+        self.HttpLogTraffic = value
+
+    def set_only_record_abnormal_response(self, value):
+        self.OnlyRecordAbnormalResponse = value
+
+    def set_only_record_assert_failed(self, value):
+        self.OnlyRecordAssertFailed = value
+
+    def set_http_traffic_log_count(self, value):
+        self.HttpTrafficLogCount = value
+
+    def set_dut_ssl_offload(self, value):
+        self.DutSslOffload = value
+
+    def set_concurrent_connection(self, value):
+        self.ConcurrentConnection = value
+
+    def set_http_send_request_mode(self, value):
+        self.HttpSendRequestMode = value
+
+    def set_ssl_em_sen(self, value):
+        self.SSLEMSen = value
+
+    def set_http_over_lap_mode(self, value):
+        self.HttpOverLapMode = value
+
+    def set_http_think_time_max_cc(self, value):
+        self.HttpThinkTimeMaxCc = value
+
+    def set_http_max_request(self, value):
+        self.HttpMaxRequest = value
+
+    def set_http_new_conn_req_num(self, value):
+        self.HttpNewConnReqNum = value
+
+    def set_new_tcp_each_requrest(self, value):
+        self.NewTcpEachRequrest = value
+
+    def set_http_web_url_ip_stat_en(self, value):
+        self.HttpWebURLIpStatEn = value
+
+    def set_http_web_stat_ip_num(self, value):
+        self.HttpWebStatIPNum = value
+
+    def set_ssl_mt_e(self, value):
+        self.SSLMtE = value
+
+    def set_scan_config(self, value):
+        self.ScanConfig = value
+
+    def set_script_configuration(self, value):
+        self.ScriptConfiguration = value
+
+    def set_test_speed(self, value):
+        self.TestSpeed = value
+
+    def set_min_rate(self, value):
+        self.MinRate = value
+
+    def set_fixed_value(self, value):
+        self.FixedValue = value
+
+    def set_test_pause_second(self, value):
+        self.TestPauseSecond = value
+
+    def set_scan_tuning_options(self, value):
+        self.ScanTuningOptions = value
+
+    def set_encoding_evasion(self, value):
+        self.EncodingEvasion = value
+
+    def set_ssl_force_mode(self, value):
+        self.SslForceMode = value
+
+    def set_background_stream(self, value):
+        self.BackgroundStream = value
+
+    def set_scan(self, value):
+        self.Scan = value
+
+    def set_qod(self, value):
+        self.Qod = value
+
+    def set_remark(self, value):
+        self.Remark = value
+
+    def set_lldp_test_type(self, value):
+        self.LLDPTestType = value
+
+    def set_ping_enable(self, value):
+        self.PingEnable = value
+
+    def set_ping_interval(self, value):
+        self.PingInterval = value
+
+    def set_payload_stream_loop_count(self, value):
+        self.PayloadStreamLoopCount = value
+
+    def set_gpro_request_timeout_second(self, value):
+        self.GproRequestTimeoutSecond = value
+
+    def set_change_mac_addr_enable(self, value):
+        self.ChangeMacAddrEnable = value
+
+    def set_change_st_enable(self, value):
+        self.ChangeStEnable = value
+
+    def set_change_sq_enable(self, value):
+        self.ChangeSqEnable = value
+
+    def set_dst_mac_range_mix(self, value):
+        self.DstMacRangeMix = value
+
+    def set_dst_mac_range_max(self, value):
+        self.DstMacRangeMax = value
+
+    def set_sq_range_mix(self, value):
+        self.SqRangeMix = value
+
+    def set_sq_range_max(self, value):
+        self.SqRangeMax = value
+
+    def set_st_enable_mix(self, value):
+        self.StEnableMix = value
+
+    def set_st_enable_max(self, value):
+        self.StEnableMax = value
+
+    def set_sv_appid_change_en(self, value):
+        self.SvAPPIDChangeEn = value
+
+    def set_sv_id_change_en(self, value):
+        self.SvIDChangeEn = value
+
+    def set_latency(self, value):
+        self.Latency = value
+
+    def set_goose_dst_mac_mix(self, value):
+        self.GooseDstMacMix = value
+
+    def set_goose_dst_mac_max(self, value):
+        self.GooseDstMacMax = value
+
+    def set_app_id_mix(self, value):
+        self.AppIDMix = value
+
+    def set_app_id_max(self, value):
+        self.AppIDMax = value
+
+    def set_ddos_delay_start(self, value):
+        self.DDosDelayStart = value
+
+    def set_http_unusual_header(self, value):
+        self.HTTPUnusualHeader = value
+
+    def set_slow_req_content_length(self, value):
+        self.SlowReqContentLength = value
+
+    def set_request_flood_send_count(self, value):
+        self.RequestFloodSendCount = value
+
+    def set_segment_send_interval_usecond(self, value):
+        self.SegmentSendIntervalUsecond = value
+
+    def set_http_attack_record(self, value):
+        self.HTTPAttackRecord = value
+
+    def set_ddos_model(self, value):
+        self.DDosModel = value
+
+    def set_ddos_type_traffic_stat(self, value):
+        self.DDoSTypeTrafficStat = value
+
+    def set_ddos_types(self, value):
+        self.DDosTypes = value
+
+    def set_unknown_protocol_attack_frame(self, value):
+        self.UNKNOWN_PROTOCOL_ATTACK_FRAME = value
+
+    def set_ipv4_attack_dst_ip_addr(self, value):
+        self.IPv4AttackDstIpAddr = value
+
+    def set_ipv6_attack_dst_ip_addr(self, value):
+        self.IPv6AttackDstIpAddr = value
+
+    def set_memcached_cache_size(self, value):
+        self.MemcachedCacheSize = value
+
+    def set_mem_amp_ddos(self, value):
+        self.MemAmpDDos = value
+
+    def set_ntp_amp_ddos(self, value: str):
+        """
+        Set the NTP amplification DDoS flag.
+
+        Args:
+            value (str): "yes" to enable, "no" to disable.
+
+        Raises:
+            ValueError: If input is not "yes" or "no".
+        """
+        if value not in ("yes", "no"):
+            raise ValueError("Value must be 'yes' or 'no'")
+        self.NTPAmpDDos = value
+
+    def set_ntp_monlist_timeout(self, value):
+        """
+        Set the NTP monlist timeout.
+
+        Args:
+            value (int): The timeout value.
+        """
+        self.NTPMonlistTimeout = value
+
+    def set_attack_stute(self, value: str):
+        """
+        Set DDoS type traffic statistics flag
+
+        Args:
+            value (str): "yes" to enable statistics, "no" to disable
+
+        Raises:
+            ValueError: If input is not "yes" or "no"
+        """
+        if value not in ("Multi", "Single"):
+            raise ValueError("Value must be 'Multi' or 'Single'")
+        self.AttackStute = value
+
+    def set_ssdp_multicast_storm_ip(self, value: str):
+        """
+        Set the SSDP multicast storm IP address.
+
+        Args:
+            value (str): The IP address.
+        """
+        self.SsdpMulticastStormIp = value
+
+    def set_ssdp_multicast_storm_ip_ipv6(self, value: str):
+        """
+        Set the SSDP multicast storm IP address (IPv6).
+
+        Args:
+            value (str): The IP address.
+        """
+        self.SsdpMulticastStormIpIpv6 = value
+
+    def set_ssdp_multi_port(self, value: str):
+        """
+        Set the SSDP multicast storm port.
+
+        Args:
+            value (str): The port number.
+        """
+        self.SsdpMultiPort = value
+
+    def set_dns_query_timeout(self, value):
+        """
+        Set the DNS query timeout.
+
+        Args:
+            value (int): The timeout value.
+        """
+        self.DNSQueryTimeOut = value
+
+    def set_ssdp_amp_ddos(self, value: str):
+        """
+        Set the SSDP amplification DDoS flag.
+
+        Args:
+            value (str): "yes" to enable, "no" to disable.
+
+        Raises:
+            ValueError: If input is not "yes" or "no".
+        """
+        if value not in ("yes", "no"):
+            raise ValueError("Value must be 'yes' or 'no'")
+        self.SSDPAmpDDos = value
+
+    def set_from_name(self, value):
+        """
+        Set the FromName value.
+
+        Args:
+            value (str): The FromName value.
+        """
+        self.FromName = value
+
+    def set_to_name(self, value):
+        """
+        Set the ToName value.
+
+        Args:
+            value (str): The ToName value.
+        """
+        self.ToName = value
+
+    def set_ims_host(self, value):
+        """
+        Set the ImsHost value.
+
+        Args:
+            value (str): The ImsHost value.
+        """
+        self.ImsHost = value
+
+    def set_multicast_ip(self, ip: str):
+        """
+        Set multicast IP address
+
+        Args:
+            ip (str): Valid IPv4 multicast address (
+
+            ip (str): Valid IPv4 multicast address (IP_ADDRESS - IP_ADDRESS): Valid IPv4 multicast address (IP_ADDRESS - 239.255.255.255)
+        Raises:
+            ValueError: If invalid multicast IP format
+        """
+        import ipaddress
+        try:
+            ip_obj = ipaddress.IPv4Address(ip)
+            if not ip_obj.is_multicast:
+                raise ValueError
+            self.MulticastIp = str(ip_obj)
+        except (ipaddress.AddressValueError, ValueError):
+            raise ValueError(f"Invalid multicast IP: {ip}")
+
+    def set_udp_flood_frame(self, value):
+        """
+        Set the udp flood frame size.
+
+        Args:
+            value (int): The frame size.
+        """
+        self.UDP_FLOOD_FRAME = value
+
+    def set_syn_flood_frame(self, value):
+        """
+        Set the syn flood frame size.
+
+        Args:
+            value (int): The frame size.
+        """
+        self.SYN_FLOOD_FRAME = value
+
+    def set_arp_request_flood_frame(self, value):
+        """
+        Set the arp request flood frame size.
+
+        Args:
+            value (int): The frame size.
+        """
+        self.ARP_REQUEST_FLOOD_FRAME = value
+
+    def set_igmp_response_flood_frame(self, value):
+        """
+        Set the IGMPv3 response flood frame size.
+
+        Args:
+            value (int): The frame size.
+        """
+        self.IGMPV3_RESPONSE_FLOOD_FRAME = value
+
+    def set_icmp_request_flood_frame(self, value):
+        """
+        Set the ICMP request flood frame size.
+
+        Args:
+            value (int): The frame size.
+        """
+        self.ICMP_REQUEST_FLOOD_FRAME = value
+
+    def set_dual_flow_mode(self, value):
+        """
+        Set whether dual - flow mode is enabled.
+
+        Args:
+            value (str): "enable" or "disable".
+        """
+        self.DualFlowMode = value
+
+    def set_cycle_duration_policy(self, value):
+        self.CycleDurationPolicy.update(value)
+
+    def set_delay_type(self, val):
+        self.DelayType = val
+
+    def set_packet_payload_value(self, val):
+        self.PacketPayloadValue = val
+
+    def set_maximum_iterative_cycle(self, val):
+        self.MaximumIterativeCycle = val
+
+    def set_filter_action(self, val):
+        self.FilterAction = val
+
+    def set_aging_time(self, val):
+        self.AgingTime = val
+
+    def set_load_limit_policy(self, val):
+        self.LoadLimitPolicy = val
+
+    def set_loopback_latency(self, val):
+        self.LoopBackLinkLatency = val
+
+    def set_display_fail_when_loss(self, val):
+        self.DisplayFailWhenLoss = val
+
+    def set_acceptable_packet_loss_rate(self, val):
+        self.AcceptablePacketLossRate = val
+
+    def set_recv_packet_count(self, value):
+        """
+        Set the received packet count.
+
+        Args:
+            value (str): The received packet count.
+        """
+        self.RecvPacketCount = value
+
+    def set_simuser_send_pps(self, value):
+        """
+        Set the packets per second sent by simulated users.
+
+        Args:
+            value (int): The packets per second value.
+        """
+        self.SimuserSendPPS = value
+
+    def set_udp_echo(self, value):
+        """
+        Set whether UDP echo is enabled.
+
+        Args:
+            value (str): "enable" or "disable".
+        """
+        self.UdpEcho = value
+
+    def set_frag_id_accumulates(self, value):
+        """
+        Set whether the fragment ID accumulates.
+
+        Args:
+            value (str): "yes" or "no".
+        """
+        self.FragIdAccumulates = value
+
+    def set_first_packet_sent_delay(self, value):
+        """
+        Set the delay for sending the first packet.
+
+        Args:
+            value (int): The delay value.
+        """
+        self.FirstPacketSentDelay = value
+
+    def set_max_ip_frag(self, value):
+        """
+        Set the maximum number of IP fragments.
+
+        Args:
+            value (int): The maximum number of IP fragments.
+        """
+        self.MaxIPFrag = value
+
+    def set_specify_payload_value(self, value):
+        """
+        Set the specified payload value.
+
+        Args:
+            value (str): The specified payload value, e.g., "00".
+        """
+        self.SpecifyPayloadValue = value
+
+    def set_simuser_send_packet_second(self, value):
+        """
+        Set the number of packets sent by simulated users per second.
+
+        Args:
+            value (int): The number of packets.
+        """
+        self.SimuserSendPacketSecond = value
+
+    def set_udp_send_packet_count(self, value):
+        """
+        Set the number of UDP packets sent.
+
+        Args:
+            value (int): The number of UDP packets.
+        """
+        self.UDPSendPacketCount = value
+
+    def set_ipv4_flags_df(self, value):
+        """
+        Set the IPv4 Flags DF value.
+
+        Args:
+            value (int): The IPv4 Flags DF value.
+        """
+        self.IPv4FlagsDF = value
+
+    def set_http_cps_success_rate_target(self, value):
+        self.HttpCpsSuccessRateTarget = value
+
+    def set_send_pkt_stat_en(self, value):
+        self.SendPktStatEn = value
+
+    def set_http_pipeline_en(self, value):
+        self.HttpPipelineEn = value
+
+    def set_simuser_fix_req(self, value):
+        self.SimuserFixReq = value
 
     def set_user_apply_memory_mb(self, value):
         self.UserApplyMemoryMB = value
@@ -2382,21 +4218,247 @@ class BaseLoads:
     def set_dpdk_huge_memory_pct(self, value):
         self.DPDKHugeMemoryPct = value
 
+    def to_dict(self):
+        return self.__dict__
+
 
 class BaseCaseObject:
-
     def __init__(self, test_type):
+        case_object_callback_dict = {
+            "HttpCps": self._handle_http_cps_case_object_config,
+            "HttpForceCps": self._handle_http_force_cps_case_object_config,
+            "HttpCc": self._handle_http_cc_case_object_config,
+            "HttpThroughput": self._handle_http_throughput_case_object_config,
+            "UdpPps": self._handle_udp_pps_case_object_config,
+            "HttpRequestFlood": self._handle_http_request_flood_case_object_config,
+            "HttpMultipleRequest": self._handle_http_multiple_request_case_object_config,
+            "HttpRecursionRequest": self._handle_http_recursion_request_case_object_config,
+            "HttpConcurrentSlowRead": self._handle_http_concurrent_slow_read_case_object_config,
+            "HttpConcurrentSlowRequest": self._handle_http_concurrent_slow_request_case_object_config,
+            "Rfc2544Throughput": self._handle_rfc2544_throughput_case_object_config,
+            "Rfc2544Latency": self._handle_rfc2544_latency_case_object_config,
+            "Rfc2544LossRate": self._handle_rfc2544_loss_rate_case_object_config,
+            "Rfc2544BackToBack": self._handle_rfc2544_back_to_back_case_object_config,
+            "UDPPayloadAttack": self._handle_udp_payload_attack_case_object_config,
+            "DnsServiceAttack": self._handle_dns_service_attack_case_object_config,
+            "DnsAmplificationAttack": self._handle_dns_amplification_attack_case_object_config,
+            "HttpsFlood": self._handle_https_flood_case_object_config,
+            "TcpSessionFlood": self._handle_tcp_session_flood_case_object_config,
+            "HTTPSlowRequestFlood": self._handle_httpslow_request_flood_case_object_config,
+            "MmsConnectStorm": self._handle_mms_connect_storm_case_object_config,
+            "VulnerabilityScanner": self._handle_vulnerability_scanner_case_object_config,
+            "HttpsCps": self._handle_https_cps_case_object_config,
+            "HttpsCc": self._handle_https_cc_case_object_config,
+            "HttpsThroughput": self._handle_https_throughput_case_object_config,
+            "SSLHandshake": self._handle_ssl_handshake_case_object_config,
+            "AdvancedFuzzing": self._handle_advanced_fuzzing_case_object_config,
+            "ScenarioDescrptionLanguage": self._handle_scenario_descrption_language_case_object_config,
+            "WebScanner": self._handle_web_scanner_case_object_config
+        }
 
-        if test_type in ["HttpCps", "HttpForceCps", "HttpCc", "HttpThroughput", "HttpsCps", "HttpsCc", "HttpsThroughput", "UdpPps"]:
-            self.Monitor = "默认监控器对象Ping"
-            self.Variate = "无"
-            self.WebTestProjectName = "默认网络设备测试项目"
-            self.FileObject = "默认156字节网页请求"
+        callback = case_object_callback_dict.get(test_type)
+        if callback:
+            callback()
+        else:
+            # case object is null
+            pass
 
-        elif test_type in ["HttpRequestFlood", "HttpMultipleRequest", "HttpRecursionRequest", "HttpConcurrentSlowRead", "HttpConcurrentSlowRequest"]:
-            self.Variate = "无"
-            self.WebTestProjectName = "默认网络设备测试项目"
-            self.FileObject = "默认根网页请求"
+    def _handle_http_cps_case_object_config(self):
+        self.Monitor = "默认监控器对象Ping"
+        self.Variate = "无"
+        self.WebTestProjectName = "默认网络设备测试项目"
+        self.FileObject = "默认156字节网页请求"
+
+    def _handle_http_force_cps_case_object_config(self):
+        self.Monitor = "默认监控器对象Ping"
+        self.Variate = "无"
+        self.WebTestProjectName = "默认网络设备测试项目"
+        self.FileObject = "默认156字节网页请求"
+
+    def _handle_http_cc_case_object_config(self):
+        self.Monitor = "默认监控器对象Ping"
+        self.Variate = "无"
+        self.WebTestProjectName = "默认网络设备测试项目"
+        self.FileObject = "默认156字节网页请求"
+
+    def _handle_http_throughput_case_object_config(self):
+        self.Monitor = "默认监控器对象Ping"
+        self.Variate = "无"
+        self.WebTestProjectName = "默认网络设备测试项目"
+        self.FileObject = "默认512K字节网页请求"
+
+    def _handle_udp_pps_case_object_config(self):
+        self.Monitor = "默认监控器对象Ping"
+        self.Variate = "无"
+        self.WebTestProjectName = "默认网络设备测试项目"
+        self.FileObject = "默认156字节网页请求"
+
+    def _handle_http_request_flood_case_object_config(self):
+        self.Variate = "无"
+        self.WebTestProjectName = "默认网络设备测试项目"
+        self.FileObject = "默认根网页请求"
+
+    def _handle_http_multiple_request_case_object_config(self):
+        self.Variate = "无"
+        self.WebTestProjectName = "默认网络设备测试项目"
+        self.FileObject = "默认根网页请求"
+
+    def _handle_http_recursion_request_case_object_config(self):
+        self.Variate = "无"
+        self.WebTestProjectName = "默认网络设备测试项目"
+        self.FileObject = "默认根网页请求"
+
+    def _handle_http_concurrent_slow_read_case_object_config(self):
+        self.Variate = "无"
+        self.WebTestProjectName = "默认网络设备测试项目"
+        self.FileObject = "默认根网页请求"
+
+    def _handle_http_concurrent_slow_request_case_object_config(self):
+        self.Variate = "无"
+        self.WebTestProjectName = "默认网络设备测试项目"
+        self.FileObject = "默认根网页请求"
+
+    def _handle_rfc2544_throughput_case_object_config(self):
+        # Monitoring of the tested equipment
+        self.Monitor = "默认监控器对象Ping"
+        # iMIX mixed frame length
+        self.iMixName = "默认混合流量"
+
+    def _handle_rfc2544_latency_case_object_config(self):
+        # Monitoring of the tested equipment
+        self.Monitor = "默认监控器对象Ping"
+        # iMIX mixed frame length
+        self.iMixName = "默认混合流量"
+
+    def _handle_rfc2544_loss_rate_case_object_config(self):
+        # Monitoring of the tested equipment
+        self.Monitor = "默认监控器对象Ping"
+        # iMIX mixed frame length
+        self.iMixName = "默认混合流量"
+
+    def _handle_rfc2544_back_to_back_case_object_config(self):
+        # Monitoring of the tested equipment
+        self.Monitor = "默认监控器对象Ping"
+        # iMIX mixed frame length
+        self.iMixName = "默认混合流量"
+
+    def _handle_udp_payload_attack_case_object_config(self):
+        self.PacketPayloadOBJ = "默认handle_over_udp载荷模板"
+
+    def _handle_dns_service_attack_case_object_config(self):
+        self.Dns = "默认DNS服务攻击"
+        self.Dnskey = "默认RSASHA256套件"
+
+    def _handle_dns_amplification_attack_case_object_config(self):
+        self.Dns = "默认DNS放大攻击"
+        self.Dnskey = "默认RSASHA256套件"
+
+    def _handle_https_flood_case_object_config(self):
+        self.SSLServerCertConfig = "默认RSA算法1024位私钥带密码证书套件"
+
+    def _handle_tcp_session_flood_case_object_config(self):
+        self.PacketPayloadOBJ = "默认handle_over_tcp载荷模板"
+
+    def _handle_httpslow_request_flood_case_object_config(self):
+        self.Variate = "默认攻击Payload变量列表"
+        self.WebTestProjectName = "默认Web攻击测试项目"
+        self.FileObject = "默认SlowGet网页请求"
+
+    def _handle_mms_connect_storm_case_object_config(self):
+        self.MQTTOBJ = "默认MMS连接风暴流模板"
+        self.Monitor = "默认监控器对象Ping"
+
+    def _handle_vulnerability_scanner_case_object_config(self):
+        self.VulnerabilityScannerMap = "默认漏洞数据库"
+        self.Credential = ""
+
+    def _handle_https_cps_case_object_config(self):
+        self.Monitor = "默认监控器对象Ping"
+        self.Variate = "无"
+        self.WebTestProjectName = "默认网络设备测试项目"
+        self.FileObject = "默认156字节网页请求"
+        self.SSLCACertConfig = ""
+        self.SSLClientCertConfig = ""
+        self.SSLServerCertConfig = "默认RSA算法1024位私钥带密码证书套件"
+
+    def _handle_https_cc_case_object_config(self):
+        self.Monitor = "默认监控器对象Ping"
+        self.Variate = "无"
+        self.WebTestProjectName = "默认网络设备测试项目"
+        self.FileObject = "默认156字节网页请求"
+        self.SSLCACertConfig = ""
+        self.SSLClientCertConfig = ""
+        self.SSLServerCertConfig = "默认RSA算法1024位私钥带密码证书套件"
+
+    def _handle_https_throughput_case_object_config(self):
+        self.Monitor = "默认监控器对象Ping"
+        self.Variate = "无"
+        self.WebTestProjectName = "默认网络设备测试项目"
+        self.FileObject = "默认156字节网页请求"
+        self.SSLCACertConfig = ""
+        self.SSLClientCertConfig = ""
+        self.SSLServerCertConfig = "默认RSA算法1024位私钥带密码证书套件"
+
+    def _handle_ssl_handshake_case_object_config(self):
+        self.SSLCACertConfig = ""
+        self.SSLClientCertConfig = ""
+        self.SSLServerCertConfig = "默认RSA算法1024位私钥带密码证书套件"
+        self.Monitor = "默认监控器对象Ping"
+
+    def _handle_advanced_fuzzing_case_object_config(self):
+        self.Fuzzing = "AMQP协议模糊测试模版"
+        self.Monitor = "默认监控器对象Ping"
+
+    def _handle_scenario_descrption_language_case_object_config(self):
+        self.Descrption = "默认攻击场景检测对象"
+        self.App_scenario = "默认应用场景对象"
+        self.Malware = "默认恶意软件攻击对象"
+        self.Mitre = "无"
+
+    def _handle_web_scanner_case_object_config(self):
+        self.Webattack = "默认SqliLabs靶场攻击列表"
+
+    def set_descrption(self, value):
+        self.Descrption = value
+
+    def set_app_scenario(self, value):
+        self.App_scenario = value
+
+    def set_malware(self, value):
+        self.Malware = value
+
+    def set_mitre(self, value):
+        self.Mitre = value
+
+    def set_fuzzing(self, value):
+        self.Fuzzing = value
+
+    def set_ssl_ca_cert_config(self, value):
+        self.SSLCACertConfig = value
+
+    def set_ssl_client_cert_config(self, value):
+        self.SSLClientCertConfig = value
+
+    def set_ssl_server_cert_config(self, value):
+        self.SSLServerCertConfig = value
+
+    def set_vulnerability_scanner_map(self, value):
+        self.VulnerabilityScannerMap = value
+
+    def set_credential(self, value):
+        self.Credential = value
+
+    def set_mqtt_obj(self, value):
+        self.MQTTOBJ = value
+
+    def set_dns(self, value):
+        self.Dns = value
+
+    def set_dnskey(self, value):
+        self.Dnskey = value
+
+    def set_packet_payload_obj(self, value):
+        self.PacketPayloadOBJ = value
 
     def set_monitor(self, value):
         self.Monitor = value
@@ -2414,6337 +4476,878 @@ class BaseCaseObject:
         return self.__dict__
 
 
-class HttpCps:
-    class Loads(BaseLoads):
-        def __init__(self):
-            super().__init__()
-            self.SimUser = 20
-            self.HttpRequestTimeoutSecond = 10000
-            self.HttpTranscationStatistics = "no"
-            self.HttpPercentageLatencyStat = "no"
-            self.HttpRequestHashSize = 512
-            self.CookieTrafficRatio = 100
-            self.SendPktStatEn = "no"
-            self.HttpOverLapMode = "user"
-            self.HttpThinkTimeMode = "fixed"
-            self.MaxThinkTime = 37500
-            self.MinThinkTime = 1
-            self.ThinkTime = 37500
-            self.HttpThinkTimeMaxCc = 4000000
-            self.HttpNewSessionTotal = 0
-            self.HttpMaxRequest = 0
-            self.HttpNewConnReqNum = 0
-            self.NewTcpEachRequrest = "no"
-            self.HttpPipelineEn = "no"
-            self.SimuserFixReq = "no"
-            self.HttpRedirectNewTcpEn = "no"
-            self.HttpLogTraffic = "no"
-            self.OnlyRecordAbnormalResponse = "no"
-            self.OnlyRecordAssertFailed = "no"
-            self.HttpTrafficLogCount = 1000
-            self.HttpWebURLIpStatEn = "no"
-            self.HttpWebStatIPNum = 10
+class BaseClientProfiles:
+    def __init__(self, test_type, dut_role="Gateway"):
 
-        def set_sim_user(self, value):
-            self.SimUser = value
+        # General Config
+        self.SourcePortRange = "10000-65535"
 
-        def set_http_request_timeout_second(self, value):
-            self.HttpRequestTimeoutSecond = value
+        general_callback_dict = {
+            "HttpCps": self._handle_http_cps_general_config,
+            "HttpForceCps": self._handle_http_force_cps_general_config,
+            "HttpCc": self._handle_http_cc_general_config,
+            "UDPPayloadAttack": self._handle_udp_payload_attack_general_config,
+            "HttpRequestFlood": self._handle_http_request_flood_general_config,
+            "HTTPSlowRequestFlood": self._handle_http_slow_request_flood_general_config,
+            "TcpSessionFlood": self._handle_tcp_session_flood_general_config,
+            "HttpMultipleRequest": self._handle_http_multiple_request_general_config,
+            "HttpRecursionRequest": self._handle_http_recursion_request_general_config,
+            "HttpConcurrentSlowRead": self._handle_http_concurrent_slow_read_general_config,
+            "HttpConcurrentSlowRequest": self._handle_http_concurrent_slow_request_general_config,
+            "MmsConnectStorm": self._handle_mms_connect_storm_general_config,
+            "NtpAmplificationAttack": self._handle_ntp_amplification_attack_general_config,
+            "SSDPAttack": self._handle_ssdp_attack_general_config,
+            "MemcachedAmplificationAttack": self._handle_memcached_amplification_attack_general_config,
+            "Ipv4FragAttack": self._handle_ipv4_frag_attack_general_config,
+            "MultiTypeFlood": self._handle_multi_type_flood_general_config,
+            "TCPWinnuke": self._handle_tcp_winnuke_general_config,
+            "UnicastStorm": self._handle_unicast_storm_general_config,
+            "MulticastStorm": self._handle_multicast_storm_general_config,
+            "BGPv4": self._handle_bgpv4_general_config,
+            "BGPv6": self._handle_bgpv6_general_config,
+            "Rfc2544Throughput": self._handle_rfc2544_throughput_general_config,
+            "Rfc2544Latency": self._handle_rfc2544_latency_general_config,
+            "Rfc2544LossRate": self._handle_rfc2544_loss_rate_general_config,
+            "Rfc2544BackToBack": self._handle_rfc2544_back_to_back_general_config,
+            "TCPSinglePacketAttack": self._handle_tcp_single_packet_attack_general_config,
+            "HttpsFlood": self._handle_https_flood_general_config,
+            "HttpsCps": self._handle_https_cps_general_config,
+            "HttpsCc": self._handle_https_cc_general_config,
+            "HttpsThroughput": self._handle_https_throughput_general_config,
+            "SSLHandshake": self._handle_ssl_handshake_general_config,
+            "DnsAmplificationAttack": self._handle_dns_amplification_attack_general_config,
+            "WeakPasswordDetection": self._handle_weak_password_detection_general_config,
+        }
 
-        def set_http_transcation_statistics(self, value):
-            self.HttpTranscationStatistics = value
+        general_callback = general_callback_dict.get(test_type)
+        if general_callback:
+            general_callback()
+        else:
+            # general config is null
+            pass
 
-        def set_http_percentage_latency_stat(self, value):
-            self.HttpPercentageLatencyStat = value
-
-        def set_http_request_hash_size(self, value):
-            self.HttpRequestHashSize = value
-
-        def set_cookie_traffic_ratio(self, value):
-            self.CookieTrafficRatio = value
-
-        def set_send_pkt_stat_en(self, value):
-            self.SendPktStatEn = value
-
-        def set_http_over_lap_mode(self, value):
-            self.HttpOverLapMode = value
-
-        def set_http_think_time_mode(self, value):
-            self.HttpThinkTimeMode = value
-
-        def set_max_think_time(self, value):
-            self.MaxThinkTime = value
-
-        def set_min_think_time(self, value):
-            self.MinThinkTime = value
-
-        def set_think_time(self, value):
-            self.ThinkTime = value
-
-        def set_http_think_time_max_cc(self, value):
-            self.HttpThinkTimeMaxCc = value
-
-        def set_http_new_session_total(self, value):
-            self.HttpNewSessionTotal = value
-
-        def set_http_max_request(self, value):
-            self.HttpMaxRequest = value
-
-        def set_http_new_conn_req_num(self, value):
-            self.HttpNewConnReqNum = value
-
-        def set_new_tcp_each_requrest(self, value):
-            self.NewTcpEachRequrest = value
-
-        def set_http_pipeline_en(self, value):
-            self.HttpPipelineEn = value
-
-        def set_simuser_fix_req(self, value):
-            self.SimuserFixReq = value
-
-        def set_http_redirect_new_tcp_en(self, value):
-            self.HttpRedirectNewTcpEn = value
-
-        def set_http_log_traffic(self, value):
-            self.HttpLogTraffic = value
-
-        def set_only_record_abnormal_response(self, value):
-            self.OnlyRecordAbnormalResponse = value
-
-        def set_only_record_assert_failed(self, value):
-            self.OnlyRecordAssertFailed = value
-
-        def set_http_traffic_log_count(self, value):
-            self.HttpTrafficLogCount = value
-
-        def set_http_web_url_ip_stat_en(self, value):
-            self.HttpWebURLIpStatEn = value
-
-        def set_http_web_stat_ip_num(self, value):
-            self.HttpWebStatIPNum = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class CaseObject(BaseCaseObject):
-        def __init__(self, test_type):
-            super().__init__(test_type)
-
-    class ClientProfiles:
-        def __init__(self):
-            self.SourcePortRange = "10000-65535"
-            self.Actions = {}
-            self.RequestHeader = [
-                "User-Agent: Firefox/41.0"
-            ]
-            self.ClientCloseMode = "Reset"
-
-        def set_source_port_range(self, SourcePortRange):
-            self.SourcePortRange = SourcePortRange
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ServerProfiles:
-        def __init__(self, role=""):
-            self.ServerPort = "80"
-            self.ResponseHeader = [
-                "Server: nginx/1.9.5",
-                "Content-Type: text/html"
-            ]
-            if role == "Server":
-                self.DNSServerPort = "53"
+        # Client Parameters
+        if dut_role == "Client":
+            client_callback_dict = {
+                "HttpsFlood": self._handle_https_flood_client_config
+            }
+            client_callback = client_callback_dict.get(test_type)
+            if client_callback:
+                client_callback()
             else:
-                self.ServerRecvRqtTimeOut = 300000
-                # self.Http1CloseDelayms = 0
-                self.Http1CloseDelayms = 500
-                self.ServerCloseMode = "3Way_Fin"
-            if role in ['Proxy', 'Client']:
-                self.HttpProxyProtocolEn = 'no'
+                # client config is null
+                pass
 
-        def set_dns_server_port(self, DNSServerPort):
-            self.DNSServerPort = DNSServerPort
+        # Proxy Parameters
+        if dut_role == "Proxy":
 
-        def set_server_port(self, ServerPort):
-            self.ServerPort = ServerPort
-
-        def set_server_recvrqt_timeout(self, ServerRecvRqtTimeOut):
-            self.ServerRecvRqtTimeOut = ServerRecvRqtTimeOut
-
-        def set_http1_close_delayms(self, Http1CloseDelayms):
-            self.Http1CloseDelayms = Http1CloseDelayms
-
-        def to_dict(self):
-            return self.__dict__
-
-    def __init__(self, dut_role, test_type):
-        self.Loads = HttpCps.Loads()
-        self.CaseObject = HttpCps.CaseObject(test_type)
-        self.ClientProfiles = HttpCps.ClientProfiles()
-        self.ServerProfiles = HttpCps.ServerProfiles(role=dut_role)
-
-    def to_dict(self):
-        return {
-            "Loads": self.Loads.to_dict(),
-            "CaseObject": self.CaseObject.to_dict(),
-            "ClientProfiles": self.ClientProfiles.to_dict(),
-            "ServerProfiles": self.ServerProfiles.to_dict()
-        }
-
-
-class HttpForceCps:
-    class Loads(BaseLoads):
-        def __init__(self):
-            super().__init__()
-            self.OnlyRecordAbnormalResponse = "no"
-            self.HttpTranscationStatistics = "no"
-            self.HttpThinkTimeMode = "fixed"
-            self.ThinkTime = 37500
-            self.MinThinkTime = 1
-            self.NewTcpEachRequrest = "no"
-            self.CookieTrafficRatio = 100
-            self.HttpTrafficLogCount = 1000
-            self.HttpThinkTimeMaxCc = 1000000
-            self.HttpOverLapMode = "none"
-            self.HttpRequestTimeoutSecond = 10000
-            self.OnlyRecordAssertFailed = "no"
-            self.HttpWebStatIPNum = 10
-            self.HttpWebURLIpStatEn = "no"
-            self.HttpPercentageLatencyStat = "no"
-            self.MaxThinkTime = 37500
-            self.HttpLogTraffic = "no"
-            self.HttpRequestHashSize = 512
-            self.HttpCpsSuccessRateTarget = 0
-
-        def set_only_record_abnormal_response(self, value):
-            self.OnlyRecordAbnormalResponse = value
-
-        def set_http_transcation_statistics(self, value):
-            self.HttpTranscationStatistics = value
-
-        def set_http_think_time_mode(self, value):
-            self.HttpThinkTimeMode = value
-
-        def set_think_time(self, value):
-            self.ThinkTime = value
-
-        def set_min_think_time(self, value):
-            self.MinThinkTime = value
-
-        def set_new_tcp_each_requrest(self, value):
-            self.NewTcpEachRequrest = value
-
-        def set_cookie_traffic_ratio(self, value):
-            self.CookieTrafficRatio = value
-
-        def set_http_traffic_log_count(self, value):
-            self.HttpTrafficLogCount = value
-
-        def set_http_think_time_max_cc(self, value):
-            self.HttpThinkTimeMaxCc = value
-
-        def set_http_over_lap_mode(self, value):
-            self.HttpOverLapMode = value
-
-        def set_http_request_timeout_second(self, value):
-            self.HttpRequestTimeoutSecond = value
-
-        def set_only_record_assert_failed(self, value):
-            self.OnlyRecordAssertFailed = value
-
-        def set_http_web_stat_ip_num(self, value):
-            self.HttpWebStatIPNum = value
-
-        def set_http_web_url_ip_stat_en(self, value):
-            self.HttpWebURLIpStatEn = value
-
-        def set_http_percentage_latency_stat(self, value):
-            self.HttpPercentageLatencyStat = value
-
-        def set_max_think_time(self, value):
-            self.MaxThinkTime = value
-
-        def set_http_log_traffic(self, value):
-            self.HttpLogTraffic = value
-
-        def set_http_request_hash_size(self, value):
-            self.HttpRequestHashSize = value
-
-        def set_http_cps_success_rate_target(self, value):
-            self.HttpCpsSuccessRateTarget = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class CaseObject(BaseCaseObject):
-        def __init__(self, test_type):
-            super().__init__(test_type)
-
-    class ClientProfiles:
-        def __init__(self):
-            self.SourcePortRange = "10000-65535"
-            self.Actions = {}
-            self.RequestHeader = ["User-Agent: Firefox/41.0"]
-            self.ClientCloseMode = "Reset"
-
-        def set_source_port_range(self, SourcePortRange):
-            self.SourcePortRange = SourcePortRange
-
-        def set_actions(self, value):
-            self.Actions = value
-
-        def set_request_header(self, value):
-            self.RequestHeader = value
-
-        def set_client_close_mode(self, value):
-            self.ClientCloseMode = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ServerProfiles:
-        def __init__(self, role=""):
-            self.ServerPort = "80"
-            self.ResponseHeader = [
-                "Server: nginx/1.9.5",
-                "Content-Type: text/html"
-            ]
-            if role == "Server":
-                self.DNSServerPort = "53"
+            proxy_callback_dict = {
+                "Rfc2544Throughput": self._handle_rfc2544_throughput_proxy_config,
+                "Rfc2544LossRate": self._handle_rfc2544_loss_rate_proxy_config,
+                "Rfc2544BackToBack": self._handle_rfc2544_back_to_back_proxy_config,
+            }
+            proxy_callback = proxy_callback_dict.get(test_type)
+            if proxy_callback:
+                proxy_callback()
             else:
-                self.ServerRecvRqtTimeOut = 300000
-                # self.Http1CloseDelayms = 0
-                self.Http1CloseDelayms = 500
-                self.ServerCloseMode = "3Way_Fin"
-            if role in ['Proxy', 'Client']:
-                self.HttpProxyProtocolEn = 'no'
+                # proxy config is null
+                pass
 
-        def set_server_port(self, ServerPort):
-            self.ServerPort = ServerPort
+    def _handle_http_cps_general_config(self):
+        self.Actions = {}
+        self.RequestHeader = ["User-Agent: Firefox/41.0"]
+        self.ClientCloseMode = "Reset"
 
-        def set_server_recvrqt_timeout(self, ServerRecvRqtTimeOut):
-            self.ServerRecvRqtTimeOut = ServerRecvRqtTimeOut
+    def _handle_http_force_cps_general_config(self):
+        self.Actions = {}
+        self.RequestHeader = ["User-Agent: Firefox/41.0"]
+        self.ClientCloseMode = "Reset"
 
-        def set_http1_close_delayms(self, Http1CloseDelayms):
-            self.Http1CloseDelayms = Http1CloseDelayms
+    def _handle_http_cc_general_config(self):
+        self.Actions = {}
+        self.RequestHeader = ["User-Agent: Firefox/41.0"]
+        self.ClientCloseMode = "Reset"
 
-        def to_dict(self):
-            return self.__dict__
+    def _handle_udp_payload_attack_general_config(self):
+        self.Actions = {}
+        self.RequestHeader = ["User-Agent: Firefox/41.0"]
+        self.ClientCloseMode = "Reset"
 
-    def __init__(self, dut_role, test_type):
-        self.Loads = HttpForceCps.Loads()
-        self.CaseObject = HttpForceCps.CaseObject(test_type)
-        self.ClientProfiles = HttpForceCps.ClientProfiles()
-        self.ServerProfiles = HttpForceCps.ServerProfiles(role=dut_role)
+    def _handle_http_request_flood_general_config(self):
+        self.Actions = {}
+        self.RequestHeader = ["User-Agent: Firefox/41.0"]
+        self.ClientCloseMode = "Reset"
+
+    def _handle_http_slow_request_flood_general_config(self):
+        self.Actions = {}
+        self.RequestHeader = ["User-Agent: Firefox/41.0"]
+        self.ClientCloseMode = "Reset"
+
+    def _handle_tcp_session_flood_general_config(self):
+        self.Actions = {}
+        self.RequestHeader = ["User-Agent: Firefox/41.0"]
+        self.ClientCloseMode = "Reset"
+
+    def _handle_http_multiple_request_general_config(self):
+        self.Actions = {}
+        self.RequestHeader = ["User-Agent: Firefox/41.0"]
+        self.ClientCloseMode = "Reset"
+
+    def _handle_http_recursion_request_general_config(self):
+        self.Actions = {}
+        self.RequestHeader = ["User-Agent: Firefox/41.0"]
+        self.ClientCloseMode = "Reset"
+
+    def _handle_http_concurrent_slow_read_general_config(self):
+        self.Actions = {}
+        self.RequestHeader = ["User-Agent: Firefox/41.0"]
+        self.ClientCloseMode = "Reset"
+
+    def _handle_http_concurrent_slow_request_general_config(self):
+        self.Actions = {}
+        self.RequestHeader = ["User-Agent: Firefox/41.0"]
+        self.ClientCloseMode = "Reset"
+
+    def _handle_mms_connect_storm_general_config(self):
+        self.Actions = {}
+        self.RequestHeader = ["User-Agent: Firefox/41.0"]
+        self.ClientCloseMode = "Reset"
+
+    def _handle_ntp_amplification_attack_general_config(self):
+        self.RandomLength = 8
+        self.Actions = {}
+
+    def _handle_ssdp_attack_general_config(self):
+        self.RandomLength = 8
+        self.Actions = {}
+
+    def _handle_memcached_amplification_attack_general_config(self):
+        self.RandomLength = 8
+        self.Actions = {}
+
+    def _handle_ipv4_frag_attack_general_config(self):
+        self.Actions = {}
+
+    def _handle_multi_type_flood_general_config(self):
+        self.Actions = {}
+
+    def _handle_tcp_winnuke_general_config(self):
+        self.Actions = {}
+
+    def _handle_unicast_storm_general_config(self):
+        self.Actions = {}
+
+    def _handle_multicast_storm_general_config(self):
+        self.Actions = {}
+
+    def _handle_bgpv4_general_config(self):
+        self.Actions = {}
+
+    def _handle_bgpv6_general_config(self):
+        self.Actions = {}
+
+    def _handle_rfc2544_throughput_general_config(self):
+        self.McoreDistributeTuplePolicy = "RSS_HASH"
+
+    def _handle_rfc2544_latency_general_config(self):
+        self.McoreDistributeTuplePolicy = "TUPLE_SID"
+
+    def _handle_rfc2544_loss_rate_general_config(self):
+        self.McoreDistributeTuplePolicy = "TUPLE_SID"
+
+    def _handle_rfc2544_back_to_back_general_config(self):
+        self.McoreDistributeTuplePolicy = "TUPLE_SID"
+
+    def _handle_tcp_single_packet_attack_general_config(self):
+        self.MonitorEnable = "no"
+        self.MonitorIP = "17.1.1.222"
+        self.Actions = {}
+
+    def _handle_https_flood_general_config(self):
+        self.Actions = {}
+        self.RequestHeader = ["User-Agent: Firefox/41.0"]
+        self.ClientCloseMode = "Reset"
+        self.SSLVersions = "TLSv1.2"
+        self.SSLCiphers = ["AES128-SHA"]
+
+    def _handle_https_cps_general_config(self):
+        self.Actions = {}
+        self.RequestHeader = ["User-Agent: Firefox/41.0"]
+        self.ClientCloseMode = "Reset"
+        self.SSLQuietDown = "enable"
+        self.SSLClientSessionCache = "no"
+        self.ClientSSLAsyncMode = "no"
+        self.SSLClientFixedEncCiphertext = "no"
+        self.SSLVersions = "TLSv1.2"
+        self.SSLCertVerify = "none"
+        self.SSLVerifyErrorAction = 0
+        self.SSLCiphers = ["AES128-GCM-SHA256"]
+
+    def _handle_https_cc_general_config(self):
+        self.Actions = {}
+        self.RequestHeader = ["User-Agent: Firefox/41.0"]
+        self.ClientCloseMode = "Reset"
+        self.SSLQuietDown = "enable"
+        self.SSLClientSessionCache = "yes"
+        self.ClientSSLAsyncMode = "no"
+        self.SSLClientFixedEncCiphertext = "no"
+        self.SSLVersions = "TLSv1.2"
+        self.SSLCertVerify = "none"
+        self.SSLVerifyErrorAction = 0
+        self.SSLCiphers = ["AES128-GCM-SHA256"]
+
+    def _handle_https_throughput_general_config(self):
+        self.Actions = {}
+        self.RequestHeader = ["User-Agent: Firefox/41.0"]
+        self.ClientCloseMode = "Reset"
+        self.SSLQuietDown = "enable"
+        self.SSLClientSessionCache = "yes"
+        self.ClientSSLAsyncMode = "no"
+        self.SSLClientFixedEncCiphertext = "no"
+        self.SSLVersions = "TLSv1.2"
+        self.SSLCertVerify = "none"
+        self.SSLVerifyErrorAction = 0
+        self.SSLCiphers = ["AES128-GCM-SHA256"]
+
+    def _handle_ssl_handshake_general_config(self):
+        self.Actions = {}
+        self.RequestHeader = ["User-Agent: Firefox/41.0"]
+        self.ClientCloseMode = "Reset"
+        self.SSLQuietDown = "enable"
+        self.SSLClientSessionCache = "yes"
+        self.ClientSSLAsyncMode = "no"
+        self.SSLClientFixedEncCiphertext = "no"
+        self.SSLVersions = "TLSv1.2"
+        self.SSLCertVerify = "none"
+        self.SSLVerifyErrorAction = 0
+        self.SSLCiphers = ["AES128-GCM-SHA256"]
+
+    def _handle_https_flood_client_config(self):
+        self.SSLCertVerify = "none"
+        self.SSLVerifyErrorAction = 0
+
+    def _handle_rfc2544_throughput_proxy_config(self):
+        self.ProxyPort = "80"
+
+    def _handle_rfc2544_loss_rate_proxy_config(self):
+        self.ProxyPort = "80"
+
+    def _handle_rfc2544_back_to_back_proxy_config(self):
+        self.ProxyPort = "80"
+
+    def _handle_dns_amplification_attack_general_config(self):
+        self.SourcePortRange = "53"
+        self.RandomLength = 8
+        self.Actions = {}
+
+    def _handle_weak_password_detection_general_config(self):
+        del self.SourcePortRange
+
+    def set_ssl_quiet_down(self, value):
+        self.SSLQuietDown = value
+
+    def set_ssl_client_session_cache(self, value):
+        self.SSLClientSessionCache = value
+
+    def set_client_ssl_async_mode(self, value):
+        self.ClientSSLAsyncMode = value
+
+    def set_ssl_client_fixed_enc_ciphertext(self, value):
+        self.SSLClientFixedEncCiphertext = value
+
+    def set_ssl_versions(self, value):
+        self.SSLVersions = value
+
+    def set_ssl_cert_verify(self, value):
+        self.SSLCertVerify = value
+
+    def set_ssl_verify_error_action(self, value):
+        self.SSLVerifyErrorAction = value
+
+    def set_ssl_ciphers(self, value):
+        self.SSLCiphers = value
+
+    def set_client_close_mode(self, value):
+        self.ClientCloseMode = value
+
+    def set_request_header(self, value):
+        self.RequestHeader = value
+
+    def set_monitor_enable(self, value: str):
+        """
+        Set monitor enable flag
+        """
+        if value not in ("yes", "no"):
+            raise ValueError("Value must be 'yes' or 'no'")
+        self.MonitorEnable = value
+
+    def set_monitor_ip(self, value: str):
+        """
+        Set monitor IP address
+        """
+        import ipaddress
+        try:
+            ip_obj = ipaddress.IPv4Address(value)
+            self.MonitorIP = str(ip_obj)
+        except (ipaddress.AddressValueError, ValueError):
+            raise ValueError(f"Invalid IP address: {value}")
+
+    def set_mcore_distribute_tuple_policy(self, value):
+        self.McoreDistributeTuplePolicy = value
+
+    def set_actions(self, value):
+        self.Actions = value
+
+    def set_source_port_range(self, value):
+        self.SourcePortRange = value
+
+    def set_random_length(self, value):
+        self.RandomLength = value
 
     def to_dict(self):
-        return {
-            "Loads": self.Loads.to_dict(),
-            "CaseObject": self.CaseObject.to_dict(),
-            "ClientProfiles": self.ClientProfiles.to_dict(),
-            "ServerProfiles": self.ServerProfiles.to_dict()
+        return self.__dict__
+
+
+class BaseServerProfiles:
+    def __init__(self, test_type, dut_role="Gateway"):
+
+        # General Config
+        general_callback_dict = {
+            "HttpCps": self._handle_http_cps_general_config,
+            "HttpForceCps": self._handle_http_force_cps_general_config,
+            "HttpCc": self._handle_http_cc_general_config,
+            "HttpThroughput": self._handle_http_throughput_general_config,
+            "HttpRequestFlood": self._handle_http_request_flood_general_config,
+            "HTTPSlowRequestFlood": self._handle_http_slow_request_flood_general_config,
+            "TcpSessionFlood": self._handle_tcp_session_flood_general_config,
+            "HttpMultipleRequest": self._handle_http_multiple_request_general_config,
+            "HttpRecursionRequest": self._handle_http_recursion_request_general_config,
+            "HttpConcurrentSlowRead": self._handle_http_concurrent_slow_read_general_config,
+            "HttpConcurrentSlowRequest": self._handle_http_concurrent_slow_request_general_config,
+            "MmsConnectStorm": self._handle_mms_connect_storm_general_config,
+            "HttpsCps": self._handle_https_cps_general_config,
+            "HttpsCc": self._handle_https_cc_general_config,
+            "HttpsThroughput": self._handle_https_cc_general_config,
+            "SSLHandshake": self._handle_ssl_handshake_general_config,
+            "HttpsFlood": self._handle_https_flood_general_config,
+            "Ipv4FragAttack": self._handle_ipv4_frag_attack_general_config,
+            "TCPSinglePacketAttack": self._handle_tcp_single_packet_attack_general_config,
+            "MultiTypeFlood": self._handle_multi_type_flood_general_config,
+            "UnicastStorm": self._handle_unicast_storm_general_config,
+            "MulticastStorm": self._handle_multicast_storm_general_config,
+            "WebScanner": self._handle_web_scanner_general_config,
+            "VulnerabilityScanner": self._handle_vulnerability_scanner_general_config,
+            "NetworkDiscovery": self._handle_network_discovery_general_config,
+            "UDPSinglePacketAttack": self._handle_udp_single_packet_attack_general_config,
+            "UDPPayloadAttack": self._handle_udp_payload_attack_general_config,
+            "SipSinglePacketAttack": self._handle_sip_single_packet_attack_general_config,
+            "DnsServiceAttack": self._handle_dns_service_attack_general_config,
+            "SSDPAttack": self._handle_ssdp_attack_general_config,
+            "DnsAmplificationAttack": self._handle_dns_amplification_attack_general_config,
+            "NtpAmplificationAttack": self._handle_ntp_amplification_attack_general_config,
+            "MemcachedAmplificationAttack": self._handle_memcached_amplification_attack_general_config,
+            "TCPWinnuke": self._handle_tcp_winnuke_general_config,
+            "AdvancedFuzzing": self._handle_advanced_fuzzing_general_config,
+            "BGPv4": self._handle_bgpv4_general_config,
+            "BGPv6": self._handle_bgpv6_general_config,
+            "Rfc2544Throughput": self._handle_rfc2544_throughput_general_config,
+            "Rfc2544Latency": self._handle_rfc2544_latency_general_config,
+            "Rfc2544LossRate": self._handle_rfc2544_lossrate_general_config,
+            "Rfc2544BackToBack": self._handle_rfc2544_backtoback_general_config,
+            "WeakPasswordDetection": self._handle_weak_password_detection_general_config,
         }
 
+        general_callback = general_callback_dict.get(test_type)
+        if general_callback:
+            general_callback()
+        else:
+            # general config is null
+            pass
 
-class HttpCc:
+        # Server Parameters
+        if dut_role == "Server":
+            server_callback_dict = {
+                "HttpCps": self._handle_dns_server_port_53_server_config,
+                "HttpForceCps": self._handle_dns_server_port_53_server_config,
+                "HttpCc": self._handle_dns_server_port_53_server_config,
+                "HttpThroughput": self._handle_dns_server_port_53_server_config,
+                "Rfc2544Throughput": self._handle_dns_server_port_53_server_config,
+                "Rfc2544Latency": self._handle_dns_server_port_53_server_config,
+                "Rfc2544LossRate": self._handle_dns_server_port_53_server_config,
+                "Rfc2544BackToBack": self._handle_dns_server_port_53_server_config,
+                "Ipv4FragAttack": self._handle_dns_server_port_53_server_config,
+                "TCPSinglePacketAttack": self._handle_dns_server_port_53_server_config,
+                "UDPSinglePacketAttack": self._handle_dns_server_port_53_server_config,
+                "UDPPayloadAttack": self._handle_dns_server_port_53_server_config,
+                "SipSinglePacketAttack": self._handle_dns_server_port_53_server_config,
+                "DnsServiceAttack": self._handle_dns_server_port_53_server_config,
+                "DnsAmplificationAttack": self._handle_dns_server_port_53_server_config,
+                "SSDPAttack": self._handle_dns_server_port_53_server_config,
+                "NtpAmplificationAttack": self._handle_dns_server_port_53_server_config,
+                "MemcachedAmplificationAttack": self._handle_dns_server_port_53_server_config,
+                "HttpRequestFlood": self._handle_dns_server_port_53_server_config,
+                "ServerProfiles": self._handle_dns_server_port_53_server_config,
+                "HttpsFlood": self._handle_dns_server_port_53_server_config,
+                "HTTPSlowRequestFlood": self._handle_dns_server_port_53_server_config,
+                "MultiTypeFlood": self._handle_dns_server_port_53_server_config,
+                "TcpSessionFlood": self._handle_dns_server_port_53_server_config,
+                "TCPWinnuke": self._handle_dns_server_port_53_server_config,
+                "HttpMultipleRequest": self._handle_dns_server_port_53_server_config,
+                "HttpRecursionRequest": self._handle_dns_server_port_53_server_config,
+                "HttpConcurrentSlowRead": self._handle_dns_server_port_53_server_config,
+                "HttpConcurrentSlowRequest": self._handle_dns_server_port_53_server_config,
+                "MmsConnectStorm": self._handle_dns_server_port_53_server_config,
 
-    class Loads(BaseLoads):
-        def __init__(self):
-            super().__init__()
-            self.OnlyRecordAbnormalResponse = "no"
-            self.HttpTranscationStatistics = "no"
-            self.HttpThinkTimeMode = "fixed"
-            self.ThinkTime = 0
-            self.MinThinkTime = 1
-            self.CookieTrafficRatio = 100
-            self.ConcurrentConnection = 6975000
-            self.HttpTrafficLogCount = 1000
-            self.HttpRequestTimeoutSecond = 10000
-            self.OnlyRecordAssertFailed = "no"
-            self.SimUser = 256
-            self.DelayResponse = "no"
-            self.HttpPercentageLatencyStat = "no"
-            self.MaxThinkTime = 37500
-            self.HttpSendRequestMode = "each"
-            self.HttpLogTraffic = "no"
-            self.HttpCcOperationPolicy = "no"
-            self.ReConnCount = 0
-            self.HttpRequestHashSize = 512
+            }
 
-        def set_only_record_abnormal_response(self, value):
-            self.OnlyRecordAbnormalResponse = value
-
-        def set_http_transcation_statistics(self, value):
-            self.HttpTranscationStatistics = value
-
-        def set_http_think_time_mode(self, value):
-            self.HttpThinkTimeMode = value
-
-        def set_think_time(self, value):
-            self.ThinkTime = value
-
-        def set_min_think_time(self, value):
-            self.MinThinkTime = value
-
-        def set_cookie_traffic_ratio(self, value):
-            self.CookieTrafficRatio = value
-
-        def set_concurrent_connection(self, value):
-            self.ConcurrentConnection = value
-
-        def set_http_traffic_log_count(self, value):
-            self.HttpTrafficLogCount = value
-
-        def set_http_request_timeout_second(self, value):
-            self.HttpRequestTimeoutSecond = value
-
-        def set_only_record_assert_failed(self, value):
-            self.OnlyRecordAssertFailed = value
-
-        def set_sim_user(self, value):
-            self.SimUser = value
-
-        def set_delay_response(self, value):
-            self.DelayResponse = value
-
-        def set_http_percentage_latency_stat(self, value):
-            self.HttpPercentageLatencyStat = value
-
-        def set_max_think_time(self, value):
-            self.MaxThinkTime = value
-
-        def set_http_send_request_mode(self, value):
-            self.HttpSendRequestMode = value
-
-        def set_http_log_traffic(self, value):
-            self.HttpLogTraffic = value
-
-        def set_http_cc_operation_policy(self, value):
-            self.HttpCcOperationPolicy = value
-
-        def set_re_conn_count(self, value):
-            self.ReConnCount = value
-
-        def set_http_request_hash_size(self, value):
-            self.HttpRequestHashSize = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class CaseObject(BaseCaseObject):
-        def __init__(self, test_type):
-            super().__init__(test_type)
-
-    class ClientProfiles:
-        def __init__(self):
-            self.SourcePortRange = "10000-65535"
-            self.Actions = {}
-            self.RequestHeader = ["User-Agent: Firefox/41.0"]
-            self.ClientCloseMode = "Reset"
-
-        def set_source_port_range(self, SourcePortRange):
-            self.SourcePortRange = SourcePortRange
-
-        def set_actions(self, value):
-            self.Actions = value
-
-        def set_request_header(self, value):
-            self.RequestHeader = value
-
-        def set_client_close_mode(self, value):
-            self.ClientCloseMode = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ServerProfiles:
-        def __init__(self, role=""):
-            self.ServerPort = "80"
-            self.ResponseHeader = [
-                "Server: nginx/1.9.5",
-                "Content-Type: text/html"
-            ]
-            if role == "Server":
-                self.DNSServerPort = "53"
+            server_callback = server_callback_dict.get(test_type)
+            if server_callback:
+                server_callback()
             else:
-                self.ServerRecvRqtTimeOut = 300000
-                # self.Http1CloseDelayms = 0
-                self.Http1CloseDelayms = 500
-                self.ServerCloseMode = "3Way_Fin"
-            if role in ['Proxy', 'Client']:
-                self.HttpProxyProtocolEn = 'no'
+                # server config is null
+                pass
 
-        def set_server_port(self, ServerPort):
-            self.ServerPort = ServerPort
+        # Client Parameters
+        elif dut_role == "Client":
 
-        def set_server_recvrqt_timeout(self, ServerRecvRqtTimeOut):
-            self.ServerRecvRqtTimeOut = ServerRecvRqtTimeOut
+            client_callback_dict = {
+                "HttpCps": self._handle_http_cps_client_config,
+                "HttpForceCps": self._handle_http_force_cps_client_config,
+                "HttpCc": self._handle_http_cc_client_config,
+                "HttpThroughput": self._handle_http_throughput_client_config,
+                "HttpsFlood": self._handle_https_flood_client_config,
+                "HTTPSlowRequestFlood": self._handle_httpslow_request_flood_client_config,
+                "HttpConcurrentSlowRead": self._handle_http_concurrent_slow_read_client_config,
+                "HttpConcurrentSlowRequest": self._handle_http_concurrent_slow_request_client_config,
 
-        def set_http1_close_delayms(self, Http1CloseDelayms):
-            self.Http1CloseDelayms = Http1CloseDelayms
+            }
 
-        def to_dict(self):
-            return self.__dict__
-
-    def __init__(self, dut_role, test_type):
-        self.Loads = HttpCc.Loads()
-        self.CaseObject = HttpCc.CaseObject(test_type)
-        self.ClientProfiles = HttpCc.ClientProfiles()
-        self.ServerProfiles = HttpCc.ServerProfiles(role=dut_role)
-
-    def to_dict(self):
-        return {
-            "Loads": self.Loads.to_dict(),
-            "CaseObject": self.CaseObject.to_dict(),
-            "ClientProfiles": self.ClientProfiles.to_dict(),
-            "ServerProfiles": self.ServerProfiles.to_dict()
-        }
-
-
-class HttpThroughput:
-
-    class Loads(BaseLoads):
-        def __init__(self):
-            super().__init__()
-            self.OnlyRecordAbnormalResponse = "no"
-            self.HttpTranscationStatistics = "no"
-            self.HttpThinkTimeMode = "fixed"
-            self.ThinkTime = 0
-            self.MinThinkTime = 1
-            self.CookieTrafficRatio = 100
-            self.HttpTrafficLogCount = 1000
-            self.HttpRequestTimeoutSecond = 10000
-            self.OnlyRecordAssertFailed = "no"
-            self.SimUser = 256
-            self.DelayResponse = "no"
-            self.HttpPercentageLatencyStat = "no"
-            self.MaxThinkTime = 37500
-            self.HttpLogTraffic = "no"
-            self.HttpCcOperationPolicy = "no"
-            self.ReConnCount = 0
-            self.HttpRequestHashSize = 512
-
-        def set_only_record_abnormal_response(self, value):
-            """
-            Set whether to only record abnormal responses.
-
-            Args:
-                value (str): "yes" or "no".
-            """
-            self.OnlyRecordAbnormalResponse = value
-
-        def set_http_transcation_statistics(self, value):
-            """
-            Set whether to enable HTTP transaction statistics.
-
-            Args:
-                value (str): "yes" or "no".
-            """
-            self.HttpTranscationStatistics = value
-
-        def set_http_think_time_mode(self, value):
-            """
-            Set the HTTP think time mode.
-
-            Args:
-                value (str): For example, "fixed" mode.
-            """
-            self.HttpThinkTimeMode = value
-
-        def set_think_time(self, value):
-            """
-            Set the think time.
-
-            Args:
-                value (int): The value of the think time.
-            """
-            self.ThinkTime = value
-
-        def set_min_think_time(self, value):
-            """
-            Set the minimum think time.
-
-            Args:
-                value (int): The value of the minimum think time.
-            """
-            self.MinThinkTime = value
-
-        def set_cookie_traffic_ratio(self, value):
-            """
-            Set the Cookie traffic ratio.
-
-            Args:
-                value (int): The traffic ratio value.
-            """
-            self.CookieTrafficRatio = value
-
-        def set_http_traffic_log_count(self, value):
-            """
-            Set the number of HTTP traffic logs to record.
-
-            Args:
-                value (int): The number of log records.
-            """
-            self.HttpTrafficLogCount = value
-
-        def set_http_request_timeout_second(self, value):
-            """
-            Set the HTTP request timeout in seconds.
-
-            Args:
-                value (int): The timeout value in seconds.
-            """
-            self.HttpRequestTimeoutSecond = value
-
-        def set_only_record_assert_failed(self, value):
-            """
-            Set whether to only record assert failures.
-
-            Args:
-                value (str): "yes" or "no".
-            """
-            self.OnlyRecordAssertFailed = value
-
-        def set_sim_user(self, value):
-            """
-            Set the number of simulated users.
-
-            Args:
-                value (int): The number of simulated users.
-            """
-            self.SimUser = value
-
-        def set_delay_response(self, value):
-            """
-            Set whether to delay the response.
-
-            Args:
-                value (str): "yes" or "no".
-            """
-            self.DelayResponse = value
-
-        def set_http_percentage_latency_stat(self, value):
-            """
-            Set whether to enable HTTP percentage latency statistics.
-
-            Args:
-                value (str): "yes" or "no".
-            """
-            self.HttpPercentageLatencyStat = value
-
-        def set_max_think_time(self, value):
-            """
-            Set the maximum think time.
-
-            Args:
-                value (int): The value of the maximum think time.
-            """
-            self.MaxThinkTime = value
-
-        def set_http_log_traffic(self, value):
-            """
-            Set whether to log HTTP traffic.
-
-            Args:
-                value (str): "yes" or "no".
-            """
-            self.HttpLogTraffic = value
-
-        def set_http_cc_operation_policy(self, value):
-            """
-            Set the HTTP concurrent connection operation policy.
-
-            Args:
-                value (str): The policy value.
-            """
-            self.HttpCcOperationPolicy = value
-
-        def set_re_conn_count(self, value):
-            """
-            Set the number of reconnections.
-
-            Args:
-                value (int): The number of reconnections.
-            """
-            self.ReConnCount = value
-
-        def set_http_request_hash_size(self, value):
-            """
-            Set the size of the HTTP request hash table.
-
-            Args:
-                value (int): The size of the hash table.
-            """
-            self.HttpRequestHashSize = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class CaseObject(BaseCaseObject):
-        def __init__(self, test_type):
-            super().__init__(test_type)
-            self.FileObject = "默认512K字节网页请求"
-
-    class ClientProfiles:
-        def __init__(self):
-            self.SourcePortRange = "10000-65535"
-
-        def set_source_port_range(self, SourcePortRange):
-            self.SourcePortRange = SourcePortRange
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ServerProfiles:
-        def __init__(self, role=""):
-            self.ServerPort = "80"
-            self.ResponseHeader = [
-                "Server: nginx/1.9.5",
-                "Content-Type: text/html"
-            ]
-            if role == "Server":
-                self.DNSServerPort = "53"
+            client_callback = client_callback_dict.get(test_type)
+            if client_callback:
+                client_callback()
             else:
-                self.ServerRecvRqtTimeOut = 300000
-                # self.Http1CloseDelayms = 0
-                self.Http1CloseDelayms = 500
-                self.ServerCloseMode = "3Way_Fin"
-            if role in ['Proxy', 'Client']:
-                self.HttpProxyProtocolEn = 'no'
+                # client config is null
+                pass
 
-        def set_server_port(self, ServerPort):
-            self.ServerPort = ServerPort
-
-        def set_server_recvrqt_timeout(self, ServerRecvRqtTimeOut):
-            self.ServerRecvRqtTimeOut = ServerRecvRqtTimeOut
-
-        def set_http1_close_delayms(self, Http1CloseDelayms):
-            self.Http1CloseDelayms = Http1CloseDelayms
-
-        def to_dict(self):
-            return self.__dict__
-
-    def __init__(self, dut_role, test_type):
-        self.Loads = HttpThroughput.Loads()
-        self.CaseObject = HttpThroughput.CaseObject(test_type)
-        self.ClientProfiles = HttpThroughput.ClientProfiles()
-        self.ServerProfiles = HttpThroughput.ServerProfiles(role=dut_role)
-
-    def to_dict(self):
-        return {
-            "Loads": self.Loads.to_dict(),
-            "CaseObject": self.CaseObject.to_dict(),
-            "ClientProfiles": self.ClientProfiles.to_dict(),
-            "ServerProfiles": self.ServerProfiles.to_dict()
-        }
-
-
-class UdpPps:
-    class Loads(BaseLoads):
-        def __init__(self):
-            super().__init__()
-            self.RecvPacketCount = "16"
-            self.SimuserSendPPS = 1
-            self.UdpEcho = "disable"
-            self.BurstPacketCount = "32"
-            self.FragIdAccumulates = "no"
-            self.PacketPayloadPolicy = "Fixed"
-            self.PolicyChangeCarrier = "Port"
-            self.FirstPacketSentDelay = 1
-            self.Latency = "disable"
-            self.MaxIPFrag = 4
-            self.SpecifyPayloadValue = "00"
-            self.SimuserSendPacketSecond = 0
-            self.SimUser = 256
-            self.UDPSendPacketCount = 0
-            self.DualFlowMode = "disable"
-            self.IPv4FlagsDF = 0
-            self.FrameSizePolicy = {
-                "SizeChangeMode": "Fixed",
-                "FrameSizeFormat": 1518
+        elif dut_role == "Proxy":
+            proxy_callback_dict = {
+                "HttpCps": self._handle_http_cps_proxy_config,
+                "HttpForceCps": self._handle_http_force_cps_proxy_config,
+                "HttpCc": self._handle_http_cc_proxy_config,
+                "HttpThroughput": self._handle_http_throughput_proxy_config,
             }
 
-        def set_recv_packet_count(self, value):
-            """
-            Set the received packet count.
-
-            Args:
-                value (str): The received packet count.
-            """
-            self.RecvPacketCount = value
-
-        def set_simuser_send_pps(self, value):
-            """
-            Set the packets per second sent by simulated users.
-
-            Args:
-                value (int): The packets per second value.
-            """
-            self.SimuserSendPPS = value
-
-        def set_udp_echo(self, value):
-            """
-            Set whether UDP echo is enabled.
-
-            Args:
-                value (str): "enable" or "disable".
-            """
-            self.UdpEcho = value
-
-        def set_burst_packet_count(self, value):
-            """
-            Set the burst packet count.
-
-            Args:
-                value (str): The burst packet count.
-            """
-            self.BurstPacketCount = value
-
-        def set_frag_id_accumulates(self, value):
-            """
-            Set whether the fragment ID accumulates.
-
-            Args:
-                value (str): "yes" or "no".
-            """
-            self.FragIdAccumulates = value
-
-        def set_packet_payload_policy(self, value):
-            """
-            Set the packet payload policy.
-
-            Args:
-                value (str): The packet payload policy, e.g., "Fixed".
-            """
-            self.PacketPayloadPolicy = value
-
-        def set_policy_change_carrier(self, value):
-            """
-            Set the policy change carrier.
-
-            Args:
-                value (str): The policy change carrier, e.g., "Port".
-            """
-            self.PolicyChangeCarrier = value
-
-        def set_first_packet_sent_delay(self, value):
-            """
-            Set the delay for sending the first packet.
-
-            Args:
-                value (int): The delay value.
-            """
-            self.FirstPacketSentDelay = value
-
-        def set_latency(self, value):
-            """
-            Set whether latency is enabled.
-
-            Args:
-                value (str): "enable" or "disable".
-            """
-            self.Latency = value
-
-        def set_max_ip_frag(self, value):
-            """
-            Set the maximum number of IP fragments.
-
-            Args:
-                value (int): The maximum number of IP fragments.
-            """
-            self.MaxIPFrag = value
-
-        def set_specify_payload_value(self, value):
-            """
-            Set the specified payload value.
-
-            Args:
-                value (str): The specified payload value, e.g., "00".
-            """
-            self.SpecifyPayloadValue = value
-
-        def set_simuser_send_packet_second(self, value):
-            """
-            Set the number of packets sent by simulated users per second.
-
-            Args:
-                value (int): The number of packets.
-            """
-            self.SimuserSendPacketSecond = value
-
-        def set_sim_user(self, value):
-            """
-            Set the number of simulated users.
-
-            Args:
-                value (int): The number of simulated users.
-            """
-            self.SimUser = value
-
-        def set_udp_send_packet_count(self, value):
-            """
-            Set the number of UDP packets sent.
-
-            Args:
-                value (int): The number of UDP packets.
-            """
-            self.UDPSendPacketCount = value
-
-        def set_dual_flow_mode(self, value):
-            """
-            Set whether dual - flow mode is enabled.
-
-            Args:
-                value (str): "enable" or "disable".
-            """
-            self.DualFlowMode = value
-
-        def set_ipv4_flags_df(self, value):
-            """
-            Set the IPv4 Flags DF value.
-
-            Args:
-                value (int): The IPv4 Flags DF value.
-            """
-            self.IPv4FlagsDF = value
-
-        def set_frame_size_policy(self, value):
-            """
-            Set the frame size policy.
-
-            Args:
-                value (dict): A dictionary containing "SizeChangeMode" and "FrameSizeFormat".
-            """
-            self.FrameSizePolicy = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class CaseObject(BaseCaseObject):
-        def __init__(self, test_type):
-            super().__init__(test_type)
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ClientProfiles:
-        def __init__(self):
-            self.SourcePortRange = "10000-65535"
-
-        def set_source_port_range(self, SourcePortRange):
-            self.SourcePortRange = SourcePortRange
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ServerProfiles:
-        def __init__(self, role=""):
-            if role == "Gateway":
-                self.ServerPort = "80"
-            # else:
-            #     self.ServerRecvRqtTimeOut = 300000
-            #     # self.Http1CloseDelayms = 0
-            #     self.Http1CloseDelayms = 500
-            #     self.ServerCloseMode = "3Way_Fin"
-            # if role in ['Proxy', 'Client']:
-            #     self.HttpProxyProtocolEn = 'no'
-
-        def set_server_port(self, ServerPort):
-            self.ServerPort = ServerPort
-
-        def to_dict(self):
-            return self.__dict__
-
-    def __init__(self, dut_role, test_type):
-        self.Loads = UdpPps.Loads()
-        self.CaseObject = UdpPps.CaseObject(test_type)
-        self.ClientProfiles = UdpPps.ClientProfiles()
-        self.ServerProfiles = UdpPps.ServerProfiles(role=dut_role)
-
-    def to_dict(self):
-        return {
-            "Loads": self.Loads.to_dict(),
-            "CaseObject": self.CaseObject.to_dict(),
-            "ClientProfiles": self.ClientProfiles.to_dict(),
-            "ServerProfiles": self.ServerProfiles.to_dict()
-        }
-
-
-class TurboTcp:
-    class Loads(BaseLoads):
-        def __init__(self):
-            super().__init__()
-            self.SimUser = 256
-
-        def set_sim_user(self, value):
-            """
-            Set the number of simulated users.
-
-            Args:
-                value (int): The number of simulated users.
-            """
-            self.SimUser = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class CaseObject:
-        def __init__(self):
-            pass
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ClientProfiles:
-        def __init__(self):
-            self.SourcePortRange = "10000-65535"
-
-        def set_source_port_range(self, SourcePortRange):
-            self.SourcePortRange = SourcePortRange
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ServerProfiles:
-        def __init__(self, role=""):
-            if role == "Gateway":
-                self.ServerPort = "6000"
-                self.ServerCloseMode = "Reset"
-            # else:
-            #     self.ServerRecvRqtTimeOut = 300000
-            #     # self.Http1CloseDelayms = 0
-            #     self.Http1CloseDelayms = 500
-            #     self.ServerCloseMode = "3Way_Fin"
-            # if role in ['Proxy', 'Client']:
-            #     self.HttpProxyProtocolEn = 'no'
-
-        def set_server_port(self, ServerPort):
-            self.ServerPort = ServerPort
-
-        def set_server_close_mode(self, ServerCloseMode):
-            self.ServerCloseMode = ServerCloseMode
-
-        def to_dict(self):
-            return self.__dict__
-
-    def __init__(self, dut_role):
-        self.Loads = TurboTcp.Loads()
-        self.CaseObject = TurboTcp.CaseObject()
-        self.ClientProfiles = TurboTcp.ClientProfiles()
-        self.ServerProfiles = TurboTcp.ServerProfiles(role=dut_role)
-
-    def to_dict(self):
-        return {
-            "Loads": self.Loads.to_dict(),
-            "CaseObject": self.CaseObject.to_dict(),
-            "ClientProfiles": self.ClientProfiles.to_dict(),
-            "ServerProfiles": self.ServerProfiles.to_dict()
-        }
-
-
-class Rfc2544Throughput:
-    class Loads(BaseLoads):
-        def __init__(self):
-            super().__init__()
-            # The number of UDP streams
-            self.SimUser = 256
-            # Delay jitter calculation
-            self.Latency = "disable"
-            # Flow direction; the available values are: enable, disable, both.
-            # "enable" indicates two-way; "disable" indicates one-way; "both" means first one-way, then two-way
-            self.DualFlowMode = "disable"
-
-            # Load transformation type; the available values are: Fixed, Random, Custom, Stream
-            self.PacketPayloadPolicy = "Fixed"
-            # When the load transformation type is set to custom load, the load content needs to be configured.
-            self.PacketPayloadValue = "0xFF"
-            # When the type of load transformation is fixed load, random load or custom load, this item needs to be specified.
-            self.FrameSizePolicy = {
-                # Frame length transformation mode; the available values are: List, Step, Random, iMix.
-                "SizeChangeMode": "List",
-                # The format of the List value is: 64, 128; The format of the Step value is: 64-128|+64
-                # The format of the Random value is: 128-256
-                "FrameSizeFormat": "64,128"
-            }
-            # Number of retry attempts for testing
-            self.MaximumIterativeCycle = 1
-
-            self.CycleDurationPolicy = {
-                # Duration adjustment method
-                "CycleDurationMode": "Fixed",
-                # The unit of test duration; the available values are: TimeSecond, PacketCount
-                "CycleDurationUnit": "TimeSecond",
-                # When the unit of test duration is seconds of sent traffic, the initial sending time period in seconds needs to be specified.
-                "InitialCycleSecond": "60",
-                # When the unit of the test duration is the number of sent messages, the initial number of sent messages field needs to be specified.
-                "InitialCyclePacket": "10000",
-                "MinimumCycleSecond": "0.000064",
-                "MinimumCyclePacket": "1",
-                "MaximumCycleSecond": "60",
-                "MaximumCyclePacket": "10000",
-                "SecondResolution": "0.1",
-                "PacketResolution": "100",
-                "AcceptableLossRate": "0"
-            }
-            # The duration of aging
-            self.AgingTime = 5
-
-            self.SendSpeedPolicy = {
-                # Load Iteration Mode ; the available values are: Binary, Step, Mixed, OptStep.
-                "SpeedIterateMode": "Binary",
-                # Rate Lower Limit (%)
-                # When the load iteration mode is selected as binary search or the optimization step size, the value of this item can be modified.
-                "LowerSpeedRate": "1",
-                # Rate limit (%)
-                # When the load iteration mode is selected as step size, binary search or hybrid method , the value of this item can be modified.
-                "UpperSpeedRate": "100",
-                # Initial rate (%)
-                "InitialSpeedRate": "100",
-                # Rate step (%)
-                # When the load iteration mode is selected as step size or hybrid method, the value of this item can be modified.
-                "UpDownStepRate": "10",
-                # the search accuracy (%)
-                # When the load iteration mode is selected as binary search, hybrid method or optimization step size, the value of this item can be modified.
-                "ResolutionRate": "1",
-                # Binary search for percentage (%)
-                # When the load iteration mode is selected as binary search or hybrid method, the value of this item can be modified.
-                "BisectionBackoff": "50",
-                # Acceptable packet loss rate
-                "AcceptableLossRate": "0"
-            }
-            self.CorrectLossRateCycle = -1
-            # Message sending rate
-            self.BurstPacketCount = 32
-
-        def set_latency(self, value):
-            """
-            Set whether latency is enabled.
-
-            Args:
-                value (str): "enable" or "disable".
-            """
-            self.Latency = value
-
-        def set_dual_flow_mode(self, value):
-            """
-            Set whether dual - flow mode is enabled.
-
-            Args:
-                value (str): "enable" or "disable".
-            """
-            self.DualFlowMode = value
-
-        def set_frame_size_policy(self, value):
-            """
-            Set the frame size policy.
-
-            Args:
-                value (dict): A dictionary containing "SizeChangeMode" and "FrameSizeFormat".
-            """
-
-            self.FrameSizePolicy = value
-
-        def set_cycle_duration_policy(self, value):
-            self.CycleDurationPolicy.update(value)
-
-        def to_dict(self):
-            return self.__dict__
-
-    class CaseObject:
-        def __init__(self):
-            # Monitoring of the tested equipment
-            self.Monitor = "默认监控器对象Ping"
-            # iMIX mixed frame length
-            self.iMixName = "默认混合流量"
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ClientProfiles:
-        def __init__(self, dut_role="Gateway"):
-            # Source port range
-            self.SourcePortRange = "10000-65535"
-            # Multi-core Five-Tuple Allocation Strategy
-            self.McoreDistributeTuplePolicy = "RSS_HASH"
-            if dut_role == "Proxy":
-                self.ProxyPort = "80"
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ServerProfiles:
-        def __init__(self, dut_role="Gateway"):
-            self.ServerPort = "6006"
-            if dut_role == "Server":
-                self.DNSServerPort = "53"
-
-        def to_dict(self):
-            return self.__dict__
-
-    def __init__(self, dut_role):
-        self.Loads = Rfc2544Throughput.Loads()
-        self.CaseObject = Rfc2544Throughput.CaseObject()
-        self.ClientProfiles = Rfc2544Throughput.ClientProfiles(dut_role=dut_role)
-        self.ServerProfiles = Rfc2544Throughput.ServerProfiles(dut_role=dut_role)
-
-    def to_dict(self):
-        return {
-            "Loads": self.Loads.to_dict(),
-            "CaseObject": self.CaseObject.to_dict(),
-            "ClientProfiles": self.ClientProfiles.to_dict(),
-            "ServerProfiles": self.ServerProfiles.to_dict()
-        }
-
-
-class Rfc2544Latency:
-    class Loads(BaseLoads):
-        def __init__(self):
-            super().__init__()
-            self.SimUser = 256
-
-            self.Latency = "enable"
-            self.DelayType = "LIFO"
-            self.DualFlowMode = "enable"
-
-            self.PacketPayloadPolicy = "Fixed"
-            self.PacketPayloadValue = "0xFF"
-
-            self.FrameSizePolicy = {
-                "SizeChangeMode": "List",
-                "FrameSizeFormat": "64,128"
+            proxy_callback = proxy_callback_dict.get(test_type)
+            if proxy_callback:
+                proxy_callback()
+            else:
+                # proxy config is null
+                pass
+
+        # Gateway Parameters
+        elif dut_role == "Gateway":
+            gateway_callback_dict = {
+                "HttpCps": self._handle_http_cps_gateway_config,
+                "HttpForceCps": self._handle_http_force_cps_gateway_config,
+                "HttpCc": self._handle_http_cc_gateway_config,
+                "HttpThroughput": self._handle_http_throughput_gateway_config,
+                "UdpPps": self._handle_udp_pps_gateway_config,
+                "TurboTcp": self._handle_turbo_tcp_gateway_config,
+                "HTTPSlowRequestFlood": self._handle_http_slow_request_flood_gateway_config,
+                "HttpConcurrentSlowRead": self._handle_http_concurrent_slow_read_gateway_config,
+                "HttpConcurrentSlowRequest": self._handle_http_concurrent_slow_request_gateway_config,
             }
 
-            self.MaximumIterativeCycle = 1
+            gateway_callback = gateway_callback_dict.get(test_type)
+            if gateway_callback:
+                gateway_callback()
+            else:
+                # gateway config is null
+                pass
 
-            self.CycleDurationPolicy = {
-                "CycleDurationMode": "Fixed",
-                "CycleDurationUnit": "TimeSecond",
-                "InitialCycleSecond": "10",
-                "InitialCyclePacket": "10000",
-                "MinimumCycleSecond": "0.000064",
-                "MinimumCyclePacket": "1",
-                "MaximumCycleSecond": "60",
-                "MaximumCyclePacket": "10000",
-                "SecondResolution": "0.1",
-                "PacketResolution": "100",
-                "AcceptableLossRate": "0"
-            }
+    def _handle_http_cps_general_config(self):
+        self.ServerPort = "80"
+        self.ResponseHeader = [
+            "Server: nginx/1.9.5",
+            "Content-Type: text/html"
+        ]
 
-            self.FilterAction = "Drop"
-            self.AgingTime = 5
+    def _handle_http_force_cps_general_config(self):
+        self.ServerPort = "80"
+        self.ResponseHeader = [
+            "Server: nginx/1.9.5",
+            "Content-Type: text/html"
+        ]
 
-            self.LoadLimitPolicy = {
-                "LoadLimitUnit": "percent",
-                "LoadLimitMode": "Step",
-                "LoadLimitFormat": "10-50|+10"
-            }
+    def _handle_http_cc_general_config(self):
+        self.ServerPort = "80"
+        self.ResponseHeader = [
+            "Server: nginx/1.9.5",
+            "Content-Type: text/html"
+        ]
 
-            self.BurstPacketCount = 32
-            self.LoopBackLinkLatency = "no"
-            self.DisplayFailWhenLoss = "yes"
-            self.AcceptablePacketLossRate = -1
+    def _handle_http_throughput_general_config(self):
+        self.ServerPort = "80"
+        self.ResponseHeader = [
+            "Server: nginx/1.9.5",
+            "Content-Type: text/html"
+        ]
 
-        def set_sim_user(self, val):
-            self.SimUser = val
+    def _handle_http_request_flood_general_config(self):
+        self.ServerPort = "80"
+        self.ResponseHeader = [
+            "Server: nginx/1.9.5",
+            "Content-Type: text/html"
+        ]
 
-        def set_latency(self, val):
-            self.Latency = val
+    def _handle_http_slow_request_flood_general_config(self):
+        self.ServerPort = "80"
+        self.ResponseHeader = [
+            "Server: nginx/1.9.5",
+            "Content-Type: text/html"
+        ]
 
-        def set_delay_type(self, val):
-            self.DelayType = val
+    def _handle_tcp_session_flood_general_config(self):
+        self.ServerPort = "80"
+        self.ResponseHeader = [
+            "Server: nginx/1.9.5",
+            "Content-Type: text/html"
+        ]
 
-        def set_dual_flow_mode(self, val):
-            self.DualFlowMode = val
+    def _handle_http_multiple_request_general_config(self):
+        self.ServerPort = "80"
+        self.ResponseHeader = [
+            "Server: nginx/1.9.5",
+            "Content-Type: text/html"
+        ]
 
-        def set_packet_payload_policy(self, val):
-            self.PacketPayloadPolicy = val
+    def _handle_http_recursion_request_general_config(self):
+        self.ServerPort = "80"
+        self.ResponseHeader = [
+            "Server: nginx/1.9.5",
+            "Content-Type: text/html"
+        ]
 
-        def set_packet_payload_value(self, val):
-            self.PacketPayloadValue = val
+    def _handle_http_concurrent_slow_read_general_config(self):
+        self.ServerPort = "80"
+        self.ResponseHeader = [
+            "Server: nginx/1.9.5",
+            "Content-Type: text/html"
+        ]
 
-        def set_frame_size_policy(self, val):
-            self.FrameSizePolicy = val
+    def _handle_http_concurrent_slow_request_general_config(self):
+        self.ServerPort = "80"
+        self.ResponseHeader = [
+            "Server: nginx/1.9.5",
+            "Content-Type: text/html"
+        ]
 
-        def set_max_iterative_cycle(self, val):
-            self.MaximumIterativeCycle = val
+    def _handle_mms_connect_storm_general_config(self):
+        self.ServerPort = "102"
+        self.ResponseHeader = [
+            "Server: nginx/1.9.5",
+            "Content-Type: text/html"
+        ]
 
-        def set_cycle_duration_policy(self, val):
-            self.CycleDurationPolicy = val
+    def _handle_https_cps_general_config(self):
+        self.ServerPort = "443"
+        self.ResponseHeader = [
+            "Server: nginx/1.9.5",
+            "Content-Type: text/html"
+        ]
+        self.ServerRecvRqtTimeOut = 300000
+        self.Http1CloseDelayms = 500
+        self.SSLServerSessionCache = "no"
+        self.ServerSSLAsyncMode = "no"
+        self.SSLServerFixedEncCiphertext = "no"
+        self.SessionTicketExtention = "no"
+        self.HttpReplyDelay = "0"
+        self.ServerCertificate = "1024"
 
-        def set_filter_action(self, val):
-            self.FilterAction = val
+    def _handle_https_cc_general_config(self):
+        self.ServerPort = "443"
+        self.ResponseHeader = [
+            "Server: nginx/1.9.5",
+            "Content-Type: text/html"
+        ]
+        self.ServerRecvRqtTimeOut = 0
+        self.Http1CloseDelayms = 500
+        self.SSLServerSessionCache = "yes"
+        self.ServerSSLAsyncMode = "no"
+        self.SSLServerFixedEncCiphertext = "no"
+        self.SessionTicketExtention = "yes"
+        self.ServerCertificate = "1024"
 
-        def set_aging_time(self, val):
-            self.AgingTime = val
+    def _handle_ssl_handshake_general_config(self):
+        self.ServerPort = "443"
+        self.ResponseHeader = [
+            "Server: nginx/1.9.5",
+            "Content-Type: text/html"
+        ]
+        self.ServerRecvRqtTimeOut = 300000
+        self.Http1CloseDelayms = 500
+        self.SSLServerSessionCache = "yes"
+        self.ServerSSLAsyncMode = "no"
+        self.SSLServerFixedEncCiphertext = "no"
+        self.SessionTicketExtention = "yes"
+        self.ServerCertificate = "1024"
 
-        def set_load_limit_policy(self, val):
-            self.LoadLimitPolicy = val
+    def _handle_https_flood_general_config(self):
+        self.ServerPort = "443"
+        self.ResponseHeader = [
+            "Server: nginx/1.9.5",
+            "Content-Type: text/html"
+        ]
+        self.ServerCertificate = "1024"
 
-        def set_burst_packet_count(self, val):
-            self.BurstPacketCount = val
+    def _handle_ipv4_frag_attack_general_config(self):
+        self.ServerPort = "80"
 
-        def set_loopback_latency(self, val):
-            self.LoopBackLinkLatency = val
+    def _handle_tcp_single_packet_attack_general_config(self):
+        self.ServerPort = "80"
 
-        def set_display_fail_when_loss(self, val):
-            self.DisplayFailWhenLoss = val
+    def _handle_multi_type_flood_general_config(self):
+        self.ServerPort = "80"
 
-        def set_acceptable_packet_loss_rate(self, val):
-            self.AcceptablePacketLossRate = val
+    def _handle_unicast_storm_general_config(self):
+        self.ServerPort = "80"
 
-        def to_dict(self):
-            return self.__dict__
+    def _handle_multicast_storm_general_config(self):
+        self.ServerPort = "80"
 
-    class CaseObject:
-        def __init__(self):
-            # Monitoring of the tested equipment
-            self.Monitor = "默认监控器对象Ping"
-            # iMIX mixed frame length
-            self.iMixName = "默认混合流量"
+    def _handle_web_scanner_general_config(self):
+        self.ServerPort = "80"
 
-        def to_dict(self):
-            return self.__dict__
+    def _handle_vulnerability_scanner_general_config(self):
+        self.ServerPort = "80"
+        self.SpecifiedPort = "1-65535"
 
-    class ClientProfiles:
-        def __init__(self, dut_role="Gateway"):
-            self.SourcePortRange = "10000-65535"
-            self.McoreDistributeTuplePolicy = "TUPLE_SID"
-            self.Actions = {}
+    def _handle_network_discovery_general_config(self):
+        self.ServerPort = "80"
+        self.SpecifiedPort = "1-65535"
 
-        def set_source_port_range(self, value):
-            self.SourcePortRange = value
+    def _handle_udp_single_packet_attack_general_config(self):
+        self.ServerPort = "69"
 
-        def set_mcore_distribute_tuple_policy(self, value):
-            self.McoreDistributeTuplePolicy = value
+    def _handle_udp_payload_attack_general_config(self):
+        self.ServerPort = "2641"
+        self.ResponseHeader = ["Server: nginx/1.9.5", "Content-Type: text/html"]
 
-        def set_actions(self, value):
-            self.Actions = value
+    def _handle_sip_single_packet_attack_general_config(self):
+        self.ServerPort = "5060"
 
-        def to_dict(self):
-            return self.__dict__
+    def _handle_dns_service_attack_general_config(self):
+        self.ServerPort = "53"
 
-    class ServerProfiles:
-        def __init__(self, dut_role="Gateway"):
-            self.ServerPort = "6006"
-            if dut_role == "Server":
-                self.DNSServerPort = "53"
+    def _handle_ssdp_attack_general_config(self):
+        self.ServerPort = "1900"
 
-        def to_dict(self):
-            return self.__dict__
+    def _handle_dns_amplification_attack_general_config(self):
+        self.ServerPort = "10000-65535"
 
-    def __init__(self, dut_role):
-        self.Loads = Rfc2544Latency.Loads()
-        self.CaseObject = Rfc2544Latency.CaseObject()
-        self.ClientProfiles = Rfc2544Latency.ClientProfiles(dut_role=dut_role)
-        self.ServerProfiles = Rfc2544Latency.ServerProfiles(dut_role=dut_role)
+    def _handle_ntp_amplification_attack_general_config(self):
+        self.ServerPort = "123"
+
+    def _handle_memcached_amplification_attack_general_config(self):
+        self.ServerPort = "11211"
+
+    def _handle_tcp_winnuke_general_config(self):
+        self.ServerPort = "139"
+
+    def _handle_advanced_fuzzing_general_config(self):
+        self.ServerPort = "5672"
+
+    def _handle_bgpv4_general_config(self):
+        self.ServerPort = "6001"
+
+    def _handle_bgpv6_general_config(self):
+        self.ServerPort = "6001"
+
+    def _handle_rfc2544_throughput_general_config(self):
+        self.ServerPort = "6006"
+
+    def _handle_rfc2544_latency_general_config(self):
+        self.ServerPort = "6006"
+
+    def _handle_rfc2544_lossrate_general_config(self):
+        self.ServerPort = "6006"
+
+    def _handle_rfc2544_backtoback_general_config(self):
+        self.ServerPort = "6006"
+
+    def _handle_weak_password_detection_general_config(self):
+        self.ServerPort = "502"
+
+    def _handle_dns_server_port_53_server_config(self):
+        self.DNSServerPort = "53"
+
+    def _handle_http_cps_client_config(self):
+        self.ServerRecvRqtTimeOut = 300000
+        self.Http1CloseDelayms = 500
+        self.ServerCloseMode = "3Way_Fin"
+        self.HttpProxyProtocolEn = 'no'
+
+    def _handle_http_force_cps_client_config(self):
+        self.ServerRecvRqtTimeOut = 300000
+        self.Http1CloseDelayms = 500
+        self.ServerCloseMode = "3Way_Fin"
+        self.HttpProxyProtocolEn = 'no'
+
+    def _handle_http_cc_client_config(self):
+        self.ServerRecvRqtTimeOut = 300000
+        self.Http1CloseDelayms = 500
+        self.ServerCloseMode = "3Way_Fin"
+        self.HttpProxyProtocolEn = 'no'
+
+    def _handle_http_throughput_client_config(self):
+        self.ServerRecvRqtTimeOut = 300000
+        self.Http1CloseDelayms = 500
+        self.ServerCloseMode = "3Way_Fin"
+        self.HttpProxyProtocolEn = 'no'
+
+    def _handle_https_flood_client_config(self):
+        self.SSLCertVerify = "none"
+        self.SSLVerifyErrorAction = 0
+        self.SSLVersions = "NetiGMv1.1"
+
+    def _handle_httpslow_request_flood_client_config(self):
+        self.ServerCloseMode = "3Way_Fin"
+        self.HttpProxyProtocolEn = "no"
+
+    def _handle_http_concurrent_slow_read_client_config(self):
+        self.ServerCloseMode = "3Way_Fin"
+        self.HttpReplyDelay = "0"
+
+    def _handle_http_concurrent_slow_request_client_config(self):
+        self.ServerCloseMode = "3Way_Fin"
+        self.HttpReplyDelay = "0"
+
+    def _handle_http_cps_proxy_config(self):
+        self.ServerRecvRqtTimeOut = 300000
+        self.Http1CloseDelayms = 500
+        self.ServerCloseMode = "3Way_Fin"
+        self.HttpProxyProtocolEn = 'no'
+
+    def _handle_http_force_cps_proxy_config(self):
+        self.ServerRecvRqtTimeOut = 300000
+        self.Http1CloseDelayms = 500
+        self.ServerCloseMode = "3Way_Fin"
+        self.HttpProxyProtocolEn = 'no'
+
+    def _handle_http_cc_proxy_config(self):
+        self.ServerRecvRqtTimeOut = 300000
+        self.Http1CloseDelayms = 500
+        self.ServerCloseMode = "3Way_Fin"
+        self.HttpProxyProtocolEn = 'no'
+
+    def _handle_http_throughput_proxy_config(self):
+        self.ServerRecvRqtTimeOut = 300000
+        self.Http1CloseDelayms = 500
+        self.ServerCloseMode = "3Way_Fin"
+        self.HttpProxyProtocolEn = 'no'
+
+    def _handle_http_cps_gateway_config(self):
+        self.ServerRecvRqtTimeOut = 300000
+        self.Http1CloseDelayms = 500
+        self.ServerCloseMode = "3Way_Fin"
+
+    def _handle_http_force_cps_gateway_config(self):
+        self.ServerRecvRqtTimeOut = 300000
+        self.Http1CloseDelayms = 500
+        self.ServerCloseMode = "3Way_Fin"
+
+    def _handle_http_cc_gateway_config(self):
+        self.ServerRecvRqtTimeOut = 300000
+        self.Http1CloseDelayms = 500
+        self.ServerCloseMode = "3Way_Fin"
+
+    def _handle_http_throughput_gateway_config(self):
+        self.ServerRecvRqtTimeOut = 300000
+        self.Http1CloseDelayms = 500
+        self.ServerCloseMode = "3Way_Fin"
+
+    def _handle_udp_pps_gateway_config(self):
+        self.ServerPort = "80"
+
+    def _handle_turbo_tcp_gateway_config(self):
+        self.ServerPort = "6000"
+        self.ServerCloseMode = "Reset"
+
+    def _handle_http_slow_request_flood_gateway_config(self):
+        self.ServerCloseMode = "3Way_Fin"
+
+    def _handle_http_concurrent_slow_read_gateway_config(self):
+        self.ServerCloseMode = "3Way_Fin"
+        self.HttpReplyDelay = "0"
+
+    def _handle_http_concurrent_slow_request_gateway_config(self):
+        self.ServerCloseMode = "3Way_Fin"
+        self.HttpReplyDelay = "0"
+
+    def set_server_recv_rqt_timeout(self, value):
+        self.ServerRecvRqtTimeOut = value
+
+    def set_http1_close_delayms(self, value):
+        self.Http1CloseDelayms = value
+
+    def set_ssl_server_session_cache(self, value):
+        self.SSLServerSessionCache = value
+
+    def set_server_ssl_async_mode(self, value):
+        self.ServerSSLAsyncMode = value
+
+    def set_ssl_server_fixed_enc_ciphertext(self, value):
+        self.SSLServerFixedEncCiphertext = value
+
+    def set_session_ticket_extention(self, value):
+        self.SessionTicketExtention = value
+
+    def set_server_certificate(self, value):
+        self.ServerCertificate = value
+
+    def set_session_ticket_extension(self, value):
+        self.SessionTicketExtention = value
+
+    def set_http_reply_delay(self, value):
+        self.HttpReplyDelay = value
+
+    def set_specified_port(self, value):
+        self.SpecifiedPort = value
+
+    def set_server_close_mode(self, value):
+        self.ServerCloseMode = value
+
+    def set_dns_server_port(self, value):
+        self.DNSServerPort = value
+
+    def set_http_proxy_protocol_en(self, value):
+        self.HttpProxyProtocolEn = value
+
+    def set_ssl_cert_verify(self, value):
+        self.SSLCertVerify = value
+
+    def set_ssl_verify_error_action(self, value):
+        self.SSLVerifyErrorAction = value
+
+    def set_ssl_versions(self, value):
+        self.SSLVersions = value
+
+    def set_server_port(self, value):
+        self.ServerPort = value
+
+    def set_server_recvrqt_timeout(self, value):
+        self.ServerRecvRqtTimeOut = value
 
     def to_dict(self):
-        return {
-            "Loads": self.Loads.to_dict(),
-            "CaseObject": self.CaseObject.to_dict(),
-            "ClientProfiles": self.ClientProfiles.to_dict(),
-            "ServerProfiles": self.ServerProfiles.to_dict()
-        }
-
-
-class Rfc2544LossRate:
-    class Loads(BaseLoads):
-        def __init__(self):
-            super().__init__()
-            # The number of UDP streams
-            self.SimUser = 256
-
-            self.Latency = "disable"
-            # Flow direction; the available values are: enable, disable, both.
-            # "enable" indicates two-way; "disable" indicates one-way; "both" means first one-way, then two-way
-            self.DualFlowMode = "disable"
-
-            # Load transformation type; the available values are: Fixed, Random, Custom, Stream
-            self.PacketPayloadPolicy = "Fixed"
-            # When the load transformation type is set to custom load, the load content needs to be configured.
-            self.PacketPayloadValue = "0xFF"
-            # When the type of load transformation is fixed load, random load or custom load, this item needs to be specified.
-            self.FrameSizePolicy = {
-                # Frame length transformation mode; the available values are: List, Step, Random, iMix.
-                "SizeChangeMode": "List",
-                # The format of the List value is: 64, 128; The format of the Step value is: 64-128|+64
-                # The format of the Random value is: 128-256
-                "FrameSizeFormat": "64,128,256,512,1024,1280,1518"
-            }
-
-            # Number of retry attempts for testing
-            self.MaximumIterativeCycle = 20
-            self.CycleDurationPolicy = {
-                # Duration adjustment method
-                "CycleDurationMode": "Fixed",
-                # The unit of test duration; the available values are: TimeSecond, PacketCount
-                "CycleDurationUnit": "TimeSecond",
-                # When the unit of test duration is seconds of sent traffic, the initial sending time period in seconds needs to be specified.
-                "InitialCycleSecond": "60",
-                # When the unit of the test duration is the number of sent messages, the initial number of sent messages field needs to be specified.
-                "InitialCyclePacket": "10000",
-                "MinimumCycleSecond": "0.000064",
-                "MinimumCyclePacket": "1",
-                "MaximumCycleSecond": "60",
-                "MaximumCyclePacket": "10000",
-                "SecondResolution": "0.1",
-                "PacketResolution": "100",
-                "AcceptableLossRate": "0"
-            }
-            # The duration of aging
-            self.AgingTime = 5
-
-            self.LoadLimitPolicy = {
-                # Unit of rate load; the available values are: percent, fps, bps, kbps, mbps, Bps
-                "LoadLimitUnit": "percent",
-                # Rate load mode; the available values are: Step, Random, List, FrameSpeedRate
-                "LoadLimitMode": "Step",
-                # The format of the Step value is 10-50|+10; The format of the Random value is 10-50
-                # The format of the List value is 10,20,50;
-                # The format of the FrameSpeedRate value is 10,20,50; At this point, the number of rate lists needs to be equal to that of frame length lists.
-                "LoadLimitFormat": "10-50|+10"
-            }
-            # Message sending rate
-            self.BurstPacketCount = 32
-            # Packet loss indicates failure.
-            self.DisplayFailWhenLoss = "yes"
-
-        def set_latency(self, value):
-            """
-            Set whether latency is enabled.
-
-            Args:
-                value (str): "enable" or "disable".
-            """
-            self.Latency = value
-
-        def set_dual_flow_mode(self, value):
-            """
-            Set whether dual - flow mode is enabled.
-
-            Args:
-                value (str): "enable" or "disable".
-            """
-            self.DualFlowMode = value
-
-        def set_frame_size_policy(self, value):
-            """
-            Set the frame size policy.
-
-            Args:
-                value (dict): A dictionary containing "SizeChangeMode" and "FrameSizeFormat".
-            """
-
-            self.FrameSizePolicy = value
-
-        def set_cycle_duration_policy(self, value):
-            self.CycleDurationPolicy.update(value)
-
-        def to_dict(self):
-            return self.__dict__
-
-    class CaseObject:
-        def __init__(self):
-            self.Monitor = "默认监控器对象Ping"
-            self.iMixName = "默认混合流量"
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ClientProfiles:
-        def __init__(self, dut_role):
-            self.SourcePortRange = "10000-65535"
-            # Multi-core Five-Tuple Allocation Strategy; the available values are: RSS_HASH, TUPLE_SID
-            self.McoreDistributeTuplePolicy = "TUPLE_SID"
-            if dut_role == "Proxy":
-                self.ProxyPort = "80"
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ServerProfiles:
-        def __init__(self, dut_role):
-            self.ServerPort = "6006"
-            if dut_role == "Server":
-                # DNS server port
-                self.DNSServerPort = "53"
-
-        def to_dict(self):
-            return self.__dict__
-
-    def __init__(self,dut_role):
-        self.Loads = Rfc2544LossRate.Loads()
-        self.CaseObject = Rfc2544LossRate.CaseObject()
-        self.ClientProfiles = Rfc2544LossRate.ClientProfiles(dut_role=dut_role)
-        self.ServerProfiles = Rfc2544LossRate.ServerProfiles(dut_role=dut_role)
-
-    def to_dict(self):
-        return {
-            "Loads": self.Loads.to_dict(),
-            "CaseObject": self.CaseObject.to_dict(),
-            "ClientProfiles": self.ClientProfiles.to_dict(),
-            "ServerProfiles": self.ServerProfiles.to_dict()
-        }
-
-
-class Rfc2544BackToBack:
-    class Loads(BaseLoads):
-        def __init__(self):
-            super().__init__()
-
-            # The number of UDP streams
-            self.SimUser = 256
-
-            self.Latency = "disable"
-            # "enable" indicates two-way; "disable" indicates one-way; "both" means first one-way, then two-way
-            self.DualFlowMode = "disable"
-
-            # Load transformation type; the available values are: Fixed, Random, Custom, Stream
-            self.PacketPayloadPolicy = "Fixed"
-            # When the load transformation type is set to custom load, the load content needs to be configured.
-            self.PacketPayloadValue = "0xFF"
-            # When the type of load transformation is fixed load, random load or custom load, this item needs to be specified.
-            self.FrameSizePolicy = {
-                # Frame length transformation mode; the available values are: List, Step, Random, iMix.
-                "SizeChangeMode": "List",
-                # The format of the List value is: 64, 128; The format of the Step value is: 64-128|+64
-                # The format of the Random value is: 128-256
-                "FrameSizeFormat": "64,128,256,512,1024,1280,1518"
-            }
-
-            # Number of retry attempts for testing
-            self.MaximumIterativeCycle = 20
-            self.CycleDurationPolicy = {
-                # Duration adjustment method
-                "CycleDurationMode": "Fixed",
-                # The unit of test duration; the available values are: TimeSecond, PacketCount
-                "CycleDurationUnit": "TimeSecond",
-                # When the unit of test duration is seconds of sent traffic, the initial sending time period in seconds needs to be specified.
-                "InitialCycleSecond": "60",
-                # When the unit of the test duration is the number of sent messages, the initial number of sent messages field needs to be specified.
-                "InitialCyclePacket": "10000",
-                "MinimumCycleSecond": "0.000064",
-                "MinimumCyclePacket": "1",
-                "MaximumCycleSecond": "60",
-                "MaximumCyclePacket": "10000",
-                "SecondResolution": "0.1",
-                "PacketResolution": "100",
-                "AcceptableLossRate": "0"
-            }
-            # The duration of aging
-            self.AgingTime = 5
-
-            self.LoadLimitPolicy = {
-                # Unit of rate load; the available values are: percent, fps, bps, kbps, mbps, Bps
-                "LoadLimitUnit": "percent",
-                # Rate load mode; the available values are: Step, Random, List, FrameSpeedRate
-                "LoadLimitMode": "List",
-                # The format of the Step value is 10-50|+10; The format of the Random value is 10-50
-                # The format of the List value is 10,20,50;
-                # The format of the FrameSpeedRate value is 10,20,50; At this point, the number of rate lists needs to be equal to that of frame length lists.
-                "LoadLimitFormat": "100"
-            }
-            # Message sending rate
-            self.BurstPacketCount = 32
-            # Packet loss indicates failure.
-            self.DisplayFailWhenLoss = "yes"
-            self.CorrectLossRateCycle = -1
-            self.UpDownGranularity = -1
-
-        def set_latency(self, value):
-            """
-            Set whether latency is enabled.
-
-            Args:
-                value (str): "enable" or "disable".
-            """
-            self.Latency = value
-
-        def set_dual_flow_mode(self, value):
-            """
-            Set whether dual - flow mode is enabled.
-
-            Args:
-                value (str): "enable" or "disable".
-            """
-            self.DualFlowMode = value
-
-        def set_frame_size_policy(self, value):
-            """
-            Set the frame size policy.
-
-            Args:
-                value (dict): A dictionary containing "SizeChangeMode" and "FrameSizeFormat".
-            """
-
-            self.FrameSizePolicy = value
-
-        def set_cycle_duration_policy(self, value):
-            self.CycleDurationPolicy.update(value)
-
-        def to_dict(self):
-            return self.__dict__
-
-    class CaseObject:
-        def __init__(self):
-            self.Monitor = "默认监控器对象Ping"
-            self.iMixName = "默认混合流量"
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ClientProfiles:
-        def __init__(self, dut_role):
-            self.SourcePortRange = "10000-65535"
-            # Multi-core Five-Tuple Allocation Strategy; the available values are: RSS_HASH, TUPLE_SID
-            self.McoreDistributeTuplePolicy = "TUPLE_SID"
-            if dut_role == "Proxy":
-                self.ProxyPort = "80"
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ServerProfiles:
-        def __init__(self, dut_role):
-            self.ServerPort = "6006"
-            if dut_role == "Server":
-                self.DNSServerPort = "53"
-
-        def to_dict(self):
-            return self.__dict__
-
-    def __init__(self, dut_role):
-        self.Loads = Rfc2544BackToBack.Loads()
-        self.CaseObject = Rfc2544BackToBack.CaseObject()
-        self.ClientProfiles = Rfc2544BackToBack.ClientProfiles(dut_role)
-        self.ServerProfiles = Rfc2544BackToBack.ServerProfiles(dut_role)
-
-    def to_dict(self):
-        return {
-            "Loads": self.Loads.to_dict(),
-            "CaseObject": self.CaseObject.to_dict(),
-            "ClientProfiles": self.ClientProfiles.to_dict(),
-            "ServerProfiles": self.ServerProfiles.to_dict()
-        }
-
-
-class Ipv4FragAttack:
-    class Loads(BaseLoads):
-        def __init__(self):
-            super().__init__()
-            self.DDoSTypeTrafficStat = "no"
-            self.MulticastIp = "225.1.1.10"
-            self.DDosTypes = {
-                "TEARDROP_UDP_FLOOD": 100
-            }
-
-        def set_ddos_type_traffic_stat(self, value: str):
-            """
-            Set DDoS type traffic statistics flag
-
-            Args:
-                value (str): "yes" to enable statistics, "no" to disable
-
-            Raises:
-                ValueError: If input is not "yes" or "no"
-            """
-            if value not in ("yes", "no"):
-                raise ValueError("Value must be 'yes' or 'no'")
-            self.DDoSTypeTrafficStat = value
-
-        def set_multicast_ip(self, ip: str):
-            """
-            Set multicast IP address
-
-            Args:
-                ip (str): Valid IPv4 multicast address (224.0.0.0 - 239.255.255.255)
-
-            Raises:
-                ValueError: If invalid multicast IP format
-            """
-            import ipaddress
-            try:
-                ip_obj = ipaddress.IPv4Address(ip)
-                if not ip_obj.is_multicast:
-                    raise ValueError
-                self.MulticastIp = str(ip_obj)
-            except (ipaddress.AddressValueError, ValueError):
-                raise ValueError(f"Invalid multicast IP: {ip}")
-
-        def set_ddos_types(self, attack_types: dict):
-            """
-            Set DDoS attack type distribution
-
-            Args:
-                attack_types (dict): Dictionary of attack types and percentages
-                    Example: {"TEARDROP_UDP_FLOOD": 100}
-
-            Raises:
-                TypeError: If input is not a dictionary
-                ValueError: If values are not integers between 1-100
-            """
-            if not isinstance(attack_types, dict):
-                raise TypeError("Input must be a dictionary")
-
-            for k, v in attack_types.items():
-                if not isinstance(v, int) or not (1 <= v <= 100):
-                    raise ValueError("Values must be integers between 1-100")
-
-            self.DDosTypes = attack_types.copy()
-
-        def to_dict(self):
-            return self.__dict__
-
-    class CaseObject:
-        def __init__(self):
-            pass
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ClientProfiles:
-        def __init__(self):
-            self.SourcePortRange = "10000-65535"
-            self.Actions = {}
-
-        def set_source_port_range(self, SourcePortRange):
-            self.SourcePortRange = SourcePortRange
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ServerProfiles:
-        def __init__(self, role=""):
-            self.ServerPort = "80"
-            if role == "Server":
-                self.DNSServerPort = "53"
-
-        def set_server_port(self, ServerPort):
-            self.ServerPort = ServerPort
-
-        def set_dns_server_port(self, DNSServerPort):
-            self.DNSServerPort = DNSServerPort
-
-        def to_dict(self):
-            return self.__dict__
-
-    def __init__(self, dut_role):
-        self.Loads = Ipv4FragAttack.Loads()
-        self.CaseObject = Ipv4FragAttack.CaseObject()
-        self.ClientProfiles = Ipv4FragAttack.ClientProfiles()
-        self.ServerProfiles = Ipv4FragAttack.ServerProfiles(role=dut_role)
-
-    def to_dict(self):
-        return {
-            "Loads": self.Loads.to_dict(),
-            "CaseObject": self.CaseObject.to_dict(),
-            "ClientProfiles": self.ClientProfiles.to_dict(),
-            "ServerProfiles": self.ServerProfiles.to_dict()
-        }
-
-
-class ICMPSinglePacketAttack:
-    class Loads(BaseLoads):
-        def __init__(self):
-            super().__init__()
-            self.SimUser = 256
-            self.DDosDelayStart = 0
-            self.ICMP_REQUEST_FLOOD_FRAME = 68
-            self.DDoSTypeTrafficStat = "no"
-            self.DDosTypes = {
-                "ICMP_REQUEST_FLOOD": 100
-            }
-
-        def set_sim_user(self, value):
-            """
-            Set the number of simulated users.
-
-            Args:
-                value (int): The number of users.
-            """
-            self.SimUser = value
-
-        def set_ddos_delay_start(self, value):
-            """
-            Set the delay before starting the attack.
-
-            Args:
-                value (int): The delay in seconds.
-            """
-            self.DDosDelayStart = value
-
-        def set_icmp_request_flood_frame(self, value):
-            """
-            Set the ICMP request flood frame size.
-
-            Args:
-                value (int): The frame size.
-            """
-            self.ICMP_REQUEST_FLOOD_FRAME = value
-
-        def set_ddos_type_traffic_stat(self, value: str):
-            """
-            Set DDoS type traffic statistics flag
-
-            Args:
-                value (str): "yes" to enable statistics, "no" to disable
-
-            Raises:
-                ValueError: If input is not "yes" or "no"
-            """
-            if value not in ("yes", "no"):
-                raise ValueError("Value must be 'yes' or 'no'")
-            self.DDoSTypeTrafficStat = value
-
-        def set_ddos_types(self, attack_types: dict):
-            """
-            Set DDoS attack type distribution
-
-            Args:
-                attack_types (dict): Dictionary of attack types and percentages
-                    Example: {"TEARDROP_UDP_FLOOD": 100}
-
-            Raises:
-                TypeError: If input is not a dictionary
-                ValueError: If values are not integers between 1-100
-            """
-            if not isinstance(attack_types, dict):
-                raise TypeError("Input must be a dictionary")
-
-            for k, v in attack_types.items():
-                if not isinstance(v, int) or not (1 <= v <= 100):
-                    raise ValueError("Values must be integers between 1-100")
-
-            self.DDosTypes = attack_types.copy()
-
-        def to_dict(self):
-            return self.__dict__
-
-    class CaseObject:
-        def __init__(self):
-            pass
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ClientProfiles:
-        def __init__(self):
-
-            self.MonitorEnable = "no"
-            self.MonitorIP = "17.1.1.222"
-            self.Actions = {}
-
-        def set_monitor_enable(self, value: str):
-            """
-            Set monitor enable flag
-            """
-            if value not in ("yes", "no"):
-                raise ValueError("Value must be 'yes' or 'no'")
-            self.MonitorEnable = value
-
-        def set_monitor_ip(self, value: str):
-            """
-            Set monitor IP address
-            """
-            import ipaddress
-            try:
-                ip_obj = ipaddress.IPv4Address(value)
-                self.MonitorIP = str(ip_obj)
-            except (ipaddress.AddressValueError, ValueError):
-                raise ValueError(f"Invalid IP address: {value}")
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ServerProfiles:
-        def __init__(self):
-            pass
-
-        def to_dict(self):
-            return self.__dict__
-
-    def __init__(self, dut_role):
-        self.Loads = ICMPSinglePacketAttack.Loads()
-        self.CaseObject = ICMPSinglePacketAttack.CaseObject()
-        self.ClientProfiles = ICMPSinglePacketAttack.ClientProfiles()
-        self.ServerProfiles = ICMPSinglePacketAttack.ServerProfiles()
-
-    def to_dict(self):
-        return {
-            "Loads": self.Loads.to_dict(),
-            "CaseObject": self.CaseObject.to_dict(),
-            "ClientProfiles": self.ClientProfiles.to_dict(),
-            "ServerProfiles": self.ServerProfiles.to_dict()
-        }
-
-
-class IGMPv4SinglePacketAttack:
-    class Loads(BaseLoads):
-        def __init__(self):
-            super().__init__()
-            self.SimUser = 256
-            self.MulticastIp = "225.1.1.10"
-            self.IGMPV3_RESPONSE_FLOOD_FRAME = 68
-            self.DDoSTypeTrafficStat = "no"
-            self.DDosTypes = {
-                "IGMPV3_RESPONSE_FLOOD": 100
-            }
-
-        def set_sim_user(self, value):
-            """
-            Set the number of simulated users.
-
-            Args:
-                value (int): The number of users.
-            """
-            self.SimUser = value
-
-        def set_multicast_ip(self, ip: str):
-            """
-            Set multicast IP address
-
-            Args:
-                ip (str): Valid IPv4 multicast address (
-
-                ip (str): Valid IPv4 multicast address (IP_ADDRESS - IP_ADDRESS): Valid IPv4 multicast address (IP_ADDRESS - 239.255.255.255)
-            Raises:
-                ValueError: If invalid multicast IP format
-            """
-            import ipaddress
-            try:
-                ip_obj = ipaddress.IPv4Address(ip)
-                if not ip_obj.is_multicast:
-                    raise ValueError
-                self.MulticastIp = str(ip_obj)
-            except (ipaddress.AddressValueError, ValueError):
-                raise ValueError(f"Invalid multicast IP: {ip}")
-
-        def set_igmp_response_flood_frame(self, value):
-            """
-            Set the IGMPv3 response flood frame size.
-
-            Args:
-                value (int): The frame size.
-            """
-            self.IGMPV3_RESPONSE_FLOOD_FRAME = value
-
-        def set_ddos_type_traffic_stat(self, value: str):
-            """
-            Set DDoS type traffic statistics flag
-
-            Args:
-                value (str): "yes" to enable statistics, "no" to disable
-
-            Raises:
-                ValueError: If input is not "yes" or "no"
-            """
-            if value not in ("yes", "no"):
-                raise ValueError("Value must be 'yes' or 'no'")
-            self.DDoSTypeTrafficStat = value
-
-        def set_ddos_types(self, attack_types: dict):
-            """
-            Set DDoS attack type distribution
-
-            Args:
-                attack_types (dict): Dictionary of attack types and percentages
-                    Example: {"TEARDROP_UDP_FLOOD": 100}
-
-            Raises:
-                TypeError: If input is not a dictionary
-                ValueError: If values are not integers between 1-100
-            """
-            if not isinstance(attack_types, dict):
-                raise TypeError("Input must be a dictionary")
-
-            for k, v in attack_types.items():
-                if not isinstance(v, int) or not (1 <= v <= 100):
-                    raise ValueError("Values must be integers between 1-100")
-
-            self.DDosTypes = attack_types.copy()
-
-        def to_dict(self):
-            return self.__dict__
-
-    class CaseObject:
-        def __init__(self):
-            pass
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ClientProfiles:
-        def __init__(self):
-
-            self.MonitorEnable = "no"
-            self.MonitorIP = "17.1.1.222"
-            self.Actions = {}
-
-        def set_monitor_enable(self, value: str):
-            """
-            Set monitor enable flag
-            """
-            if value not in ("yes", "no"):
-                raise ValueError("Value must be 'yes' or 'no'")
-            self.MonitorEnable = value
-
-        def set_monitor_ip(self, value: str):
-            """
-            Set monitor IP address
-            """
-            import ipaddress
-            try:
-                ip_obj = ipaddress.IPv4Address(value)
-                self.MonitorIP = str(ip_obj)
-            except (ipaddress.AddressValueError, ValueError):
-                raise ValueError(f"Invalid IP address: {value}")
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ServerProfiles:
-        def __init__(self):
-            pass
-
-        def to_dict(self):
-            return self.__dict__
-
-    def __init__(self, dut_role):
-        self.Loads = IGMPv4SinglePacketAttack.Loads()
-        self.CaseObject = IGMPv4SinglePacketAttack.CaseObject()
-        self.ClientProfiles = IGMPv4SinglePacketAttack.ClientProfiles()
-        self.ServerProfiles = IGMPv4SinglePacketAttack.ServerProfiles()
-
-    def to_dict(self):
-        return {
-            "Loads": self.Loads.to_dict(),
-            "CaseObject": self.CaseObject.to_dict(),
-            "ClientProfiles": self.ClientProfiles.to_dict(),
-            "ServerProfiles": self.ServerProfiles.to_dict()
-        }
-
-
-class ARPv4SinglePacketAttack:
-    class Loads(BaseLoads):
-        def __init__(self):
-            super().__init__()
-            self.SimUser = 256
-            self.DDoSTypeTrafficStat = "no"
-            self.DDosTypes = {
-                "ARP_REQUEST_FLOOD": 100
-            }
-            self.ARP_REQUEST_FLOOD_FRAME = 68
-
-        def set_sim_user(self, value):
-            """
-            Set the number of simulated users.
-
-            Args:
-                value (int): The number of users.
-            """
-            self.SimUser = value
-
-        def set_arp_request_flood_frame(self, value):
-            """
-            Set the arp request flood frame size.
-
-            Args:
-                value (int): The frame size.
-            """
-            self.ARP_REQUEST_FLOOD_FRAME = value
-
-        def set_ddos_type_traffic_stat(self, value: str):
-            """
-            Set DDoS type traffic statistics flag
-
-            Args:
-                value (str): "yes" to enable statistics, "no" to disable
-
-            Raises:
-                ValueError: If input is not "yes" or "no"
-            """
-            if value not in ("yes", "no"):
-                raise ValueError("Value must be 'yes' or 'no'")
-            self.DDoSTypeTrafficStat = value
-
-        def set_ddos_types(self, attack_types: dict):
-            """
-            Set DDoS attack type distribution
-
-            Args:
-                attack_types (dict): Dictionary of attack types and percentages
-                    Example: {"TEARDROP_UDP_FLOOD": 100}
-
-            Raises:
-                TypeError: If input is not a dictionary
-                ValueError: If values are not integers between 1-100
-            """
-            if not isinstance(attack_types, dict):
-                raise TypeError("Input must be a dictionary")
-
-            for k, v in attack_types.items():
-                if not isinstance(v, int) or not (1 <= v <= 100):
-                    raise ValueError("Values must be integers between 1-100")
-
-            self.DDosTypes = attack_types.copy()
-
-        def to_dict(self):
-            return self.__dict__
-
-    class CaseObject:
-        def __init__(self):
-            pass
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ClientProfiles:
-        def __init__(self):
-
-            self.MonitorEnable = "no"
-            self.MonitorIP = "17.1.1.222"
-            self.Actions = {}
-
-        def set_monitor_enable(self, value: str):
-            """
-            Set monitor enable flag
-            """
-            if value not in ("yes", "no"):
-                raise ValueError("Value must be 'yes' or 'no'")
-            self.MonitorEnable = value
-
-        def set_monitor_ip(self, value: str):
-            """
-            Set monitor IP address
-            """
-            import ipaddress
-            try:
-                ip_obj = ipaddress.IPv4Address(value)
-                self.MonitorIP = str(ip_obj)
-            except (ipaddress.AddressValueError, ValueError):
-                raise ValueError(f"Invalid IP address: {value}")
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ServerProfiles:
-        def __init__(self):
-            pass
-
-        def to_dict(self):
-            return self.__dict__
-
-    def __init__(self, dut_role):
-        self.Loads = ARPv4SinglePacketAttack.Loads()
-        self.CaseObject = ARPv4SinglePacketAttack.CaseObject()
-        self.ClientProfiles = ARPv4SinglePacketAttack.ClientProfiles()
-        self.ServerProfiles = ARPv4SinglePacketAttack.ServerProfiles()
-
-    def to_dict(self):
-        return {
-            "Loads": self.Loads.to_dict(),
-            "CaseObject": self.CaseObject.to_dict(),
-            "ClientProfiles": self.ClientProfiles.to_dict(),
-            "ServerProfiles": self.ServerProfiles.to_dict()
-        }
-
-
-class TCPSinglePacketAttack:
-    class Loads(BaseLoads):
-        def __init__(self):
-            super().__init__()
-            self.SimUser = 256
-            self.DDoSTypeTrafficStat = "no"
-            self.DDosDelayStart = 0
-            self.DDosTypes = {
-                "SYN_FLOOD": 100
-            }
-            self.SYN_FLOOD_FRAME = 68
-
-        def set_sim_user(self, value):
-            """
-            Set the number of simulated users.
-
-            Args:
-                value (int): The number of users.
-            """
-            self.SimUser = value
-
-        def set_syn_flood_frame(self, value):
-            """
-            Set the syn flood frame size.
-
-            Args:
-                value (int): The frame size.
-            """
-            self.SYN_FLOOD_FRAME = value
-
-        def set_ddos_delay_start(self, value):
-            """
-            Set the delay start time.
-
-            Args:
-                value (int): The delay start time.
-            """
-            self.DDosDelayStart = value
-
-        def set_ddos_type_traffic_stat(self, value: str):
-            """
-            Set DDoS type traffic statistics flag
-
-            Args:
-                value (str): "yes" to enable statistics, "no" to disable
-
-            Raises:
-                ValueError: If input is not "yes" or "no"
-            """
-            if value not in ("yes", "no"):
-                raise ValueError("Value must be 'yes' or 'no'")
-            self.DDoSTypeTrafficStat = value
-
-        def set_ddos_types(self, attack_types: dict):
-            """
-            Set DDoS attack type distribution
-
-            Args:
-                attack_types (dict): Dictionary of attack types and percentages
-                    Example: {"TEARDROP_UDP_FLOOD": 100}
-
-            Raises:
-                TypeError: If input is not a dictionary
-                ValueError: If values are not integers between 1-100
-            """
-            if not isinstance(attack_types, dict):
-                raise TypeError("Input must be a dictionary")
-
-            for k, v in attack_types.items():
-                if not isinstance(v, int) or not (1 <= v <= 100):
-                    raise ValueError("Values must be integers between 1-100")
-
-            self.DDosTypes = attack_types.copy()
-
-        def to_dict(self):
-            return self.__dict__
-
-    class CaseObject:
-        def __init__(self):
-            pass
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ClientProfiles:
-        def __init__(self):
-            self.SourcePortRange = "10000-65535"
-            self.MonitorEnable = "no"
-            self.MonitorIP = "17.1.1.222"
-            self.Actions = {}
-
-        def set_source_port_range(self, SourcePortRange):
-            self.SourcePortRange = SourcePortRange
-
-        def set_monitor_enable(self, value: str):
-            """
-            Set monitor enable flag
-            """
-            if value not in ("yes", "no"):
-                raise ValueError("Value must be 'yes' or 'no'")
-            self.MonitorEnable = value
-
-        def set_monitor_ip(self, value: str):
-            """
-            Set monitor IP address
-            """
-            import ipaddress
-            try:
-                ip_obj = ipaddress.IPv4Address(value)
-                self.MonitorIP = str(ip_obj)
-            except (ipaddress.AddressValueError, ValueError):
-                raise ValueError(f"Invalid IP address: {value}")
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ServerProfiles:
-        def __init__(self, role=""):
-            self.ServerPort = "80"
-            if role == "Server":
-                self.DNSServerPort = "53"
-
-        def set_server_port(self, ServerPort):
-            self.ServerPort = ServerPort
-
-        def set_dns_server_port(self, DNSServerPort):
-            self.DNSServerPort = DNSServerPort
-
-        def to_dict(self):
-            return self.__dict__
-
-    def __init__(self, dut_role):
-        self.Loads = TCPSinglePacketAttack.Loads()
-        self.CaseObject = TCPSinglePacketAttack.CaseObject()
-        self.ClientProfiles = TCPSinglePacketAttack.ClientProfiles()
-        self.ServerProfiles = TCPSinglePacketAttack.ServerProfiles(role=dut_role)
-
-    def to_dict(self):
-        return {
-            "Loads": self.Loads.to_dict(),
-            "CaseObject": self.CaseObject.to_dict(),
-            "ClientProfiles": self.ClientProfiles.to_dict(),
-            "ServerProfiles": self.ServerProfiles.to_dict()
-        }
-
-
-class UDPSinglePacketAttack:
-    class Loads(BaseLoads):
-        def __init__(self):
-            super().__init__()
-            self.SimUser = 256
-            self.MulticastIp = "225.1.1.10"
-            self.DDoSTypeTrafficStat = "no"
-            self.DDosDelayStart = 0
-            self.DDosTypes = {
-                "UDP_FLOOD": 100
-            }
-            self.UDP_FLOOD_FRAME = 68
-
-        def set_sim_user(self, value):
-            """
-            Set the number of simulated users.
-
-            Args:
-                value (int): The number of users.
-            """
-            self.SimUser = value
-
-        def set_multicast_ip(self, ip: str):
-            """
-            Set multicast IP address
-
-            Args:
-                ip (str): Valid IPv4 multicast address (
-
-                ip (str): Valid IPv4 multicast address (IP_ADDRESS - IP_ADDRESS): Valid IPv4 multicast address (IP_ADDRESS - 239.255.255.255)
-            Raises:
-                ValueError: If invalid multicast IP format
-            """
-            import ipaddress
-            try:
-                ip_obj = ipaddress.IPv4Address(ip)
-                if not ip_obj.is_multicast:
-                    raise ValueError
-                self.MulticastIp = str(ip_obj)
-            except (ipaddress.AddressValueError, ValueError):
-                raise ValueError(f"Invalid multicast IP: {ip}")
-
-        def set_udp_flood_frame(self, value):
-            """
-            Set the udp flood frame size.
-
-            Args:
-                value (int): The frame size.
-            """
-            self.UDP_FLOOD_FRAME = value
-
-        def set_ddos_delay_start(self, value):
-            """
-            Set the delay start time.
-
-            Args:
-                value (int): The delay start time.
-            """
-            self.DDosDelayStart = value
-
-        def set_ddos_type_traffic_stat(self, value: str):
-            """
-            Set DDoS type traffic statistics flag
-
-            Args:
-                value (str): "yes" to enable statistics, "no" to disable
-
-            Raises:
-                ValueError: If input is not "yes" or "no"
-            """
-            if value not in ("yes", "no"):
-                raise ValueError("Value must be 'yes' or 'no'")
-            self.DDoSTypeTrafficStat = value
-
-        def set_ddos_types(self, attack_types: dict):
-            """
-            Set DDoS attack type distribution
-
-            Args:
-                attack_types (dict): Dictionary of attack types and percentages
-                    Example: {"TEARDROP_UDP_FLOOD": 100}
-
-            Raises:
-                TypeError: If input is not a dictionary
-                ValueError: If values are not integers between 1-100
-            """
-            if not isinstance(attack_types, dict):
-                raise TypeError("Input must be a dictionary")
-
-            for k, v in attack_types.items():
-                if not isinstance(v, int) or not (1 <= v <= 100):
-                    raise ValueError("Values must be integers between 1-100")
-
-            self.DDosTypes = attack_types.copy()
-
-        def to_dict(self):
-            return self.__dict__
-
-    class CaseObject:
-        def __init__(self):
-            pass
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ClientProfiles:
-        def __init__(self):
-            self.SourcePortRange = "10000-65535"
-            self.Actions = {}
-
-        def set_source_port_range(self, SourcePortRange):
-            self.SourcePortRange = SourcePortRange
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ServerProfiles:
-        def __init__(self, role=""):
-            self.ServerPort = "69"
-            if role == "Server":
-                self.DNSServerPort = "53"
-
-        def set_server_port(self, ServerPort):
-            self.ServerPort = ServerPort
-
-        def set_dns_server_port(self, DNSServerPort):
-            self.DNSServerPort = DNSServerPort
-
-        def to_dict(self):
-            return self.__dict__
-
-    def __init__(self, dut_role):
-        self.Loads = UDPSinglePacketAttack.Loads()
-        self.CaseObject = UDPSinglePacketAttack.CaseObject()
-        self.ClientProfiles = UDPSinglePacketAttack.ClientProfiles()
-        self.ServerProfiles = UDPSinglePacketAttack.ServerProfiles(role=dut_role)
-
-    def to_dict(self):
-        return {
-            "Loads": self.Loads.to_dict(),
-            "CaseObject": self.CaseObject.to_dict(),
-            "ClientProfiles": self.ClientProfiles.to_dict(),
-            "ServerProfiles": self.ServerProfiles.to_dict()
-        }
-
-
-class UDPPayloadAttack:
-    class Loads(BaseLoads):
-        def __init__(self):
-            super().__init__()
-            self.SimUser = 1
-            self.DDoSTypeTrafficStat = "no"
-            self.DDosDelayStart = 0
-
-        def set_sim_user(self, value):
-            """
-            Set the number of simulated users.
-
-            Args:
-                value (int): The number of users.
-            """
-            self.SimUser = value
-
-        def set_ddos_delay_start(self, value):
-            """
-            Set the delay start time.
-
-            Args:
-                value (int): The delay start time.
-            """
-            self.DDosDelayStart = value
-
-        def set_ddos_type_traffic_stat(self, value: str):
-            """
-            Set DDoS type traffic statistics flag
-
-            Args:
-                value (str): "yes" to enable statistics, "no" to disable
-
-            Raises:
-                ValueError: If input is not "yes" or "no"
-            """
-            if value not in ("yes", "no"):
-                raise ValueError("Value must be 'yes' or 'no'")
-            self.DDoSTypeTrafficStat = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class CaseObject:
-        def __init__(self):
-            self.PacketPayloadOBJ = "默认handle_over_udp载荷模板"
-
-        def set_packet_payload_obj(self, value):
-            """
-            Set the packet payload object.
-
-            Args:
-                value (str): The payload object.
-            """
-            self.PacketPayloadOBJ = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ClientProfiles:
-        def __init__(self):
-            self.SourcePortRange = "10000-65535"
-            self.ClientCloseMode = "Reset"
-            self.RequestHeader = ["User-Agent: Firefox/41.0"]
-            self.Actions = {}
-
-        def set_source_port_range(self, SourcePortRange):
-            self.SourcePortRange = SourcePortRange
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ServerProfiles:
-        def __init__(self, role=""):
-            self.ServerPort = "2641"
-            self.ResponseHeader = ["Server: nginx/1.9.5", "Content-Type: text/html"]
-            if role == "Server":
-                self.DNSServerPort = "53"
-
-        def set_server_port(self, ServerPort):
-            self.ServerPort = ServerPort
-
-        def set_dns_server_port(self, DNSServerPort):
-            self.DNSServerPort = DNSServerPort
-
-        def to_dict(self):
-            return self.__dict__
-
-    def __init__(self, dut_role):
-        self.Loads = UDPPayloadAttack.Loads()
-        self.CaseObject = UDPPayloadAttack.CaseObject()
-        self.ClientProfiles = UDPPayloadAttack.ClientProfiles()
-        self.ServerProfiles = UDPPayloadAttack.ServerProfiles(role=dut_role)
-
-    def to_dict(self):
-        return {
-            "Loads": self.Loads.to_dict(),
-            "CaseObject": self.CaseObject.to_dict(),
-            "ClientProfiles": self.ClientProfiles.to_dict(),
-            "ServerProfiles": self.ServerProfiles.to_dict()
-        }
-
-
-class SipSinglePacketAttack:
-    class Loads(BaseLoads):
-        def __init__(self):
-            super().__init__()
-            self.SimUser = 256
-            self.FromName = "sip:+460001111100001"
-            self.ToName = "sip:+460001111100002"
-            self.ImsHost = "ims.mnc011.mcc460.3gppnetwork.org"
-            self.DDoSTypeTrafficStat = "no"
-            self.DDosTypes = {
-                "SIP_INVITE_FLOOD": 100
-            }
-
-        def set_sim_user(self, value):
-            """
-            Set the number of simulated users.
-
-            Args:
-                value (int): The number of users.
-            """
-            self.SimUser = value
-
-        def set_ddos_type_traffic_stat(self, value: str):
-            """
-            Set DDoS type traffic statistics flag
-
-            Args:
-                value (str): "yes" to enable statistics, "no" to disable
-
-            Raises:
-                ValueError: If input is not "yes" or "no"
-            """
-            if value not in ("yes", "no"):
-                raise ValueError("Value must be 'yes' or 'no'")
-            self.DDoSTypeTrafficStat = value
-
-        def set_ddos_types(self, attack_types: dict):
-            """
-            Set DDoS attack type distribution
-
-            Args:
-                attack_types (dict): Dictionary of attack types and percentages
-                    Example: {"TEARDROP_UDP_FLOOD": 100}
-
-            Raises:
-                TypeError: If input is not a dictionary
-                ValueError: If values are not integers between 1-100
-            """
-            if not isinstance(attack_types, dict):
-                raise TypeError("Input must be a dictionary")
-
-            for k, v in attack_types.items():
-                if not isinstance(v, int) or not (1 <= v <= 100):
-                    raise ValueError("Values must be integers between 1-100")
-
-            self.DDosTypes = attack_types.copy()
-
-        def set_from_name(self, value):
-            """
-            Set the FromName value.
-
-            Args:
-                value (str): The FromName value.
-            """
-            self.FromName = value
-
-        def set_to_name(self, value):
-            """
-            Set the ToName value.
-
-            Args:
-                value (str): The ToName value.
-            """
-            self.ToName = value
-
-        def set_ims_host(self, value):
-            """
-            Set the ImsHost value.
-
-            Args:
-                value (str): The ImsHost value.
-            """
-            self.ImsHost = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class CaseObject:
-        def __init__(self):
-            pass
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ClientProfiles:
-        def __init__(self):
-            self.SourcePortRange = "10000-65535"
-            self.Actions = {}
-
-        def set_source_port_range(self, SourcePortRange):
-            self.SourcePortRange = SourcePortRange
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ServerProfiles:
-        def __init__(self, role=""):
-            self.ServerPort = "5060"
-            if role == "Server":
-                self.DNSServerPort = "53"
-
-        def set_server_port(self, ServerPort):
-            self.ServerPort = ServerPort
-
-        def set_dns_server_port(self, DNSServerPort):
-            self.DNSServerPort = DNSServerPort
-
-        def to_dict(self):
-            return self.__dict__
-
-    def __init__(self, dut_role):
-        self.Loads = SipSinglePacketAttack.Loads()
-        self.CaseObject = SipSinglePacketAttack.CaseObject()
-        self.ClientProfiles = SipSinglePacketAttack.ClientProfiles()
-        self.ServerProfiles = SipSinglePacketAttack.ServerProfiles(role=dut_role)
-
-    def to_dict(self):
-        return {
-            "Loads": self.Loads.to_dict(),
-            "CaseObject": self.CaseObject.to_dict(),
-            "ClientProfiles": self.ClientProfiles.to_dict(),
-            "ServerProfiles": self.ServerProfiles.to_dict()
-        }
-
-
-class DnsServiceAttack:
-    class Loads(BaseLoads):
-        def __init__(self):
-            super().__init__()
-            self.DDoSTypeTrafficStat = "no"
-            self.DDosDelayStart = 0
-            self.SimUser = 256
-
-        def set_sim_user(self, value):
-            """
-            Set the number of simulated users.
-
-            Args:
-                value (int): The number of users.
-            """
-            self.SimUser = value
-
-        def set_ddos_delay_start(self, value):
-            """
-            Set the delay start time.
-
-            Args:
-                value (int): The delay start time.
-            """
-            self.DDosDelayStart = value
-
-        def set_ddos_type_traffic_stat(self, value: str):
-            """
-            Set DDoS type traffic statistics flag
-
-            Args:
-                value (str): "yes" to enable statistics, "no" to disable
-
-            Raises:
-                ValueError: If input is not "yes" or "no"
-            """
-            if value not in ("yes", "no"):
-                raise ValueError("Value must be 'yes' or 'no'")
-            self.DDoSTypeTrafficStat = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class CaseObject:
-        def __init__(self):
-            self.Dns = "默认DNS服务攻击"
-            self.Dnskey = "默认RSASHA256套件"
-
-        def set_dns(self, value):
-            """
-            Set the Dns value.
-
-            Args:
-                value (str): The Dns value.
-            """
-            self.Dns = value
-
-        def set_dnskey(self, value):
-            """
-            Set the Dnskey value.
-
-            Args:
-                value (str): The Dnskey value.
-            """
-            self.Dnskey = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ClientProfiles:
-        def __init__(self):
-            self.SourcePortRange = "10000-65535"
-            self.Actions = {}
-
-        def set_source_port_range(self, SourcePortRange):
-            self.SourcePortRange = SourcePortRange
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ServerProfiles:
-        def __init__(self, role=""):
-            self.ServerPort = "53"
-            if role == "Server":
-                self.DNSServerPort = "53"
-
-        def set_server_port(self, ServerPort):
-            self.ServerPort = ServerPort
-
-        def set_dns_server_port(self, DNSServerPort):
-            self.DNSServerPort = DNSServerPort
-
-        def to_dict(self):
-            return self.__dict__
-
-    def __init__(self, dut_role):
-        self.Loads = DnsServiceAttack.Loads()
-        self.CaseObject = DnsServiceAttack.CaseObject()
-        self.ClientProfiles = DnsServiceAttack.ClientProfiles()
-        self.ServerProfiles = DnsServiceAttack.ServerProfiles(role=dut_role)
-
-    def to_dict(self):
-        return {
-            "Loads": self.Loads.to_dict(),
-            "CaseObject": self.CaseObject.to_dict(),
-            "ClientProfiles": self.ClientProfiles.to_dict(),
-            "ServerProfiles": self.ServerProfiles.to_dict()
-        }
-
-
-class DnsAmplificationAttack:
-    class Loads(BaseLoads):
-        def __init__(self):
-            super().__init__()
-            self.DDoSTypeTrafficStat = "no"
-            self.DDosDelayStart = 0
-            self.DNSQueryTimeOut = 1000
-
-        def set_dns_query_timeout(self, value):
-            """
-            Set the DNS query timeout.
-
-            Args:
-                value (int): The timeout value.
-            """
-            self.DNSQueryTimeOut = value
-
-        def set_ddos_delay_start(self, value):
-            """
-            Set the delay start time.
-
-            Args:
-                value (int): The delay start time.
-            """
-            self.DDosDelayStart = value
-
-        def set_ddos_type_traffic_stat(self, value: str):
-            """
-            Set DDoS type traffic statistics flag
-
-            Args:
-                value (str): "yes" to enable statistics, "no" to disable
-
-            Raises:
-                ValueError: If input is not "yes" or "no"
-            """
-            if value not in ("yes", "no"):
-                raise ValueError("Value must be 'yes' or 'no'")
-            self.DDoSTypeTrafficStat = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class CaseObject:
-        def __init__(self):
-            self.Dns = "默认DNS服务攻击"
-            self.Dnskey = "默认RSASHA256套件"
-
-        def set_dns(self, value):
-            """
-            Set the Dns value.
-
-            Args:
-                value (str): The Dns value.
-            """
-            self.Dns = value
-
-        def set_dnskey(self, value):
-            """
-            Set the Dnskey value.
-
-            Args:
-                value (str): The Dnskey value.
-            """
-            self.Dnskey = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ClientProfiles:
-        def __init__(self):
-            self.SourcePortRange = "53"
-            self.Actions = {}
-
-        def set_source_port_range(self, SourcePortRange):
-            self.SourcePortRange = SourcePortRange
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ServerProfiles:
-        def __init__(self, role=""):
-            self.ServerPort = "10000-65535"
-            if role == "Server":
-                self.DNSServerPort = "53"
-
-        def set_server_port(self, ServerPort):
-            self.ServerPort = ServerPort
-
-        def set_dns_server_port(self, DNSServerPort):
-            self.DNSServerPort = DNSServerPort
-
-        def to_dict(self):
-            return self.__dict__
-
-    def __init__(self, dut_role):
-        self.Loads = DnsAmplificationAttack.Loads()
-        self.CaseObject = DnsAmplificationAttack.CaseObject()
-        self.ClientProfiles = DnsAmplificationAttack.ClientProfiles()
-        self.ServerProfiles = DnsAmplificationAttack.ServerProfiles(role=dut_role)
-
-    def to_dict(self):
-        return {
-            "Loads": self.Loads.to_dict(),
-            "CaseObject": self.CaseObject.to_dict(),
-            "ClientProfiles": self.ClientProfiles.to_dict(),
-            "ServerProfiles": self.ServerProfiles.to_dict()
-        }
-
-
-class SSDPAttack:
-    class Loads(BaseLoads):
-        def __init__(self):
-            super().__init__()
-            self.SimUser = 256
-            self.DDoSTypeTrafficStat = "no"
-            self.DDosDelayStart = 0
-            self.AttackStute = "Multi"
-            self.SsdpMulticastStormIp = "239.255.255.250"
-            self.SsdpMulticastStormIpIpv6 = "FF02::C"
-            self.SsdpMultiPort = "1900"
-            self.DNSQueryTimeOut = 1000
-            self.SSDPAmpDDos = "no"
-
-        def set_ddos_delay_start(self, value):
-            """
-            Set the delay start time.
-
-            Args:
-                value (int): The delay start time.
-            """
-            self.DDosDelayStart = value
-
-        def set_sim_user(self, value):
-            """
-            Set the number of simulated users.
-
-            Args:
-                value (int): The number of users.
-            """
-            self.SimUser = value
-
-        def set_ddos_type_traffic_stat(self, value: str):
-            """
-            Set DDoS type traffic statistics flag
-
-            Args:
-                value (str): "yes" to enable statistics, "no" to disable
-
-            Raises:
-                ValueError: If input is not "yes" or "no"
-            """
-            if value not in ("yes", "no"):
-                raise ValueError("Value must be 'yes' or 'no'")
-            self.DDoSTypeTrafficStat = value
-
-        def set_attack_stute(self, value: str):
-            """
-            Set DDoS type traffic statistics flag
-
-            Args:
-                value (str): "yes" to enable statistics, "no" to disable
-
-            Raises:
-                ValueError: If input is not "yes" or "no"
-            """
-            if value not in ("Multi", "Single"):
-                raise ValueError("Value must be 'Multi' or 'Single'")
-            self.AttackStute = value
-
-        def set_ssdp_multicast_storm_ip(self, value: str):
-            """
-            Set the SSDP multicast storm IP address.
-
-            Args:
-                value (str): The IP address.
-            """
-            self.SsdpMulticastStormIp = value
-
-        def set_ssdp_multicast_storm_ip_ipv6(self, value: str):
-            """
-            Set the SSDP multicast storm IP address (IPv6).
-
-            Args:
-                value (str): The IP address.
-            """
-            self.SsdpMulticastStormIpIpv6 = value
-
-        def set_ssdp_multi_port(self, value: str):
-            """
-            Set the SSDP multicast storm port.
-
-            Args:
-                value (str): The port number.
-            """
-            self.SsdpMultiPort = value
-
-        def set_dns_query_timeout(self, value):
-            """
-            Set the DNS query timeout.
-
-            Args:
-                value (int): The timeout value.
-            """
-            self.DNSQueryTimeOut = value
-
-        def set_ssdp_amp_ddos(self, value: str):
-            """
-            Set the SSDP amplification DDoS flag.
-
-            Args:
-                value (str): "yes" to enable, "no" to disable.
-
-            Raises:
-                ValueError: If input is not "yes" or "no".
-            """
-            if value not in ("yes", "no"):
-                raise ValueError("Value must be 'yes' or 'no'")
-            self.SSDPAmpDDos = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class CaseObject:
-        def __init__(self):
-            pass
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ClientProfiles:
-        def __init__(self):
-            self.SourcePortRange = "10000-65535"
-            self.RandomLength = 8
-            self.Actions = {}
-
-        def set_source_port_range(self, SourcePortRange):
-            self.SourcePortRange = SourcePortRange
-
-        def set_random_length(self, RandomLength):
-            self.RandomLength = RandomLength
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ServerProfiles:
-        def __init__(self, role=""):
-            self.ServerPort = "1900"
-            if role == "Server":
-                self.DNSServerPort = "53"
-
-        def set_server_port(self, ServerPort):
-            self.ServerPort = ServerPort
-
-        def set_dns_server_port(self, DNSServerPort):
-            self.DNSServerPort = DNSServerPort
-
-        def to_dict(self):
-            return self.__dict__
-
-    def __init__(self, dut_role):
-        self.Loads = SSDPAttack.Loads()
-        self.CaseObject = SSDPAttack.CaseObject()
-        self.ClientProfiles = SSDPAttack.ClientProfiles()
-        self.ServerProfiles = SSDPAttack.ServerProfiles(role=dut_role)
-
-    def to_dict(self):
-        return {
-            "Loads": self.Loads.to_dict(),
-            "CaseObject": self.CaseObject.to_dict(),
-            "ClientProfiles": self.ClientProfiles.to_dict(),
-            "ServerProfiles": self.ServerProfiles.to_dict()
-        }
-
-
-class NtpAmplificationAttack:
-    class Loads(BaseLoads):
-        def __init__(self):
-            super().__init__()
-            self.SimUser = 256
-            self.DDoSTypeTrafficStat = "no"
-            self.DDosDelayStart = 0
-            self.NTPMonlistTimeout = "500"
-            self.NTPAmpDDos = "no"
-
-        def set_ntp_amp_ddos(self, value: str):
-            """
-            Set the NTP amplification DDoS flag.
-
-            Args:
-                value (str): "yes" to enable, "no" to disable.
-
-            Raises:
-                ValueError: If input is not "yes" or "no".
-            """
-            if value not in ("yes", "no"):
-                raise ValueError("Value must be 'yes' or 'no'")
-            self.NTPAmpDDos = value
-
-        def set_ddos_delay_start(self, value):
-            """
-            Set the delay start time.
-
-            Args:
-                value (int): The delay start time.
-            """
-            self.DDosDelayStart = value
-
-        def set_sim_user(self, value):
-            """
-            Set the number of simulated users.
-
-            Args:
-                value (int): The number of users.
-            """
-            self.SimUser = value
-
-        def set_ddos_type_traffic_stat(self, value: str):
-            """
-            Set DDoS type traffic statistics flag
-
-            Args:
-                value (str): "yes" to enable statistics, "no" to disable
-
-            Raises:
-                ValueError: If input is not "yes" or "no"
-            """
-            if value not in ("yes", "no"):
-                raise ValueError("Value must be 'yes' or 'no'")
-            self.DDoSTypeTrafficStat = value
-
-        def set_ntp_monlist_timeout(self, value):
-            """
-            Set the NTP monlist timeout.
-
-            Args:
-                value (int): The timeout value.
-            """
-            self.NTPMonlistTimeout = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class CaseObject:
-        def __init__(self):
-            pass
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ClientProfiles:
-        def __init__(self):
-            self.SourcePortRange = "10000-65535"
-            self.RandomLength = 8
-            self.Actions = {}
-
-        def set_source_port_range(self, SourcePortRange):
-            self.SourcePortRange = SourcePortRange
-
-        def set_random_length(self, RandomLength):
-            self.RandomLength = RandomLength
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ServerProfiles:
-        def __init__(self, role=""):
-            self.ServerPort = "123"
-            if role == "Server":
-                self.DNSServerPort = "53"
-
-        def set_server_port(self, ServerPort):
-            self.ServerPort = ServerPort
-
-        def set_dns_server_port(self, DNSServerPort):
-            self.DNSServerPort = DNSServerPort
-
-        def to_dict(self):
-            return self.__dict__
-
-    def __init__(self, dut_role):
-        self.Loads = NtpAmplificationAttack.Loads()
-        self.CaseObject = NtpAmplificationAttack.CaseObject()
-        self.ClientProfiles = NtpAmplificationAttack.ClientProfiles()
-        self.ServerProfiles = NtpAmplificationAttack.ServerProfiles(role=dut_role)
-
-    def to_dict(self):
-        return {
-            "Loads": self.Loads.to_dict(),
-            "CaseObject": self.CaseObject.to_dict(),
-            "ClientProfiles": self.ClientProfiles.to_dict(),
-            "ServerProfiles": self.ServerProfiles.to_dict()
-        }
-
-
-class MemcachedAmplificationAttack:
-    class Loads(BaseLoads):
-        def __init__(self):
-            super().__init__()
-            self.SimUser = 256
-            self.DDoSTypeTrafficStat = "no"
-            self.DDosDelayStart = 0
-            self.IPv4AttackDstIpAddr = "17.1.2.2"
-            self.IPv6AttackDstIpAddr = "3ffe:0:17:2::1:3"
-            self.MemcachedCacheSize = 9000
-            self.MemAmpDDos = "no"
-
-        def set_sim_user(self, value):
-            self.SimUser = value
-
-        def set_ddos_type_traffic_stat(self, value):
-            self.DDoSTypeTrafficStat = value
-
-        def set_ddos_delay_start(self, value):
-            self.DDosDelayStart = value
-
-        def set_ipv4_attack_dst_ip_addr(self, value):
-            self.IPv4AttackDstIpAddr = value
-
-        def set_ipv6_attack_dst_ip_addr(self, value):
-            self.IPv6AttackDstIpAddr = value
-
-        def set_memcached_cache_size(self, value):
-            self.MemcachedCacheSize = value
-
-        def set_mem_amp_ddos(self, value):
-            self.MemAmpDDos = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class CaseObject:
-        def __init__(self):
-            pass
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ClientProfiles:
-        def __init__(self):
-            self.SourcePortRange = "10000-65535"
-            self.RandomLength = 8
-            self.Actions = {}
-
-        def set_source_port_range(self, value):
-            self.SourcePortRange = value
-
-        def set_random_length(self, value):
-            self.RandomLength = value
-
-        def set_actions(self, value):
-            self.Actions = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ServerProfiles:
-        def __init__(self, role=""):
-            self.ServerPort = "11211"
-            if role == "Server":
-                self.DNSServerPort = "53"
-
-        def set_server_port(self, value):
-            self.ServerPort = value
-
-        def set_dns_server_port(self, value):
-            self.DNSServerPort = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    def __init__(self, dut_role):
-        self.Loads = MemcachedAmplificationAttack.Loads()
-        self.CaseObject = MemcachedAmplificationAttack.CaseObject()
-        self.ClientProfiles = MemcachedAmplificationAttack.ClientProfiles()
-        self.ServerProfiles = MemcachedAmplificationAttack.ServerProfiles(role=dut_role)
-
-    def to_dict(self):
-        return {
-            "Loads": self.Loads.to_dict(),
-            "CaseObject": self.CaseObject.to_dict(),
-            "ClientProfiles": self.ClientProfiles.to_dict(),
-            "ServerProfiles": self.ServerProfiles.to_dict()
-        }
-
-
-class UnknownProtocolSinglePacketAttack:
-    class Loads(BaseLoads):
-        def __init__(self):
-            super().__init__()
-            self.SimUser = 256
-            self.DDoSTypeTrafficStat = "no"
-            self.DDosTypes = {
-                "UNKNOWN_PROTOCOL_ATTACK": 100
-            }
-            self.UNKNOWN_PROTOCOL_ATTACK_FRAME = 1500
-
-        def set_sim_user(self, value):
-            self.SimUser = value
-
-        def set_ddos_type_traffic_stat(self, value):
-            self.DDoSTypeTrafficStat = value
-
-        def set_ddos_types(self, value):
-            self.DDosTypes = value
-
-        def set_unknown_protocol_attack_frame(self, value):
-            self.UNKNOWN_PROTOCOL_ATTACK_FRAME = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class CaseObject:
-        def __init__(self):
-            pass
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ClientProfiles:
-        def __init__(self):
-            pass
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ServerProfiles:
-        def __init__(self):
-            pass
-
-        def to_dict(self):
-            return self.__dict__
-
-    def __init__(self):
-        self.Loads = UnknownProtocolSinglePacketAttack.Loads()
-        self.CaseObject = UnknownProtocolSinglePacketAttack.CaseObject()
-        self.ClientProfiles = UnknownProtocolSinglePacketAttack.ClientProfiles()
-        self.ServerProfiles = UnknownProtocolSinglePacketAttack.ServerProfiles()
-
-    def to_dict(self):
-        return {
-            "Loads": self.Loads.to_dict(),
-            "CaseObject": self.CaseObject.to_dict(),
-            "ClientProfiles": self.ClientProfiles.to_dict(),
-            "ServerProfiles": self.ServerProfiles.to_dict()
-        }
-
-
-# DDOS type
-class HttpRequestFlood:
-    class Loads(BaseLoads):
-        def __init__(self):
-            super().__init__()
-            self.SimUser = 256
-            self.HTTPAttackRecord = 0
-            self.DDosDelayStart = 0
-            self.HttpTranscationStatistics = "no"
-            self.DDosModel = "no"
-            self.HttpRequestTimeoutSecond = 5000
-            self.HttpRequestHashSize = 512
-            self.HttpMaxRequest = 0
-
-        def set_sim_user(self, value):
-            self.SimUser = value
-
-        def set_http_attack_record(self, value):
-            self.HTTPAttackRecord = value
-
-        def set_ddos_delay_start(self, value):
-            self.DDosDelayStart = value
-
-        def set_http_transcation_statistics(self, value):
-            self.HttpTranscationStatistics = value
-
-        def set_ddos_model(self, value):
-            self.DDosModel = value
-
-        def set_http_request_timeout_second(self, value):
-            self.HttpRequestTimeoutSecond = value
-
-        def set_http_request_hash_size(self, value):
-            self.HttpRequestHashSize = value
-
-        def set_http_max_request(self, value):
-            self.HttpMaxRequest = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class CaseObject(BaseCaseObject):
-        def __init__(self, test_type):
-            super().__init__(test_type)
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ClientProfiles:
-        def __init__(self):
-            self.SourcePortRange = "10000-65535"
-            self.Actions = {}
-            self.RequestHeader = ["User-Agent: Firefox/41.0"]
-            self.ClientCloseMode = "Reset"
-
-        def set_source_port_range(self, value):
-            self.SourcePortRange = value
-
-        def set_actions(self, value):
-            self.Actions = value
-
-        def set_request_header(self, value):
-            self.RequestHeader = value
-
-        def set_client_close_mode(self, value):
-            self.ClientCloseMode = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ServerProfiles:
-        def __init__(self, role=""):
-            self.ServerPort = "80"
-            self.ResponseHeader = [
-                "Server: nginx/1.9.5",
-                "Content-Type: text/html"
-            ]
-            if role == "Server":
-                self.DNSServerPort = "53"
-
-        def set_server_port(self, value):
-            self.ServerPort = value
-
-        def set_response_header(self, value):
-            self.ResponseHeader = value
-
-        def set_dns_server_port(self, value):
-            self.DNSServerPort = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    def __init__(self, dut_role, test_type):
-        self.Loads = HttpRequestFlood.Loads()
-        self.CaseObject = HttpRequestFlood.CaseObject(test_type)
-        self.ClientProfiles = HttpRequestFlood.ClientProfiles()
-        self.ServerProfiles = HttpRequestFlood.ServerProfiles(role=dut_role)
-
-    def to_dict(self):
-        return {
-            "Loads": self.Loads.to_dict(),
-            "CaseObject": self.CaseObject.to_dict(),
-            "ClientProfiles": self.ClientProfiles.to_dict(),
-            "ServerProfiles": self.ServerProfiles.to_dict()
-        }
-
-
-class HttpsFlood:
-    class Loads(BaseLoads):
-        def __init__(self):
-            super().__init__()
-            self.DDosDelayStart = 0
-            self.SimUser = 256
-
-        def set_ddos_delay_start(self, value):
-            self.DDosDelayStart = value
-
-        def set_sim_user(self, value):
-            self.SimUser = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class CaseObject:
-        def __init__(self):
-            self.SSLServerCertConfig = "默认RSA算法1024位私钥带密码证书套件"
-
-        def set_ssl_server_cert_config(self, value):
-            self.SSLServerCertConfig = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ClientProfiles:
-        def __init__(self, role=""):
-            self.SourcePortRange = "10000-65535"
-            self.SSLVersions = "TLSv1.2"
-            self.SSLCiphers = ["AES128-SHA"]
-            self.Actions = {}
-            self.ClientCloseMode = "Reset"
-            self.RequestHeader = ["User-Agent: Firefox/41.0"]
-
-            if role == "Client":
-                self.SSLCertVerify = "none"
-                self.SSLVerifyErrorAction = 0
-
-        def set_source_port_range(self, value):
-            self.SourcePortRange = value
-
-        def set_ssl_versions(self, value):
-            self.SSLVersions = value
-
-        def set_ssl_ciphers(self, value):
-            self.SSLCiphers = value
-
-        def set_actions(self, value):
-            self.Actions = value
-
-        def set_client_close_mode(self, value):
-            self.ClientCloseMode = value
-
-        def set_request_header(self, value):
-            self.RequestHeader = value
-
-        def set_ssl_cert_verify(self, value):
-            self.SSLCertVerify = value
-
-        def set_ssl_verify_error_action(self, value):
-            self.SSLVerifyErrorAction = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ServerProfiles:
-        def __init__(self, role=""):
-            self.ServerPort = "443"
-            self.ResponseHeader = [
-                "Server: nginx/1.9.10",
-                "Content-Type: text/html"
-            ]
-            self.ServerCertificate = "1024"
-
-            if role == "Server":
-                self.DNSServerPort = "53"
-
-            if role == "Client":
-                self.SSLCertVerify = "none"
-                self.SSLVerifyErrorAction = 0
-                self.SSLVersions = "NetiGMv1.1"
-
-        def set_server_port(self, value):
-            self.ServerPort = value
-
-        def set_response_header(self, value):
-            self.ResponseHeader = value
-
-        def set_server_certificate(self, value):
-            self.ServerCertificate = value
-
-        def set_dns_server_port(self, value):
-            self.DNSServerPort = value
-
-        def set_ssl_cert_verify(self, value):
-            self.SSLCertVerify = value
-
-        def set_ssl_verify_error_action(self, value):
-            self.SSLVerifyErrorAction = value
-
-        def set_ssl_versions(self, value):
-            self.SSLVersions = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    def __init__(self, dut_role):
-        self.Loads = HttpsFlood.Loads()
-        self.CaseObject = HttpsFlood.CaseObject()
-        self.ClientProfiles = HttpsFlood.ClientProfiles(role=dut_role)
-        self.ServerProfiles = HttpsFlood.ServerProfiles(role=dut_role)
-
-    def to_dict(self):
-        return {
-            "Loads": self.Loads.to_dict(),
-            "CaseObject": self.CaseObject.to_dict(),
-            "ClientProfiles": self.ClientProfiles.to_dict(),
-            "ServerProfiles": self.ServerProfiles.to_dict()
-        }
-
-
-class HTTPSlowRequestFlood:
-    class Loads(BaseLoads):
-        def __init__(self):
-            super().__init__()
-            self.SimUser = 256
-            self.DDosDelayStart = 0
-            self.HTTPUnusualHeader = "yes"
-            self.SlowReqContentLength = "0"
-            self.HttpRequestTimeoutSecond = 10000
-            self.RequestFloodSendCount = 1
-            self.SegmentSendIntervalUsecond = 0
-            self.HttpRequestHashSize = 512
-
-        def set_sim_user(self, value):
-            self.SimUser = value
-
-        def set_ddos_delay_start(self, value):
-            self.DDosDelayStart = value
-
-        def set_http_unusual_header(self, value):
-            self.HTTPUnusualHeader = value
-
-        def set_slow_req_content_length(self, value):
-            self.SlowReqContentLength = value
-
-        def set_http_request_timeout_second(self, value):
-            self.HttpRequestTimeoutSecond = value
-
-        def set_request_flood_send_count(self, value):
-            self.RequestFloodSendCount = value
-
-        def set_segment_send_interval_usecond(self, value):
-            self.SegmentSendIntervalUsecond = value
-
-        def set_http_request_hash_size(self, value):
-            self.HttpRequestHashSize = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class CaseObject:
-        def __init__(self):
-            self.Variate = "默认攻击Payload变量列表"
-            self.WebTestProjectName = "默认Web攻击测试项目"
-            self.FileObject = "默认SlowGet网页请求"
-
-        def set_variate(self, value):
-            self.Variate = value
-
-        def set_web_test_project_name(self, value):
-            self.WebTestProjectName = value
-
-        def set_file_object(self, value):
-            self.FileObject = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ClientProfiles:
-        def __init__(self):
-            self.SourcePortRange = "10000-65535"
-            self.Actions = {}
-            self.RequestHeader = ["User-Agent: Firefox/41.0"]
-            self.ClientCloseMode = "Reset"
-
-        def set_source_port_range(self, value):
-            self.SourcePortRange = value
-
-        def set_actions(self, value):
-            self.Actions = value
-
-        def set_request_header(self, value):
-            self.RequestHeader = value
-
-        def set_client_close_mode(self, value):
-            self.ClientCloseMode = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ServerProfiles:
-        def __init__(self, role=""):
-            self.ServerPort = "80"
-            self.ResponseHeader = [
-                "Server: nginx/1.9.5",
-                "Content-Type: text/html"
-            ]
-
-            if role == "Gateway":
-                self.ServerCloseMode = "3Way_Fin"
-
-            if role == "Server":
-                self.DNSServerPort = "53"
-
-            if role == "Client":
-                self.ServerCloseMode = "3Way_Fin"
-                self.HttpProxyProtocolEn = "no"
-
-        def set_server_port(self, value):
-            self.ServerPort = value
-
-        def set_server_close_mode(self, value):
-            self.ServerCloseMode = value
-
-        def set_response_header(self, value):
-            self.ResponseHeader = value
-
-        def set_dns_server_port(self, value):
-            self.DNSServerPort = value
-
-        def set_http_proxy_protocol_en(self, value):
-            self.HttpProxyProtocolEn = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    def __init__(self, dut_role):
-        self.Loads = HTTPSlowRequestFlood.Loads()
-        self.CaseObject = HTTPSlowRequestFlood.CaseObject()
-        self.ClientProfiles = HTTPSlowRequestFlood.ClientProfiles()
-        self.ServerProfiles = HTTPSlowRequestFlood.ServerProfiles(role=dut_role)
-
-    def to_dict(self):
-        return {
-            "Loads": self.Loads.to_dict(),
-            "CaseObject": self.CaseObject.to_dict(),
-            "ClientProfiles": self.ClientProfiles.to_dict(),
-            "ServerProfiles": self.ServerProfiles.to_dict()
-        }
-
-
-class MultiTypeFlood:
-    class Loads(BaseLoads):
-        def __init__(self):
-            super().__init__()
-            self.SimUser = 256
-
-        def set_sim_user(self, value):
-            self.SimUser = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class CaseObject:
-        def __init__(self):
-            pass
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ClientProfiles:
-        def __init__(self):
-            self.SourcePortRange = "10000-65535"
-            self.Actions = {}
-
-        def set_source_port_range(self, value):
-            self.SourcePortRange = value
-
-        def set_actions(self, value):
-            self.Actions = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ServerProfiles:
-        def __init__(self, role=""):
-            self.ServerPort = "80"
-
-            if role == "Server":
-                self.DNSServerPort = "53"
-
-        def set_server_port(self, value):
-            self.ServerPort = value
-
-        def set_dns_server_port(self, value):
-            self.DNSServerPort = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    def __init__(self, dut_role):
-        self.Loads = MultiTypeFlood.Loads()
-        self.CaseObject = MultiTypeFlood.CaseObject()
-        self.ClientProfiles = MultiTypeFlood.ClientProfiles()
-        self.ServerProfiles = MultiTypeFlood.ServerProfiles(role=dut_role)
-
-    def to_dict(self):
-        return {
-            "Loads": self.Loads.to_dict(),
-            "CaseObject": self.CaseObject.to_dict(),
-            "ClientProfiles": self.ClientProfiles.to_dict(),
-            "ServerProfiles": self.ServerProfiles.to_dict()
-        }
-
-
-class TcpSessionFlood:
-    class Loads(BaseLoads):
-        def __init__(self):
-            super().__init__()
-            self.SimUser = 256
-
-        def set_sim_user(self, value):
-            self.SimUser = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class CaseObject:
-        def __init__(self):
-            self.PacketPayloadOBJ = "默认handle_over_tcp载荷模板"
-
-        def set_packet_payload_obj(self, value):
-            self.PacketPayloadOBJ = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ClientProfiles:
-        def __init__(self):
-            self.SourcePortRange = "10000-65535"
-            self.Actions = {}
-            self.RequestHeader = ["User-Agent: Firefox/41.0"]
-            self.ClientCloseMode = "Reset"
-
-        def set_source_port_range(self, value):
-            self.SourcePortRange = value
-
-        def set_actions(self, value):
-            self.Actions = value
-
-        def set_request_header(self, value):
-            self.RequestHeader = value
-
-        def set_client_close_mode(self, value):
-            self.ClientCloseMode = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ServerProfiles:
-        def __init__(self, role=""):
-            self.ServerPort = "80"
-            self.ResponseHeader = [
-                "Server: nginx/1.9.5",
-                "Content-Type: text/html"
-            ]
-
-            if role == "Server":
-                self.DNSServerPort = "53"
-
-        def set_server_port(self, value):
-            self.ServerPort = value
-
-        def set_response_header(self, value):
-            self.ResponseHeader = value
-
-        def set_dns_server_port(self, value):
-            self.DNSServerPort = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    def __init__(self, dut_role):
-        self.Loads = TcpSessionFlood.Loads()
-        self.CaseObject = TcpSessionFlood.CaseObject()
-        self.ClientProfiles = TcpSessionFlood.ClientProfiles()
-        self.ServerProfiles = TcpSessionFlood.ServerProfiles(role=dut_role)
-
-    def to_dict(self):
-        return {
-            "Loads": self.Loads.to_dict(),
-            "CaseObject": self.CaseObject.to_dict(),
-            "ClientProfiles": self.ClientProfiles.to_dict(),
-            "ServerProfiles": self.ServerProfiles.to_dict()
-        }
-
-
-class TCPWinnuke:
-    class Loads(BaseLoads):
-        def __init__(self):
-            super().__init__()
-            self.SimUser = 256
-
-        def set_sim_user(self, value):
-            self.SimUser = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class CaseObject:
-        def __init__(self):
-            pass
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ClientProfiles:
-        def __init__(self):
-            self.SourcePortRange = "10000-65535"
-            self.Actions = {}
-
-        def set_source_port_range(self, value):
-            self.SourcePortRange = value
-
-        def set_actions(self, value):
-            self.Actions = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ServerProfiles:
-        def __init__(self, role=""):
-            self.ServerPort = "139"
-            if role == "Server":
-                self.DNSServerPort = "53"
-
-        def set_server_port(self, value):
-            self.ServerPort = value
-
-        def set_dns_server_port(self, value):
-            self.DNSServerPort = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    def __init__(self, dut_role):
-        self.Loads = TCPWinnuke.Loads()
-        self.CaseObject = TCPWinnuke.CaseObject()
-        self.ClientProfiles = TCPWinnuke.ClientProfiles()
-        self.ServerProfiles = TCPWinnuke.ServerProfiles(role=dut_role)
-
-    def to_dict(self):
-        return {
-            "Loads": self.Loads.to_dict(),
-            "CaseObject": self.CaseObject.to_dict(),
-            "ClientProfiles": self.ClientProfiles.to_dict(),
-            "ServerProfiles": self.ServerProfiles.to_dict()
-        }
-
-
-class HttpMultipleRequest:
-    class Loads(BaseLoads):
-        def __init__(self):
-            super().__init__()
-            self.SimUser = 256
-
-        def set_sim_user(self, value):
-            self.SimUser = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class CaseObject(BaseCaseObject):
-        def __init__(self, test_type):
-            super().__init__(test_type)
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ClientProfiles:
-        def __init__(self):
-            self.SourcePortRange = "10000-65535"
-            self.Actions = {}
-            self.RequestHeader = ["User-Agent: Firefox/41.0"]
-            self.ClientCloseMode = "Reset"
-
-        def set_source_port_range(self, value):
-            self.SourcePortRange = value
-
-        def set_actions(self, value):
-            self.Actions = value
-
-        def set_request_header(self, value):
-            self.RequestHeader = value
-
-        def set_client_close_mode(self, value):
-            self.ClientCloseMode = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ServerProfiles:
-        def __init__(self, role=""):
-            self.ServerPort = "80"
-            self.ResponseHeader = [
-                "Server: nginx/1.9.5",
-                "Content-Type: text/html"
-            ]
-
-            if role == "Server":
-                self.DNSServerPort = "53"
-
-        def set_server_port(self, value):
-            self.ServerPort = value
-
-        def set_response_header(self, value):
-            self.ResponseHeader = value
-
-        def set_dns_server_port(self, value):
-            self.DNSServerPort = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    def __init__(self, dut_role, test_type):
-        self.Loads = HttpMultipleRequest.Loads()
-        self.CaseObject = HttpMultipleRequest.CaseObject(test_type)
-        self.ClientProfiles = HttpMultipleRequest.ClientProfiles()
-        self.ServerProfiles = HttpMultipleRequest.ServerProfiles(role=dut_role)
-
-    def to_dict(self):
-        return {
-            "Loads": self.Loads.to_dict(),
-            "CaseObject": self.CaseObject.to_dict(),
-            "ClientProfiles": self.ClientProfiles.to_dict(),
-            "ServerProfiles": self.ServerProfiles.to_dict()
-        }
-
-
-class HttpRecursionRequest:
-    class Loads(BaseLoads):
-        def __init__(self):
-            super().__init__()
-            self.SimUser = 256
-
-        def set_sim_user(self, value):
-            self.SimUser = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class CaseObject(BaseCaseObject):
-        def __init__(self, test_type):
-            super().__init__(test_type)
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ClientProfiles:
-        def __init__(self):
-            self.SourcePortRange = "10000-65535"
-            self.Actions = {}
-            self.RequestHeader = ["User-Agent: Firefox/41.0"]
-            self.ClientCloseMode = "Reset"
-
-        def set_source_port_range(self, value):
-            self.SourcePortRange = value
-
-        def set_actions(self, value):
-            self.Actions = value
-
-        def set_request_header(self, value):
-            self.RequestHeader = value
-
-        def set_client_close_mode(self, value):
-            self.ClientCloseMode = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ServerProfiles:
-        def __init__(self, role=""):
-            self.ServerPort = "80"
-            self.ResponseHeader = [
-                "Server: nginx/1.9.5",
-                "Content-Type: text/html"
-            ]
-
-            if role == "Server":
-                self.DNSServerPort = "53"
-
-        def set_server_port(self, value):
-            self.ServerPort = value
-
-        def set_response_header(self, value):
-            self.ResponseHeader = value
-
-        def set_dns_server_port(self, value):
-            self.DNSServerPort = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    def __init__(self, dut_role, test_type):
-        self.Loads = HttpRecursionRequest.Loads()
-        self.CaseObject = HttpRecursionRequest.CaseObject(test_type)
-        self.ClientProfiles = HttpRecursionRequest.ClientProfiles()
-        self.ServerProfiles = HttpRecursionRequest.ServerProfiles(role=dut_role)
-
-    def to_dict(self):
-        return {
-            "Loads": self.Loads.to_dict(),
-            "CaseObject": self.CaseObject.to_dict(),
-            "ClientProfiles": self.ClientProfiles.to_dict(),
-            "ServerProfiles": self.ServerProfiles.to_dict()
-        }
-
-
-class HttpConcurrentSlowRead:
-    class Loads(BaseLoads):
-        def __init__(self):
-            super().__init__()
-            self.SimUser = 256
-            self.HttpRequestTimeoutSecond = 5000
-            self.ConcurrentConnection = 8000000
-
-        def set_sim_user(self, value):
-            self.SimUser = value
-
-        def set_http_request_timeout_second(self, value):
-            self.HttpRequestTimeoutSecond = value
-
-        def set_concurrent_connection(self, value):
-            self.ConcurrentConnection = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class CaseObject(BaseCaseObject):
-        def __init__(self, test_type):
-            super().__init__(test_type)
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ClientProfiles:
-        def __init__(self):
-            self.SourcePortRange = "10000-65535"
-            self.Actions = {}
-            self.RequestHeader = ["User-Agent: Firefox/41.0"]
-            self.ClientCloseMode = "Reset"
-
-        def set_source_port_range(self, value):
-            self.SourcePortRange = value
-
-        def set_actions(self, value):
-            self.Actions = value
-
-        def set_request_header(self, value):
-            self.RequestHeader = value
-
-        def set_client_close_mode(self, value):
-            self.ClientCloseMode = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ServerProfiles:
-        def __init__(self, role=""):
-            self.ServerPort = "80"
-            self.ResponseHeader = [
-                "Server: nginx/1.9.5",
-                "Content-Type: text/html"
-            ]
-
-            if role == "Gateway":
-                self.ServerCloseMode = "3Way_Fin"
-                self.HttpReplyDelay = "0"
-
-            if role == "Server":
-                self.DNSServerPort = "53"
-
-            if role == "Client":
-                self.ServerCloseMode = "3Way_Fin"
-                self.HttpReplyDelay = "0"
-
-        def set_server_port(self, value):
-            self.ServerPort = value
-
-        def set_server_close_mode(self, value):
-            self.ServerCloseMode = value
-
-        def set_http_reply_delay(self, value):
-            self.HttpReplyDelay = value
-
-        def set_response_header(self, value):
-            self.ResponseHeader = value
-
-        def set_dns_server_port(self, value):
-            self.DNSServerPort = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    def __init__(self, dut_role, test_type):
-        self.Loads = HttpConcurrentSlowRead.Loads()
-        self.CaseObject = HttpConcurrentSlowRead.CaseObject(test_type)
-        self.ClientProfiles = HttpConcurrentSlowRead.ClientProfiles()
-        self.ServerProfiles = HttpConcurrentSlowRead.ServerProfiles(role=dut_role)
-
-    def to_dict(self):
-        return {
-            "Loads": self.Loads.to_dict(),
-            "CaseObject": self.CaseObject.to_dict(),
-            "ClientProfiles": self.ClientProfiles.to_dict(),
-            "ServerProfiles": self.ServerProfiles.to_dict()
-        }
-
-
-class HttpConcurrentSlowRequest:
-    class Loads(BaseLoads):
-        def __init__(self):
-            super().__init__()
-            self.SimUser = 256
-            self.HttpRequestTimeoutSecond = 5000
-            self.ConcurrentConnection = 8000000
-            self.ReConnCount = 60
-
-        def set_sim_user(self, value):
-            self.SimUser = value
-
-        def set_http_request_timeout_second(self, value):
-            self.HttpRequestTimeoutSecond = value
-
-        def set_concurrent_connection(self, value):
-            self.ConcurrentConnection = value
-
-        def set_re_conn_count(self, value):
-            self.ReConnCount = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class CaseObject(BaseCaseObject):
-        def __init__(self, test_type):
-            super().__init__(test_type)
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ClientProfiles:
-        def __init__(self):
-            self.SourcePortRange = "10000-65535"
-            self.Actions = {}
-            self.RequestHeader = ["User-Agent: Firefox/41.0"]
-            self.ClientCloseMode = "Reset"
-
-        def set_source_port_range(self, value):
-            self.SourcePortRange = value
-
-        def set_actions(self, value):
-            self.Actions = value
-
-        def set_request_header(self, value):
-            self.RequestHeader = value
-
-        def set_client_close_mode(self, value):
-            self.ClientCloseMode = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ServerProfiles:
-        def __init__(self, role=""):
-            self.ServerPort = "80"
-            self.ResponseHeader = [
-                "Server: nginx/1.9.5",
-                "Content-Type: text/html"
-            ]
-
-            if role == "Gateway":
-                self.ServerCloseMode = "3Way_Fin"
-                self.HttpReplyDelay = "0"
-
-            if role == "Server":
-                self.DNSServerPort = "53"
-
-            if role == "Client":
-                self.ServerCloseMode = "3Way_Fin"
-                self.HttpReplyDelay = "0"
-
-        def set_server_port(self, value):
-            self.ServerPort = value
-
-        def set_server_close_mode(self, value):
-            self.ServerCloseMode = value
-
-        def set_http_reply_delay(self, value):
-            self.HttpReplyDelay = value
-
-        def set_response_header(self, value):
-            self.ResponseHeader = value
-
-        def set_dns_server_port(self, value):
-            self.DNSServerPort = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    def __init__(self, dut_role, test_type):
-        self.Loads = HttpConcurrentSlowRequest.Loads()
-        self.CaseObject = HttpConcurrentSlowRequest.CaseObject(test_type)
-        self.ClientProfiles = HttpConcurrentSlowRequest.ClientProfiles()
-        self.ServerProfiles = HttpConcurrentSlowRequest.ServerProfiles(role=dut_role)
-
-    def to_dict(self):
-        return {
-            "Loads": self.Loads.to_dict(),
-            "CaseObject": self.CaseObject.to_dict(),
-            "ClientProfiles": self.ClientProfiles.to_dict(),
-            "ServerProfiles": self.ServerProfiles.to_dict()
-        }
-
-
-class UnicastStorm:
-    class Loads(BaseLoads):
-        def __init__(self):
-            super().__init__()
-            self.SimUser = 256
-            self.FrameSizePolicy = {
-                "SizeChangeMode": "Fixed",
-                "FrameSizeFormat": 64
-            }
-            self.PingEnable = "no"
-            self.PingInterval = 5
-
-        def set_sim_user(self, value):
-            self.SimUser = value
-
-        def set_frame_size_policy(self, value):
-            self.FrameSizePolicy = value
-
-        def set_ping_enable(self, value):
-            self.PingEnable = value
-
-        def set_ping_interval(self, value):
-            self.PingInterval = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class CaseObject:
-        def __init__(self):
-            pass
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ClientProfiles:
-        def __init__(self):
-            self.SourcePortRange = "10000-65535"
-            self.Actions = {}
-
-        def set_source_port_range(self, value):
-            self.SourcePortRange = value
-
-        def set_actions(self, value):
-            self.Actions = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ServerProfiles:
-        def __init__(self, role=""):
-            self.ServerPort = "80"
-
-        def set_server_port(self, value):
-            self.ServerPort = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    def __init__(self, dut_role):
-        self.Loads = UnicastStorm.Loads()
-        self.CaseObject = UnicastStorm.CaseObject()
-        self.ClientProfiles = UnicastStorm.ClientProfiles()
-        self.ServerProfiles = UnicastStorm.ServerProfiles(role=dut_role)
-
-    def to_dict(self):
-        return {
-            "Loads": self.Loads.to_dict(),
-            "CaseObject": self.CaseObject.to_dict(),
-            "ClientProfiles": self.ClientProfiles.to_dict(),
-            "ServerProfiles": self.ServerProfiles.to_dict()
-        }
-
-
-class BroadcastStorm:
-    class Loads(BaseLoads):
-        def __init__(self):
-            super().__init__()
-            self.SimUser = 256
-            self.PingEnable = "no"
-            self.PingInterval = 5
-
-        def set_sim_user(self, value):
-            self.SimUser = value
-
-        def set_ping_enable(self, value):
-            self.PingEnable = value
-
-        def set_ping_interval(self, value):
-            self.PingInterval = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class CaseObject:
-        def __init__(self):
-            pass
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ClientProfiles:
-        def __init__(self):
-            pass
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ServerProfiles:
-        def __init__(self, role=""):
-            pass
-
-        def to_dict(self):
-            return self.__dict__
-
-    def __init__(self, dut_role):
-        self.Loads = BroadcastStorm.Loads()
-        self.CaseObject = BroadcastStorm.CaseObject()
-        self.ClientProfiles = BroadcastStorm.ClientProfiles()
-        self.ServerProfiles = BroadcastStorm.ServerProfiles(role=dut_role)
-
-    def to_dict(self):
-        return {
-            "Loads": self.Loads.to_dict(),
-            "CaseObject": self.CaseObject.to_dict(),
-            "ClientProfiles": self.ClientProfiles.to_dict(),
-            "ServerProfiles": self.ServerProfiles.to_dict()
-        }
-
-
-class MulticastStorm:
-    class Loads(BaseLoads):
-        def __init__(self):
-            super().__init__()
-            self.SimUser = 256
-            self.FrameSizePolicy = {
-                "SizeChangeMode": "Fixed",
-                "FrameSizeFormat": 64
-            }
-            self.PingEnable = "no"
-            self.PingInterval = 5
-
-        def set_sim_user(self, value):
-            self.SimUser = value
-
-        def set_frame_size_policy(self, value):
-            self.FrameSizePolicy = value
-
-        def set_ping_enable(self, value):
-            self.PingEnable = value
-
-        def set_ping_interval(self, value):
-            self.PingInterval = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class CaseObject:
-        def __init__(self):
-            pass
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ClientProfiles:
-        def __init__(self):
-            self.SourcePortRange = "10000-65535"
-            self.Actions = {}
-
-        def set_source_port_range(self, value):
-            self.SourcePortRange = value
-
-        def set_actions(self, value):
-            self.Actions = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ServerProfiles:
-        def __init__(self, role=""):
-            self.ServerPort = "80"
-
-        def set_server_port(self, value):
-            self.ServerPort = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    def __init__(self, dut_role):
-        self.Loads = MulticastStorm.Loads()
-        self.CaseObject = MulticastStorm.CaseObject()
-        self.ClientProfiles = MulticastStorm.ClientProfiles()
-        self.ServerProfiles = MulticastStorm.ServerProfiles(role=dut_role)
-
-    def to_dict(self):
-        return {
-            "Loads": self.Loads.to_dict(),
-            "CaseObject": self.CaseObject.to_dict(),
-            "ClientProfiles": self.ClientProfiles.to_dict(),
-            "ServerProfiles": self.ServerProfiles.to_dict()
-        }
-
-
-class SVStormTest:
-    class Loads(BaseLoads):
-        def __init__(self):
-            super().__init__()
-            self.ChangeMacAddrEnable = "no"
-            self.SvAPPIDChangeEn = "no"
-            self.SvIDChangeEn = "no"
-            self.FrameSizePolicy = {
-                "SizeChangeMode": "Fixed",
-                "FrameSizeFormat": 79
-            }
-            self.Latency = "enable"
-            self.PingEnable = "no"
-            self.PingInterval = 5
-            self.GooseDstMacMix = "01:0C:CD:04:00:01"
-            self.GooseDstMacMax = "01:0C:CD:04:01:FF"
-            self.AppIDMix = "0x4000"
-            self.AppIDMax = "0xFFFF"
-            self.SimUser = 256
-
-        def set_change_mac_addr_enable(self, value):
-            self.ChangeMacAddrEnable = value
-
-        def set_sv_appid_change_en(self, value):
-            self.SvAPPIDChangeEn = value
-
-        def set_sv_id_change_en(self, value):
-            self.SvIDChangeEn = value
-
-        def set_frame_size_policy(self, value):
-            self.FrameSizePolicy = value
-
-        def set_latency(self, value):
-            self.Latency = value
-
-        def set_ping_enable(self, value):
-            self.PingEnable = value
-
-        def set_ping_interval(self, value):
-            self.PingInterval = value
-
-        def set_goose_dst_mac_mix(self, value):
-            self.GooseDstMacMix = value
-
-        def set_goose_dst_mac_max(self, value):
-            self.GooseDstMacMax = value
-
-        def set_app_id_mix(self, value):
-            self.AppIDMix = value
-
-        def set_app_id_max(self, value):
-            self.AppIDMax = value
-
-        def set_sim_user(self, value):
-            self.SimUser = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class CaseObject:
-        def __init__(self):
-            pass
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ClientProfiles:
-        def __init__(self):
-            pass
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ServerProfiles:
-        def __init__(self, role=""):
-            pass
-
-        def to_dict(self):
-            return self.__dict__
-
-    def __init__(self, dut_role):
-        self.Loads = SVStormTest.Loads()
-        self.CaseObject = SVStormTest.CaseObject()
-        self.ClientProfiles = SVStormTest.ClientProfiles()
-        self.ServerProfiles = SVStormTest.ServerProfiles(role=dut_role)
-
-    def to_dict(self):
-        return {
-            "Loads": self.Loads.to_dict(),
-            "CaseObject": self.CaseObject.to_dict(),
-            "ClientProfiles": self.ClientProfiles.to_dict(),
-            "ServerProfiles": self.ServerProfiles.to_dict()
-        }
-
-
-class GooseStormTest:
-    class Loads(BaseLoads):
-        def __init__(self):
-            super().__init__()
-            self.ChangeMacAddrEnable = "no"
-            self.ChangeStEnable = "no"
-            self.ChangeSqEnable = "no"
-            self.PingEnable = "no"
-            self.PingInterval = 5
-            self.DstMacRangeMix = "01:0C:CD:04:00:01"
-            self.DstMacRangeMax = "01:0C:CD:04:01:FF"
-            self.SqRangeMix = "0"
-            self.SqRangeMax = "65535"
-            self.StEnableMix = "0"
-            self.StEnableMax = "65535"
-            self.SimUser = 256
-
-        def set_change_mac_addr_enable(self, value):
-            self.ChangeMacAddrEnable = value
-
-        def set_change_st_enable(self, value):
-            self.ChangeStEnable = value
-
-        def set_change_sq_enable(self, value):
-            self.ChangeSqEnable = value
-
-        def set_ping_enable(self, value):
-            self.PingEnable = value
-
-        def set_ping_interval(self, value):
-            self.PingInterval = value
-
-        def set_dst_mac_range_mix(self, value):
-            self.DstMacRangeMix = value
-
-        def set_dst_mac_range_max(self, value):
-            self.DstMacRangeMax = value
-
-        def set_sq_range_mix(self, value):
-            self.SqRangeMix = value
-
-        def set_sq_range_max(self, value):
-            self.SqRangeMax = value
-
-        def set_st_enable_mix(self, value):
-            self.StEnableMix = value
-
-        def set_st_enable_max(self, value):
-            self.StEnableMax = value
-
-        def set_sim_user(self, value):
-            self.SimUser = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class CaseObject:
-        def __init__(self):
-            pass
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ClientProfiles:
-        def __init__(self):
-            pass
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ServerProfiles:
-        def __init__(self, role=""):
-            pass
-
-        def to_dict(self):
-            return self.__dict__
-
-    def __init__(self, dut_role):
-        self.Loads = GooseStormTest.Loads()
-        self.CaseObject = GooseStormTest.CaseObject()
-        self.ClientProfiles = GooseStormTest.ClientProfiles()
-        self.ServerProfiles = GooseStormTest.ServerProfiles(role=dut_role)
-
-    def to_dict(self):
-        return {
-            "Loads": self.Loads.to_dict(),
-            "CaseObject": self.CaseObject.to_dict(),
-            "ClientProfiles": self.ClientProfiles.to_dict(),
-            "ServerProfiles": self.ServerProfiles.to_dict()
-        }
-
-
-class MmsConnectStorm:
-    class Loads(BaseLoads):
-        def __init__(self):
-            super().__init__()
-            self.SimUser = 32
-            self.PayloadStreamLoopCount = 0
-            self.GproRequestTimeoutSecond = 5
-            self.PingEnable = "no"
-            self.PingInterval = 5
-
-        def set_sim_user(self, value):
-            self.SimUser = value
-
-        def set_payload_stream_loop_count(self, value):
-            self.PayloadStreamLoopCount = value
-
-        def set_gpro_request_timeout_second(self, value):
-            self.GproRequestTimeoutSecond = value
-
-        def set_ping_enable(self, value):
-            self.PingEnable = value
-
-        def set_ping_interval(self, value):
-            self.PingInterval = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class CaseObject:
-        def __init__(self):
-            self.MQTTOBJ = "默认MMS连接风暴流模板"
-            self.Monitor = "默认监控器对象Ping"
-
-        def set_mqtt_obj(self, value):
-            self.MQTTOBJ = value
-
-        def set_monitor(self, value):
-            self.Monitor = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ClientProfiles:
-        def __init__(self):
-            self.SourcePortRange = "10000-65535"
-            self.Actions = {}
-            self.RequestHeader = ["User-Agent: Firefox/41.0"]
-            self.ClientCloseMode = "Reset"
-
-        def set_source_port_range(self, value):
-            self.SourcePortRange = value
-
-        def set_actions(self, value):
-            self.Actions = value
-
-        def set_request_header(self, value):
-            self.RequestHeader = value
-
-        def set_client_close_mode(self, value):
-            self.ClientCloseMode = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ServerProfiles:
-        def __init__(self, role=""):
-            self.ServerPort = "102"
-            self.ResponseHeader = [
-                "Server: nginx/1.9.5",
-                "Content-Type: text/html"
-            ]
-
-            if role == "Server":
-                self.DNSServerPort = "53"
-
-        def set_server_port(self, value):
-            self.ServerPort = value
-
-        def set_response_header(self, value):
-            self.ResponseHeader = value
-
-        def set_dns_server_port(self, value):
-            self.DNSServerPort = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    def __init__(self, dut_role):
-        self.Loads = MmsConnectStorm.Loads()
-        self.CaseObject = MmsConnectStorm.CaseObject()
-        self.ClientProfiles = MmsConnectStorm.ClientProfiles()
-        self.ServerProfiles = MmsConnectStorm.ServerProfiles(role=dut_role)
-
-    def to_dict(self):
-        return {
-            "Loads": self.Loads.to_dict(),
-            "CaseObject": self.CaseObject.to_dict(),
-            "ClientProfiles": self.ClientProfiles.to_dict(),
-            "ServerProfiles": self.ServerProfiles.to_dict()
-        }
-
-
-class LLDPStormTest:
-    class Loads(BaseLoads):
-        def __init__(self):
-            super().__init__()
-            self.LLDPTestType = "0"
-            self.PingEnable = "no"
-            self.PingInterval = 5
-            self.SimUser = 256
-
-        def set_lldp_test_type(self, value):
-            self.LLDPTestType = value
-
-        def set_ping_enable(self, value):
-            self.PingEnable = value
-
-        def set_ping_interval(self, value):
-            self.PingInterval = value
-
-        def set_sim_user(self, value):
-            self.SimUser = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class CaseObject:
-        def __init__(self):
-            pass
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ClientProfiles:
-        def __init__(self):
-            pass
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ServerProfiles:
-        def __init__(self, role=""):
-            pass
-
-        def to_dict(self):
-            return self.__dict__
-
-    def __init__(self, dut_role):
-        self.Loads = LLDPStormTest.Loads()
-        self.CaseObject = LLDPStormTest.CaseObject()
-        self.ClientProfiles = LLDPStormTest.ClientProfiles()
-        self.ServerProfiles = LLDPStormTest.ServerProfiles(role=dut_role)
-
-    def to_dict(self):
-        return {
-            "Loads": self.Loads.to_dict(),
-            "CaseObject": self.CaseObject.to_dict(),
-            "ClientProfiles": self.ClientProfiles.to_dict(),
-            "ServerProfiles": self.ServerProfiles.to_dict()
-        }
-
-
-class VulnerabilityScanner:
-    class Loads:
-        def __init__(self):
-            self.Scan = "Full and fast"
-            self.Qod = 70
-            self.Remark = ""
-
-        def set_scan(self, value):
-            self.Scan = value
-
-        def set_qod(self, value):
-            self.Qod = value
-
-        def set_remark(self, value):
-            self.Remark = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class CaseObject:
-        def __init__(self):
-            self.VulnerabilityScannerMap = "默认漏洞数据库"
-            self.Credential = ""
-
-        def set_vulnerability_scanner_map(self, value):
-            self.VulnerabilityScannerMap = value
-
-        def set_credential(self, value):
-            self.Credential = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ClientProfiles:
-        def __init__(self):
-            pass
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ServerProfiles:
-        def __init__(self, role=""):
-            self.SpecifiedPort = "1-65535"
-            self.ServerPort = 80
-
-        def set_specified_port(self, value):
-            self.SpecifiedPort = value
-
-        def set_server_port(self, value):
-            self.ServerPort = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    def __init__(self, dut_role):
-        self.Loads = VulnerabilityScanner.Loads()
-        self.CaseObject = VulnerabilityScanner.CaseObject()
-        self.ClientProfiles = VulnerabilityScanner.ClientProfiles()
-        self.ServerProfiles = VulnerabilityScanner.ServerProfiles(role=dut_role)
-
-    def to_dict(self):
-        return {
-            "Loads": self.Loads.to_dict(),
-            "CaseObject": self.CaseObject.to_dict(),
-            "ClientProfiles": self.ClientProfiles.to_dict(),
-            "ServerProfiles": self.ServerProfiles.to_dict()
-        }
-
-
-class WebScanner:
-    class Loads:
-        def __init__(self):
-            self.TestPauseSecond = 0
-            self.ScanTuningOptions = "0123456789abcdef"
-            self.EncodingEvasion = ""
-            self.SslForceMode = "no"
-            self.BackgroundStream = "no"
-
-        def set_test_pause_second(self, value):
-            self.TestPauseSecond = value
-
-        def set_scan_tuning_options(self, value):
-            self.ScanTuningOptions = value
-
-        def set_encoding_evasion(self, value):
-            self.EncodingEvasion = value
-
-        def set_ssl_force_mode(self, value):
-            self.SslForceMode = value
-
-        def set_background_stream(self, value):
-            self.BackgroundStream = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class CaseObject:
-        def __init__(self):
-            pass
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ClientProfiles:
-        def __init__(self):
-            pass
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ServerProfiles:
-        def __init__(self, role=""):
-            self.ServerPort = 80
-
-        def set_server_port(self, value):
-            self.ServerPort = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    def __init__(self, dut_role):
-        self.Loads = VulnerabilityScanner.Loads()
-        self.CaseObject = VulnerabilityScanner.CaseObject()
-        self.ClientProfiles = VulnerabilityScanner.ClientProfiles()
-        self.ServerProfiles = VulnerabilityScanner.ServerProfiles(role=dut_role)
-
-    def to_dict(self):
-        return {
-            "Loads": self.Loads.to_dict(),
-            "CaseObject": self.CaseObject.to_dict(),
-            "ClientProfiles": self.ClientProfiles.to_dict(),
-            "ServerProfiles": self.ServerProfiles.to_dict()
-        }
-
-
-class NetworkDiscovery:
-    class Loads:
-        def __init__(self):
-            self.ScanConfig = "Intense scan"
-            self.ScriptConfiguration = {}
-            self.TestSpeed = "-T4"
-            self.MinRate = "auto"
-            self.FixedValue = 10000
-
-        def set_scan_config(self, value):
-            self.ScanConfig = value
-
-        def set_script_configuration(self, value):
-            self.ScriptConfiguration = value
-
-        def set_test_speed(self, value):
-            self.TestSpeed = value
-
-        def set_min_rate(self, value):
-            self.MinRate = value
-
-        def set_fixed_value(self, value):
-            self.FixedValue = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class CaseObject:
-        def __init__(self):
-            pass
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ClientProfiles:
-        def __init__(self):
-            pass
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ServerProfiles:
-        def __init__(self, role=""):
-            self.SpecifiedPort = "1-65535"
-            self.ServerPort = 80
-
-        def set_specified_port(self, value):
-            self.SpecifiedPort = value
-
-        def set_server_port(self, value):
-            self.ServerPort = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    def __init__(self, dut_role):
-        self.Loads = NetworkDiscovery.Loads()
-        self.CaseObject = NetworkDiscovery.CaseObject()
-        self.ClientProfiles = NetworkDiscovery.ClientProfiles()
-        self.ServerProfiles = NetworkDiscovery.ServerProfiles(role=dut_role)
-
-    def to_dict(self):
-        return {
-            "Loads": self.Loads.to_dict(),
-            "CaseObject": self.CaseObject.to_dict(),
-            "ClientProfiles": self.ClientProfiles.to_dict(),
-            "ServerProfiles": self.ServerProfiles.to_dict()
-        }
-
-
-class HttpsCps:
-    class Loads(BaseLoads):
-        def __init__(self):
-            super().__init__()
-            self.SimUser = 20
-            self.HttpRequestTimeoutSecond = 100000
-            self.HttpTranscationStatistics = "no"
-            self.HttpPercentageLatencyStat = "no"
-            self.HttpRequestHashSize = 512
-            self.CookieTrafficRatio = 100
-            self.CoreRunMode = "mt"
-            self.HttpRedirectNewTcpEn = "no"
-            self.HttpOverLapMode = "none"
-            self.HttpThinkTimeMode = "fixed"
-            self.MaxThinkTime = 37500
-            self.MinThinkTime = 1
-            self.ThinkTime = 37500
-            self.HttpThinkTimeMaxCc = 100000
-            self.HttpNewSessionTotal = 0
-            self.HttpMaxRequest = 0
-            self.HttpNewConnReqNum = 0
-            self.NewTcpEachRequrest = "no"
-            self.HttpLogTraffic = "no"
-            self.OnlyRecordAbnormalResponse = "no"
-            self.OnlyRecordAssertFailed = "no"
-            self.HttpTrafficLogCount = 1000
-            self.HttpWebURLIpStatEn = "no"
-            self.HttpWebStatIPNum = 10
-            self.ExtendedMasterSecret = "no"
-            self.SSLExtServerName = ""
-            self.SSLEMSen = "yes"
-            self.SSLMtE = "yes"
-            self.CertificateRevocationList = "no"
-            self.CRLFilePath = ""
-            self.SSLCommonNameCheck = "no"
-            self.SSLVerifyCNHostName = ""
-            self.SSLDebugLevel = 0
-            self.FisecCardLogLevel = 3
-            self.FisecCardSM2Engine = 1
-            self.FisecCardSM3Engine = 1
-            self.FisecCardSM4Engine = 1
-            self.FisecCardRandomEngine = 1
-
-        def set_sim_user(self, value):
-            self.SimUser = value
-
-        def set_http_request_timeout_second(self, value):
-            self.HttpRequestTimeoutSecond = value
-
-        def set_http_transcation_statistics(self, value):
-            self.HttpTranscationStatistics = value
-
-        def set_http_percentage_latency_stat(self, value):
-            self.HttpPercentageLatencyStat = value
-
-        def set_http_request_hash_size(self, value):
-            self.HttpRequestHashSize = value
-
-        def set_cookie_traffic_ratio(self, value):
-            self.CookieTrafficRatio = value
-
-        def set_core_run_mode(self, value):
-            self.CoreRunMode = value
-
-        def set_http_redirect_new_tcp_en(self, value):
-            self.HttpRedirectNewTcpEn = value
-
-        def set_http_over_lap_mode(self, value):
-            self.HttpOverLapMode = value
-
-        def set_http_think_time_mode(self, value):
-            self.HttpThinkTimeMode = value
-
-        def set_max_think_time(self, value):
-            self.MaxThinkTime = value
-
-        def set_min_think_time(self, value):
-            self.MinThinkTime = value
-
-        def set_think_time(self, value):
-            self.ThinkTime = value
-
-        def set_http_think_time_max_cc(self, value):
-            self.HttpThinkTimeMaxCc = value
-
-        def set_http_new_session_total(self, value):
-            self.HttpNewSessionTotal = value
-
-        def set_http_max_request(self, value):
-            self.HttpMaxRequest = value
-
-        def set_http_new_conn_req_num(self, value):
-            self.HttpNewConnReqNum = value
-
-        def set_new_tcp_each_requrest(self, value):
-            self.NewTcpEachRequrest = value
-
-        def set_http_log_traffic(self, value):
-            self.HttpLogTraffic = value
-
-        def set_only_record_abnormal_response(self, value):
-            self.OnlyRecordAbnormalResponse = value
-
-        def set_only_record_assert_failed(self, value):
-            self.OnlyRecordAssertFailed = value
-
-        def set_http_traffic_log_count(self, value):
-            self.HttpTrafficLogCount = value
-
-        def set_http_web_url_ip_stat_en(self, value):
-            self.HttpWebURLIpStatEn = value
-
-        def set_http_web_stat_ip_num(self, value):
-            self.HttpWebStatIPNum = value
-
-        def set_extended_master_secret(self, value):
-            self.ExtendedMasterSecret = value
-
-        def set_ssl_ext_server_name(self, value):
-            self.SSLExtServerName = value
-
-        def set_ssl_ems_en(self, value):
-            self.SSLEMSen = value
-
-        def set_ssl_mt_e(self, value):
-            self.SSLMtE = value
-
-        def set_certificate_revocation_list(self, value):
-            self.CertificateRevocationList = value
-
-        def set_crl_file_path(self, value):
-            self.CRLFilePath = value
-
-        def set_ssl_common_name_check(self, value):
-            self.SSLCommonNameCheck = value
-
-        def set_ssl_verify_cn_host_name(self, value):
-            self.SSLVerifyCNHostName = value
-
-        def set_ssl_debug_level(self, value):
-            self.SSLDebugLevel = value
-
-        def set_fisec_card_log_level(self, value):
-            self.FisecCardLogLevel = value
-
-        def set_fisec_card_sm2_engine(self, value):
-            self.FisecCardSM2Engine = value
-
-        def set_fisec_card_sm3_engine(self, value):
-            self.FisecCardSM3Engine = value
-
-        def set_fisec_card_sm4_engine(self, value):
-            self.FisecCardSM4Engine = value
-
-        def set_fisec_card_random_engine(self, value):
-            self.FisecCardRandomEngine = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class CaseObject(BaseCaseObject):
-        def __init__(self, test_type):
-            super().__init__(test_type)
-            self.SSLCACertConfig = ""
-            self.SSLClientCertConfig = ""
-            self.SSLServerCertConfig = "默认RSA算法1024位私钥带密码证书套件"
-
-        def set_ssl_ca_cert_config(self, value):
-            self.SSLCACertConfig = value
-
-        def set_ssl_client_cert_config(self, value):
-            self.SSLClientCertConfig = value
-
-        def set_ssl_server_cert_config(self, value):
-            self.SSLServerCertConfig = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ClientProfiles:
-        def __init__(self):
-            self.SourcePortRange = "10000-65535"
-            self.SSLQuietDown = "enable"
-            self.SSLClientSessionCache = "no"
-            self.ClientSSLAsyncMode = "no"
-            self.SSLClientFixedEncCiphertext = "no"
-            self.SSLVersions = "TLSv1.2"
-            self.SSLCertVerify = "none"
-            self.SSLVerifyErrorAction = 0
-            self.SSLCiphers = ["AES128-GCM-SHA256"]
-            self.Actions = {}
-            self.ClientCloseMode = "Reset"
-            self.RequestHeader = ["User-Agent: Firefox/41.0"]
-
-        def set_source_port_range(self, value):
-            self.SourcePortRange = value
-
-        def set_ssl_quiet_down(self, value):
-            self.SSLQuietDown = value
-
-        def set_ssl_client_session_cache(self, value):
-            self.SSLClientSessionCache = value
-
-        def set_client_ssl_async_mode(self, value):
-            self.ClientSSLAsyncMode = value
-
-        def set_ssl_client_fixed_enc_ciphertext(self, value):
-            self.SSLClientFixedEncCiphertext = value
-
-        def set_ssl_versions(self, value):
-            self.SSLVersions = value
-
-        def set_ssl_cert_verify(self, value):
-            self.SSLCertVerify = value
-
-        def set_ssl_verify_error_action(self, value):
-            self.SSLVerifyErrorAction = value
-
-        def set_ssl_ciphers(self, value):
-            self.SSLCiphers = value
-
-        def set_actions(self, value):
-            self.Actions = value
-
-        def set_client_close_mode(self, value):
-            self.ClientCloseMode = value
-
-        def set_request_header(self, value):
-            self.RequestHeader = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ServerProfiles:
-        def __init__(self, role=""):
-            self.ServerPort = "443"
-            self.ServerRecvRqtTimeOut = 300000
-            self.Http1CloseDelayms = 500
-            self.SSLServerSessionCache = "no"
-            self.ServerSSLAsyncMode = "no"
-            self.SSLServerFixedEncCiphertext = "no"
-            self.SessionTicketExtention = "no"
-            self.HttpReplyDelay = "0"
-            self.ResponseHeader = ["Server: nginx/1.9.10", "Content-Type: text/html"]
-            self.ServerCertificate = "1024"
-
-        def set_server_port(self, value):
-            self.ServerPort = value
-
-        def set_server_recv_rqt_timeout(self, value):
-            self.ServerRecvRqtTimeOut = value
-
-        def set_http1_close_delayms(self, value):
-            self.Http1CloseDelayms = value
-
-        def set_ssl_server_session_cache(self, value):
-            self.SSLServerSessionCache = value
-
-        def set_server_ssl_async_mode(self, value):
-            self.ServerSSLAsyncMode = value
-
-        def set_ssl_server_fixed_enc_ciphertext(self, value):
-            self.SSLServerFixedEncCiphertext = value
-
-        def set_session_ticket_extension(self, value):
-            self.SessionTicketExtention = value
-
-        def set_http_reply_delay(self, value):
-            self.HttpReplyDelay = value
-
-        def set_response_header(self, value):
-            self.ResponseHeader = value
-
-        def set_server_certificate(self, value):
-            self.ServerCertificate = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    def __init__(self, dut_role, test_type):
-        self.Loads = HttpsCps.Loads()
-        self.CaseObject = HttpsCps.CaseObject(test_type)
-        self.ClientProfiles = HttpsCps.ClientProfiles()
-        self.ServerProfiles = HttpsCps.ServerProfiles(role=dut_role)
-
-    def to_dict(self):
-        return {
-            "Loads": self.Loads.to_dict(),
-            "CaseObject": self.CaseObject.to_dict(),
-            "ClientProfiles": self.ClientProfiles.to_dict(),
-            "ServerProfiles": self.ServerProfiles.to_dict()
-        }
-
-
-class HttpsCc:
-    class Loads(BaseLoads):
-        def __init__(self):
-            super().__init__()
-            self.SimUser = 32
-            self.HttpRequestTimeoutSecond = 100000
-            self.HttpTranscationStatistics = "no"
-            self.HttpPercentageLatencyStat = "no"
-            self.HttpRequestHashSize = 512
-            self.CookieTrafficRatio = 100
-            self.DutSslOffload = "disable"
-            self.ConcurrentConnection = 200000
-            self.DelayResponse = "no"
-            self.HttpThinkTimeMode = "fixed"
-            self.MaxThinkTime = 37500
-            self.MinThinkTime = 1
-            self.ThinkTime = 0
-            self.HttpSendRequestMode = "each"
-            self.ReConnCount = 0
-            self.HttpCcOperationPolicy = "no"
-            self.HttpLogTraffic = "no"
-            self.OnlyRecordAbnormalResponse = "no"
-            self.OnlyRecordAssertFailed = "no"
-            self.HttpTrafficLogCount = 1000
-            self.ExtendedMasterSecret = "no"
-            self.SSLExtServerName = ""
-            self.SSLEMSen = "yes"
-            self.SSLMtE = "yes"
-            self.CertificateRevocationList = "no"
-            self.CRLFilePath = ""
-            self.SSLCommonNameCheck = "no"
-            self.SSLVerifyCNHostName = ""
-            self.SSLDebugLevel = 0
-            self.FisecCardLogLevel = 3
-            self.FisecCardSM2Engine = 1
-            self.FisecCardSM3Engine = 1
-            self.FisecCardSM4Engine = 1
-            self.FisecCardRandomEngine = 1
-            self.HttpRedirectNewTcpEn = "no"
-
-        def set_sim_user(self, value):
-            self.SimUser = value
-
-        def set_http_request_timeout_second(self, value):
-            self.HttpRequestTimeoutSecond = value
-
-        def set_http_transcation_statistics(self, value):
-            self.HttpTranscationStatistics = value
-
-        def set_http_percentage_latency_stat(self, value):
-            self.HttpPercentageLatencyStat = value
-
-        def set_http_request_hash_size(self, value):
-            self.HttpRequestHashSize = value
-
-        def set_cookie_traffic_ratio(self, value):
-            self.CookieTrafficRatio = value
-
-        def set_dut_ssl_offload(self, value):
-            self.DutSslOffload = value
-
-        def set_concurrent_connection(self, value):
-            self.ConcurrentConnection = value
-
-        def set_delay_response(self, value):
-            self.DelayResponse = value
-
-        def set_http_think_time_mode(self, value):
-            self.HttpThinkTimeMode = value
-
-        def set_max_think_time(self, value):
-            self.MaxThinkTime = value
-
-        def set_min_think_time(self, value):
-            self.MinThinkTime = value
-
-        def set_think_time(self, value):
-            self.ThinkTime = value
-
-        def set_http_send_request_mode(self, value):
-            self.HttpSendRequestMode = value
-
-        def set_re_conn_count(self, value):
-            self.ReConnCount = value
-
-        def set_http_cc_operation_policy(self, value):
-            self.HttpCcOperationPolicy = value
-
-        def set_http_log_traffic(self, value):
-            self.HttpLogTraffic = value
-
-        def set_only_record_abnormal_response(self, value):
-            self.OnlyRecordAbnormalResponse = value
-
-        def set_only_record_assert_failed(self, value):
-            self.OnlyRecordAssertFailed = value
-
-        def set_http_traffic_log_count(self, value):
-            self.HttpTrafficLogCount = value
-
-        def set_extended_master_secret(self, value):
-            self.ExtendedMasterSecret = value
-
-        def set_ssl_ext_server_name(self, value):
-            self.SSLExtServerName = value
-
-        def set_ssl_em_sen(self, value):
-            self.SSLEMSen = value
-
-        def set_ssl_mte(self, value):
-            self.SSLMtE = value
-
-        def set_certificate_revocation_list(self, value):
-            self.CertificateRevocationList = value
-
-        def set_crl_file_path(self, value):
-            self.CRLFilePath = value
-
-        def set_ssl_common_name_check(self, value):
-            self.SSLCommonNameCheck = value
-
-        def set_ssl_verify_cn_host_name(self, value):
-            self.SSLVerifyCNHostName = value
-
-        def set_ssl_debug_level(self, value):
-            self.SSLDebugLevel = value
-
-        def set_fisec_card_log_level(self, value):
-            self.FisecCardLogLevel = value
-
-        def set_fisec_card_sm2_engine(self, value):
-            self.FisecCardSM2Engine = value
-
-        def set_fisec_card_sm3_engine(self, value):
-            self.FisecCardSM3Engine = value
-
-        def set_fisec_card_sm4_engine(self, value):
-            self.FisecCardSM4Engine = value
-
-        def set_fisec_card_random_engine(self, value):
-            self.FisecCardRandomEngine = value
-
-        def set_http_redirect_new_tcp_en(self, value):
-            self.HttpRedirectNewTcpEn = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class CaseObject(BaseCaseObject):
-        def __init__(self, test_type):
-            super().__init__(test_type)
-            self.SSLCACertConfig = ""
-            self.SSLClientCertConfig = ""
-            self.SSLServerCertConfig = "默认RSA算法1024位私钥带密码证书套件"
-
-        def set_ssl_ca_cert_config(self, value):
-            self.SSLCACertConfig = value
-
-        def set_ssl_client_cert_config(self, value):
-            self.SSLClientCertConfig = value
-
-        def set_ssl_server_cert_config(self, value):
-            self.SSLServerCertConfig = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ClientProfiles:
-        def __init__(self):
-            self.SourcePortRange = "10000-65535"
-            self.SSLQuietDown = "enable"
-            self.SSLClientSessionCache = "yes"
-            self.ClientSSLAsyncMode = "no"
-            self.SSLClientFixedEncCiphertext = "no"
-            self.SSLVersions = "TLSv1.2"
-            self.SSLCertVerify = "none"
-            self.SSLVerifyErrorAction = 0
-            self.SSLCiphers = ["AES128-GCM-SHA256"]
-            self.Actions = {}
-            self.ClientCloseMode = "Reset"
-            self.RequestHeader = ["User-Agent: Firefox/41.0"]
-
-        def set_source_port_range(self, value):
-            self.SourcePortRange = value
-
-        def set_ssl_quiet_down(self, value):
-            self.SSLQuietDown = value
-
-        def set_ssl_client_session_cache(self, value):
-            self.SSLClientSessionCache = value
-
-        def set_client_ssl_async_mode(self, value):
-            self.ClientSSLAsyncMode = value
-
-        def set_ssl_client_fixed_enc_ciphertext(self, value):
-            self.SSLClientFixedEncCiphertext = value
-
-        def set_ssl_versions(self, value):
-            self.SSLVersions = value
-
-        def set_ssl_cert_verify(self, value):
-            self.SSLCertVerify = value
-
-        def set_ssl_verify_error_action(self, value):
-            self.SSLVerifyErrorAction = value
-
-        def set_ssl_ciphers(self, value):
-            self.SSLCiphers = value
-
-        def set_actions(self, value):
-            self.Actions = value
-
-        def set_client_close_mode(self, value):
-            self.ClientCloseMode = value
-
-        def set_request_header(self, value):
-            self.RequestHeader = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ServerProfiles:
-        def __init__(self, role=""):
-            self.ServerPort = "443"
-            self.ServerRecvRqtTimeOut = 0
-            self.Http1CloseDelayms = 500
-            self.SSLServerSessionCache = "yes"
-            self.ServerSSLAsyncMode = "no"
-            self.SSLServerFixedEncCiphertext = "no"
-            self.SessionTicketExtention = "yes"
-            self.ResponseHeader = ["Server: nginx/1.9.10", "Content-Type: text/html"]
-            self.ServerCertificate = "1024"
-
-        def set_server_port(self, value):
-            self.ServerPort = value
-
-        def set_server_recv_rqt_timeout(self, value):
-            self.ServerRecvRqtTimeOut = value
-
-        def set_http1_close_delayms(self, value):
-            self.Http1CloseDelayms = value
-
-        def set_ssl_server_session_cache(self, value):
-            self.SSLServerSessionCache = value
-
-        def set_server_ssl_async_mode(self, value):
-            self.ServerSSLAsyncMode = value
-
-        def set_ssl_server_fixed_enc_ciphertext(self, value):
-            self.SSLServerFixedEncCiphertext = value
-
-        def set_session_ticket_extention(self, value):
-            self.SessionTicketExtention = value
-
-        def set_response_header(self, value):
-            self.ResponseHeader = value
-
-        def set_server_certificate(self, value):
-            self.ServerCertificate = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    def __init__(self, dut_role, test_type):
-        self.Loads = HttpsCc.Loads()
-        self.CaseObject = HttpsCc.CaseObject(test_type)
-        self.ClientProfiles = HttpsCc.ClientProfiles()
-        self.ServerProfiles = HttpsCc.ServerProfiles(role=dut_role)
-
-    def to_dict(self):
-        return {
-            "Loads": self.Loads.to_dict(),
-            "CaseObject": self.CaseObject.to_dict(),
-            "ClientProfiles": self.ClientProfiles.to_dict(),
-            "ServerProfiles": self.ServerProfiles.to_dict()
-        }
-
-
-class HttpsThroughput:
-    class Loads(BaseLoads):
-        def __init__(self):
-            super().__init__()
-            self.SimUser = 20
-            self.HttpRequestTimeoutSecond = 100000
-            self.HttpTranscationStatistics = "no"
-            self.HttpPercentageLatencyStat = "no"
-            self.HttpRequestHashSize = 512
-            self.CookieTrafficRatio = 100
-            self.DelayResponse = "no"
-            self.HttpThinkTimeMode = "fixed"
-            self.MaxThinkTime = 37500
-            self.MinThinkTime = 1
-            self.ThinkTime = 0
-            self.ReConnCount = 0
-            self.HttpCcOperationPolicy = "no"
-            self.HttpLogTraffic = "no"
-            self.OnlyRecordAbnormalResponse = "no"
-            self.OnlyRecordAssertFailed = "no"
-            self.HttpTrafficLogCount = 1000
-            self.ExtendedMasterSecret = "no"
-            self.SSLExtServerName = ""
-            self.SSLEMSen = "yes"
-            self.SSLMtE = "yes"
-            self.CertificateRevocationList = "no"
-            self.CRLFilePath = ""
-            self.SSLCommonNameCheck = "no"
-            self.SSLVerifyCNHostName = ""
-            self.SSLDebugLevel = 0
-            self.FisecCardLogLevel = 3
-            self.FisecCardSM2Engine = 1
-            self.FisecCardSM3Engine = 1
-            self.FisecCardSM4Engine = 1
-            self.FisecCardRandomEngine = 1
-            self.HttpRedirectNewTcpEn = "no"
-
-        def set_sim_user(self, value):
-            self.SimUser = value
-
-        def set_http_request_timeout_second(self, value):
-            self.HttpRequestTimeoutSecond = value
-
-        def set_http_transcation_statistics(self, value):
-            self.HttpTranscationStatistics = value
-
-        def set_http_percentage_latency_stat(self, value):
-            self.HttpPercentageLatencyStat = value
-
-        def set_http_request_hash_size(self, value):
-            self.HttpRequestHashSize = value
-
-        def set_cookie_traffic_ratio(self, value):
-            self.CookieTrafficRatio = value
-
-        def set_delay_response(self, value):
-            self.DelayResponse = value
-
-        def set_http_think_time_mode(self, value):
-            self.HttpThinkTimeMode = value
-
-        def set_max_think_time(self, value):
-            self.MaxThinkTime = value
-
-        def set_min_think_time(self, value):
-            self.MinThinkTime = value
-
-        def set_think_time(self, value):
-            self.ThinkTime = value
-
-        def set_re_conn_count(self, value):
-            self.ReConnCount = value
-
-        def set_http_cc_operation_policy(self, value):
-            self.HttpCcOperationPolicy = value
-
-        def set_http_log_traffic(self, value):
-            self.HttpLogTraffic = value
-
-        def set_only_record_abnormal_response(self, value):
-            self.OnlyRecordAbnormalResponse = value
-
-        def set_only_record_assert_failed(self, value):
-            self.OnlyRecordAssertFailed = value
-
-        def set_http_traffic_log_count(self, value):
-            self.HttpTrafficLogCount = value
-
-        def set_extended_master_secret(self, value):
-            self.ExtendedMasterSecret = value
-
-        def set_ssl_ext_server_name(self, value):
-            self.SSLExtServerName = value
-
-        def set_ssl_ems_en(self, value):
-            self.SSLEMSen = value
-
-        def set_ssl_mte(self, value):
-            self.SSLMtE = value
-
-        def set_certificate_revocation_list(self, value):
-            self.CertificateRevocationList = value
-
-        def set_crl_file_path(self, value):
-            self.CRLFilePath = value
-
-        def set_ssl_common_name_check(self, value):
-            self.SSLCommonNameCheck = value
-
-        def set_ssl_verify_cn_host_name(self, value):
-            self.SSLVerifyCNHostName = value
-
-        def set_ssl_debug_level(self, value):
-            self.SSLDebugLevel = value
-
-        def set_fisec_card_log_level(self, value):
-            self.FisecCardLogLevel = value
-
-        def set_fisec_card_sm2_engine(self, value):
-            self.FisecCardSM2Engine = value
-
-        def set_fisec_card_sm3_engine(self, value):
-            self.FisecCardSM3Engine = value
-
-        def set_fisec_card_sm4_engine(self, value):
-            self.FisecCardSM4Engine = value
-
-        def set_fisec_card_random_engine(self, value):
-            self.FisecCardRandomEngine = value
-
-        def set_http_redirect_new_tcp_en(self, value):
-            self.HttpRedirectNewTcpEn = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class CaseObject(BaseCaseObject):
-        def __init__(self, test_type):
-            super().__init__(test_type)
-            self.SSLCACertConfig = ""
-            self.SSLClientCertConfig = ""
-            self.SSLServerCertConfig = "默认RSA算法1024位私钥带密码证书套件"
-
-        def set_ssl_ca_cert_config(self, value):
-            self.SSLCACertConfig = value
-
-        def set_ssl_client_cert_config(self, value):
-            self.SSLClientCertConfig = value
-
-        def set_ssl_server_cert_config(self, value):
-            self.SSLServerCertConfig = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ClientProfiles:
-        def __init__(self):
-            self.SourcePortRange = "10000-65535"
-            self.SSLQuietDown = "enable"
-            self.SSLClientSessionCache = "yes"
-            self.ClientSSLAsyncMode = "no"
-            self.SSLClientFixedEncCiphertext = "no"
-            self.SSLVersions = "TLSv1.2"
-            self.SSLCertVerify = "none"
-            self.SSLVerifyErrorAction = 0
-            self.SSLCiphers = ["AES128-GCM-SHA256"]
-            self.Actions = None
-            self.ClientCloseMode = "Reset"
-            self.RequestHeader = ["User-Agent: Firefox/41.0"]
-
-        def set_source_port_range(self, value):
-            self.SourcePortRange = value
-
-        def set_ssl_quiet_down(self, value):
-            self.SSLQuietDown = value
-
-        def set_ssl_client_session_cache(self, value):
-            self.SSLClientSessionCache = value
-
-        def set_client_ssl_async_mode(self, value):
-            self.ClientSSLAsyncMode = value
-
-        def set_ssl_client_fixed_enc_ciphertext(self, value):
-            self.SSLClientFixedEncCiphertext = value
-
-        def set_ssl_versions(self, value):
-            self.SSLVersions = value
-
-        def set_ssl_cert_verify(self, value):
-            self.SSLCertVerify = value
-
-        def set_ssl_verify_error_action(self, value):
-            self.SSLVerifyErrorAction = value
-
-        def set_ssl_ciphers(self, value):
-            self.SSLCiphers = value
-
-        def set_actions(self, value):
-            self.Actions = value
-
-        def set_client_close_mode(self, value):
-            self.ClientCloseMode = value
-
-        def set_request_header(self, value):
-            self.RequestHeader = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ServerProfiles:
-        def __init__(self, role=""):
-            self.ServerPort = "443"
-            self.ServerRecvRqtTimeOut = 0
-            self.Http1CloseDelayms = 500
-            self.SSLServerSessionCache = "yes"
-            self.ServerSSLAsyncMode = "no"
-            self.SSLServerFixedEncCiphertext = "no"
-            self.SessionTicketExtention = "yes"
-            self.ResponseHeader = [
-                "Server: nginx/1.9.10",
-                "Content-Type: text/html"
-            ]
-            self.ServerCertificate = "1024"
-
-        def set_server_port(self, value):
-            self.ServerPort = value
-
-        def set_server_recv_rqt_timeout(self, value):
-            self.ServerRecvRqtTimeOut = value
-
-        def set_http1_close_delay(self, value):
-            self.Http1CloseDelayms = value
-
-        def set_ssl_server_session_cache(self, value):
-            self.SSLServerSessionCache = value
-
-        def set_server_ssl_async_mode(self, value):
-            self.ServerSSLAsyncMode = value
-
-        def set_ssl_server_fixed_enc_ciphertext(self, value):
-            self.SSLServerFixedEncCiphertext = value
-
-        def set_session_ticket_extension(self, value):
-            self.SessionTicketExtention = value
-
-        def set_response_header(self, value):
-            self.ResponseHeader = value
-
-        def set_server_certificate(self, value):
-            self.ServerCertificate = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    def __init__(self, dut_role, test_type):
-        self.Loads = HttpsThroughput.Loads()
-        self.CaseObject = HttpsThroughput.CaseObject(test_type)
-        self.ClientProfiles = HttpsThroughput.ClientProfiles()
-        self.ServerProfiles = HttpsThroughput.ServerProfiles(role=dut_role)
-
-    def to_dict(self):
-        return {
-            "Loads": self.Loads.to_dict(),
-            "CaseObject": self.CaseObject.to_dict(),
-            "ClientProfiles": self.ClientProfiles.to_dict(),
-            "ServerProfiles": self.ServerProfiles.to_dict()
-        }
-
-
-class SSLHandshake:
-    class Loads(BaseLoads):
-        def __init__(self):
-            super().__init__()
-            self.SimUser = 20
-            self.HttpTranscationStatistics = "no"
-            self.HttpPercentageLatencyStat = "no"
-            self.HttpRequestHashSize = 512
-            self.CookieTrafficRatio = 100
-            self.CoreRunMode = "mt"
-            self.HttpNewSessionTotal = 0
-            self.ExtendedMasterSecret = "no"
-            self.SSLExtServerName = ""
-            self.SSLEMSen = "yes"
-            self.SSLMtE = "yes"
-            self.CertificateRevocationList = "no"
-            self.CRLFilePath = ""
-            self.SSLCommonNameCheck = "no"
-            self.SSLVerifyCNHostName = ""
-            self.SSLDebugLevel = 0
-            self.FisecCardLogLevel = 3
-            self.FisecCardSM2Engine = 1
-            self.FisecCardSM3Engine = 1
-            self.FisecCardSM4Engine = 1
-            self.FisecCardRandomEngine = 1
-            self.HttpRedirectNewTcpEn = "no"
-
-        def set_sim_user(self, value):
-            self.SimUser = value
-
-        def set_http_transcation_statistics(self, value):
-            self.HttpTranscationStatistics = value
-
-        def set_http_percentage_latency_stat(self, value):
-            self.HttpPercentageLatencyStat = value
-
-        def set_http_request_hash_size(self, value):
-            self.HttpRequestHashSize = value
-
-        def set_cookie_traffic_ratio(self, value):
-            self.CookieTrafficRatio = value
-
-        def set_core_run_mode(self, value):
-            self.CoreRunMode = value
-
-        def set_http_new_session_total(self, value):
-            self.HttpNewSessionTotal = value
-
-        def set_extended_master_secret(self, value):
-            self.ExtendedMasterSecret = value
-
-        def set_ssl_ext_server_name(self, value):
-            self.SSLExtServerName = value
-
-        def set_ssl_ems_en(self, value):
-            self.SSLEMSen = value
-
-        def set_ssl_mte(self, value):
-            self.SSLMtE = value
-
-        def set_certificate_revocation_list(self, value):
-            self.CertificateRevocationList = value
-
-        def set_crl_file_path(self, value):
-            self.CRLFilePath = value
-
-        def set_ssl_common_name_check(self, value):
-            self.SSLCommonNameCheck = value
-
-        def set_ssl_verify_cn_host_name(self, value):
-            self.SSLVerifyCNHostName = value
-
-        def set_ssl_debug_level(self, value):
-            self.SSLDebugLevel = value
-
-        def set_fisec_card_log_level(self, value):
-            self.FisecCardLogLevel = value
-
-        def set_fisec_card_sm2_engine(self, value):
-            self.FisecCardSM2Engine = value
-
-        def set_fisec_card_sm3_engine(self, value):
-            self.FisecCardSM3Engine = value
-
-        def set_fisec_card_sm4_engine(self, value):
-            self.FisecCardSM4Engine = value
-
-        def set_fisec_card_random_engine(self, value):
-            self.FisecCardRandomEngine = value
-
-        def set_http_redirect_new_tcp_en(self, value):
-            self.HttpRedirectNewTcpEn = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class CaseObject:
-        def __init__(self):
-            self.SSLCACertConfig = ""
-            self.SSLClientCertConfig = ""
-            self.SSLServerCertConfig = "默认RSA算法1024位私钥带密码证书套件"
-            self.Monitor = "默认监控器对象Ping"
-
-        def set_ssl_ca_cert_config(self, value):
-            self.SSLCACertConfig = value
-
-        def set_ssl_client_cert_config(self, value):
-            self.SSLClientCertConfig = value
-
-        def set_ssl_server_cert_config(self, value):
-            self.SSLServerCertConfig = value
-
-        def set_monitor(self, value):
-            self.Monitor = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ClientProfiles:
-        def __init__(self):
-            self.SourcePortRange = "10000-65535"
-            self.SSLQuietDown = "enable"
-            self.SSLClientSessionCache = "yes"
-            self.ClientSSLAsyncMode = "no"
-            self.SSLClientFixedEncCiphertext = "no"
-            self.SSLVersions = "TLSv1.2"
-            self.SSLCertVerify = "none"
-            self.SSLVerifyErrorAction = 0
-            self.SSLCiphers = ["AES128-GCM-SHA256"]
-            self.Actions = None
-            self.ClientCloseMode = "Reset"
-            self.RequestHeader = ["User-Agent: Firefox/41.0"]
-
-        def set_source_port_range(self, value):
-            self.SourcePortRange = value
-
-        def set_ssl_quiet_down(self, value):
-            self.SSLQuietDown = value
-
-        def set_ssl_client_session_cache(self, value):
-            self.SSLClientSessionCache = value
-
-        def set_client_ssl_async_mode(self, value):
-            self.ClientSSLAsyncMode = value
-
-        def set_ssl_versions(self, value):
-            self.SSLVersions = value
-
-        def set_ssl_cert_verify(self, value):
-            self.SSLCertVerify = value
-
-        def set_ssl_verify_error_action(self, value):
-            self.SSLVerifyErrorAction = value
-
-        def set_ssl_ciphers(self, value):
-            self.SSLCiphers = value
-
-        def set_actions(self, value):
-            self.Actions = value
-
-        def set_client_close_mode(self, value):
-            self.ClientCloseMode = value
-
-        def set_request_header(self, value):
-            self.RequestHeader = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ServerProfiles:
-        def __init__(self, role=""):
-            self.ServerPort = "443"
-            self.ServerRecvRqtTimeOut = 300000
-            self.Http1CloseDelayms = 500
-            self.SSLServerSessionCache = "yes"
-            self.ServerSSLAsyncMode = "no"
-            self.SSLServerFixedEncCiphertext = "no"
-            self.SessionTicketExtention = "yes"
-            self.ResponseHeader = ["Server: nginx/1.9.10", "Content-Type: text/html"]
-            self.ServerCertificate = "1024"
-
-        def set_server_port(self, value):
-            self.ServerPort = value
-
-        def set_server_recv_rqt_timeout(self, value):
-            self.ServerRecvRqtTimeOut = value
-
-        def set_http1_close_delay(self, value):
-            self.Http1CloseDelayms = value
-
-        def set_ssl_server_session_cache(self, value):
-            self.SSLServerSessionCache = value
-
-        def set_server_ssl_async_mode(self, value):
-            self.ServerSSLAsyncMode = value
-
-        def set_ssl_server_fixed_enc_ciphertext(self, value):
-            self.SSLServerFixedEncCiphertext = value
-
-        def set_session_ticket_extension(self, value):
-            self.SessionTicketExtention = value
-
-        def set_response_header(self, value):
-            self.ResponseHeader = value
-
-        def set_server_certificate(self, value):
-            self.ServerCertificate = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    def __init__(self, dut_role):
-        self.Loads = SSLHandshake.Loads()
-        self.CaseObject = SSLHandshake.CaseObject()
-        self.ClientProfiles = SSLHandshake.ClientProfiles()
-        self.ServerProfiles = SSLHandshake.ServerProfiles(role=dut_role)
-
-    def to_dict(self):
-        return {
-            "Loads": self.Loads.to_dict(),
-            "CaseObject": self.CaseObject.to_dict(),
-            "ClientProfiles": self.ClientProfiles.to_dict(),
-            "ServerProfiles": self.ServerProfiles.to_dict()
-        }
-
-
-class AdvancedFuzzing:
-    class Loads:
-        def __init__(self):
-            self.SleepTime = 0
-            self.RestartThreshold = 3
-            self.RestartSleepTime = 2
-            self.IndexStart = 1
-            self.IndexEnd = 30000
-            self.FuzzDbKeepOnlyNPassCases = 10
-            self.ReuseTargetConnection = "no"
-            self.Checksum = "no"
-            self.ChecksumValue = "0x3a"
-            self.CheckDataReceivedEachRequest = "no"
-            self.ReceiveDataAfterFuzz = "no"
-
-        def set_sleep_time(self, value):
-            self.SleepTime = value
-
-        def set_restart_threshold(self, value):
-            self.RestartThreshold = value
-
-        def set_restart_sleep_time(self, value):
-            self.RestartSleepTime = value
-
-        def set_index_start(self, value):
-            self.IndexStart = value
-
-        def set_index_end(self, value):
-            self.IndexEnd = value
-
-        def set_fuzz_db_keep_only_n_pass_cases(self, value):
-            self.FuzzDbKeepOnlyNPassCases = value
-
-        def set_reuse_target_connection(self, value):
-            self.ReuseTargetConnection = value
-
-        def set_checksum(self, value):
-            self.Checksum = value
-
-        def set_checksum_value(self, value):
-            self.ChecksumValue = value
-
-        def set_check_data_received_each_request(self, value):
-            self.CheckDataReceivedEachRequest = value
-
-        def set_receive_data_after_fuzz(self, value):
-            self.ReceiveDataAfterFuzz = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class CaseObject:
-        def __init__(self):
-            self.Fuzzing = "AMQP协议模糊测试模版"
-            self.Monitor = "默认监控器对象Ping"
-
-        def set_fuzzing(self, value):
-            self.Fuzzing = value
-
-        def set_monitor(self, value):
-            self.Monitor = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ClientProfiles:
-        def __init__(self):
-            pass
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ServerProfiles:
-        def __init__(self, role=""):
-            self.ServerPort = "5672"
-
-        def set_server_port(self, value):
-            self.ServerPort = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    def __init__(self, dut_role):
-        self.Loads = AdvancedFuzzing.Loads()
-        self.CaseObject = AdvancedFuzzing.CaseObject()
-        self.ClientProfiles = AdvancedFuzzing.ClientProfiles()
-        self.ServerProfiles = AdvancedFuzzing.ServerProfiles(role=dut_role)
-
-    def to_dict(self):
-        return {
-            "Loads": self.Loads.to_dict(),
-            "CaseObject": self.CaseObject.to_dict(),
-            "ClientProfiles": self.ClientProfiles.to_dict(),
-            "ServerProfiles": self.ServerProfiles.to_dict()
-        }
-
-
-class BGPv4:
-    class Loads(BaseLoads):
-        def __init__(self):
-            super().__init__()
-            self.SimUser = 256
-            self.PolicyChangeCarrier = "Port"
-            self.PacketPayloadPolicy = "Fixed"
-            self.FrameSizePolicy = {
-                "SizeChangeMode": "Fixed",
-                "FrameSizeFormat": 64
-            }
-            self.PacketMaxCount = "10000"
-            self.BurstPacketCount = "1"
-
-        def set_sim_user(self, value):
-            self.SimUser = value
-
-        def set_policy_change_carrier(self, value):
-            self.PolicyChangeCarrier = value
-
-        def set_packet_payload_policy(self, value):
-            self.PacketPayloadPolicy = value
-
-        def set_frame_size_policy(self, value):
-            self.FrameSizePolicy = value
-
-        def set_packet_max_count(self, value):
-            self.PacketMaxCount = value
-
-        def set_burst_packet_count(self, value):
-            self.BurstPacketCount = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class CaseObject:
-        def __init__(self):
-            pass
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ClientProfiles:
-        def __init__(self):
-            self.SourcePortRange = "10000-65535"
-            self.Actions = {}
-
-        def set_source_port_range(self, value):
-            self.SourcePortRange = value
-
-        def set_actions(self, value):
-            self.Actions = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ServerProfiles:
-        def __init__(self, role=""):
-            self.ServerPort = "6001"
-
-        def set_server_port(self, value):
-            self.ServerPort = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    def __init__(self, dut_role):
-        self.Loads = BGPv4.Loads()
-        self.CaseObject = BGPv4.CaseObject()
-        self.ClientProfiles = BGPv4.ClientProfiles()
-        self.ServerProfiles = BGPv4.ServerProfiles(role=dut_role)
-
-    def to_dict(self):
-        return {
-            "Loads": self.Loads.to_dict(),
-            "CaseObject": self.CaseObject.to_dict(),
-            "ClientProfiles": self.ClientProfiles.to_dict(),
-            "ServerProfiles": self.ServerProfiles.to_dict()
-        }
-
-
-class BGPv6:
-    class Loads(BaseLoads):
-        def __init__(self):
-            super().__init__()
-            self.SimUser = 256
-            self.PolicyChangeCarrier = "Port"
-            self.PacketPayloadPolicy = "Fixed"
-            self.FrameSizePolicy = {
-                "SizeChangeMode": "Fixed",
-                "FrameSizeFormat": 80
-            }
-            self.PacketMaxCount = "10000"
-            self.BurstPacketCount = "1"
-
-        def set_sim_user(self, value):
-            self.SimUser = value
-
-        def set_policy_change_carrier(self, value):
-            self.PolicyChangeCarrier = value
-
-        def set_packet_payload_policy(self, value):
-            self.PacketPayloadPolicy = value
-
-        def set_frame_size_policy(self, size_change_mode, frame_size_format):
-            self.FrameSizePolicy = {
-                "SizeChangeMode": size_change_mode,
-                "FrameSizeFormat": frame_size_format
-            }
-
-        def set_packet_max_count(self, value):
-            self.PacketMaxCount = value
-
-        def set_burst_packet_count(self, value):
-            self.BurstPacketCount = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class CaseObject:
-        def __init__(self):
-            pass
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ClientProfiles:
-        def __init__(self):
-            self.SourcePortRange = "10000-65535"
-            self.Actions = []
-
-        def set_source_port_range(self, value):
-            self.SourcePortRange = value
-
-        def set_actions(self, value):
-            self.Actions = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    class ServerProfiles:
-        def __init__(self, role=""):
-            self.ServerPort = "6001"
-
-        def set_server_port(self, value):
-            self.ServerPort = value
-
-        def to_dict(self):
-            return self.__dict__
-
-    def __init__(self, dut_role):
-        self.Loads = BGPv6.Loads()
-        self.CaseObject = BGPv6.CaseObject()
-        self.ClientProfiles = BGPv6.ClientProfiles()
-        self.ServerProfiles = BGPv6.ServerProfiles(role=dut_role)
+        return self.__dict__
+
+
+class GenericTestCaseModel:
+    def __init__(self, test_type: str, dut_role: str):
+        self.Loads = BaseLoads(test_type)
+        self.CaseObject = BaseCaseObject(test_type)
+        self.ClientProfiles = BaseClientProfiles(test_type, dut_role=dut_role)
+        self.ServerProfiles = BaseServerProfiles(test_type, dut_role=dut_role)
 
     def to_dict(self):
         return {
@@ -8756,77 +5359,106 @@ class BGPv6:
 
 
 class PortConfig:
+
+    def _handle_bgp_v6_config(self, config_dict):
+
+        port_side = config_dict.get("port_side", "")
+        dut_role = config_dict.get("dut_role", "")
+        proxy_mode = config_dict.get("proxy_mode", "")
+
+        if port_side == "client":
+            network_subnets_obj = ClientSubnet(dut_role, proxy_mode, 6, 'no')
+            network_subnets_obj.__dict__.update({"SubnetNumber": "1"})
+            self.NetworkSubnets = [network_subnets_obj.to_dict()]
+        if port_side == "server":
+            network_subnets_obj = ServerSubnet(6, 'no')
+            network_subnets_obj.__dict__.update({"SubnetNumber": "1"})
+            self.NetworkSubnets = [network_subnets_obj.to_dict()]
+
+        del self.SimUserSpeedLimit
+
+    def _handle_scenario_descrption_language_config(self, config_dict):
+
+        port_side = config_dict.get("port_side", "")
+        dut_role = config_dict.get("dut_role", "")
+        proxy_mode = config_dict.get("proxy_mode", "")
+
+        if port_side == "client":
+            self.NetworkSubnets = [ClientSubnet(dut_role, proxy_mode, server_address_format='Port').to_dict(),
+                                   ClientSubnet(dut_role, proxy_mode, 6, 'no', server_address_format='Port').to_dict()]
+
+    def _handle_rfc2544_throughput_config(self):
+        self.PortStreamTemplate = PortStreamTemplate().to_dict()
+
+    def _handle_rfc2544_latency_config(self):
+        del self.PortSpeedLimit
+        del self.SimUserSpeedLimit
+        self.PortStreamTemplate = PortStreamTemplate().to_dict()
+        self.PortRXRSS = "yes"
+        self.PortLinkSpeedNow = 10000
+        self.PortModuleType = "100G_40G_QSFP28"
+
+    def _handle_rfc2544_loss_rate_config(self):
+        self.PortStreamTemplate = PortStreamTemplate().to_dict()
+
+    def _handle_rfc2544_back_to_back_config(self):
+        self.PortStreamTemplate = PortStreamTemplate().to_dict()
+
+    def _handle_http_cc_config(self):
+        del self.SimUserSpeedLimit
+
+    def _handle_http_force_cps_config(self):
+        del self.SimUserSpeedLimit
+
+    def _handle_web_scanner_config(self):
+        del self.SimUserSpeedLimit
+
+    def _handle_bgp_v4_config(self, config_dict):
+        port_name = config_dict.get("port_name", "")
+
+        del self.SimUserSpeedLimit
+        self.AdditionalFields = AdditionalFields(port_name).to_dict()
+        self.route_strm_cfg = RouteStrmCfg().to_dict()
+        self.bfdConfig = BfdConfig().to_dict()
+        self.PortRXRSS = "yes"
+
     def __init__(self, port_name, port_side, case_config):
         dut_role = case_config.get("DUTRole", "")
         proxy_mode = case_config.get("ProxyMode", "")
         test_type = case_config.get("TestType", "")
 
+        # General Config
         if port_side == "client":
-
-            if test_type in ["BGPv6"]:
-                network_subnets_obj = ClientSubnet(dut_role, proxy_mode, 6, 'no')
-                network_subnets_obj.__dict__.update({"SubnetNumber": "1"})
-                self.NetworkSubnets = [network_subnets_obj.to_dict()]
-            else:
-                self.NetworkSubnets = [ClientSubnet(dut_role, proxy_mode).to_dict(),
-                                       ClientSubnet(dut_role, proxy_mode, 6, 'no').to_dict()]
+            self.NetworkSubnets = [ClientSubnet(dut_role, proxy_mode).to_dict(),
+                                   ClientSubnet(dut_role, proxy_mode, 6, 'no').to_dict()]
         elif port_side == "server":
+            self.NetworkSubnets = [ServerSubnet().to_dict(), ServerSubnet(6, 'no').to_dict()]
 
-            if test_type in ["BGPv6"]:
-                network_subnets_obj = ServerSubnet(6, 'no')
-                network_subnets_obj.__dict__.update({"SubnetNumber": "1"})
-                self.NetworkSubnets = [network_subnets_obj.to_dict()]
-            else:
-                self.NetworkSubnets = [ServerSubnet().to_dict(), ServerSubnet(6, 'no').to_dict()]
-
-        # packet capture
         self.PacketCapture = [PacketCapture().to_dict()]
 
-        if test_type not in ["AdvancedFuzzing"]:
-            self.VirtualRouterConfig = VirtualRouterConfig(side=port_side, test_type=test_type, port_name=port_name).to_dict()
-            # NetworkZone
-            self.NetworkZone = NetworkZone(test_type=test_type).to_dict()
-            if test_type not in ["Rfc2544Latency"]:
-                # speed limit
-                self.PortSpeedLimit = [PortSpeedLimit(test_type).to_dict()]
-            # SimUserSpeedLimit
-            if (test_type not in ["HttpCc", "HttpForceCps", "BGPv4", "BGPv6", "Rfc2544Latency"]) and (not ToolsUtils.is_ddos_type(test_type)):
-                self.SimUserSpeedLimit = [SimUserSpeedLimit().to_dict()]
-
-            self.PacketFilter = [PacketFilter().to_dict()]
-            # VXLAN
-            self.VXLANTunnel = VXLANTunnel().to_dict()
-            self.GTPUTunnel = GTPUTunnel().to_dict()
-            self.MsgFragSet = MsgFragSet().to_dict()
-            if test_type.startswith("Rfc"):
-                self.PortStreamTemplate = PortStreamTemplate().to_dict()
-            self.MACSEC = MACSEC().to_dict()
-            if test_type in ["BGPv4"]:
-                self.AdditionalFields = AdditionalFields(port_name).to_dict()
-                self.route_strm_cfg = RouteStrmCfg().to_dict()
-                self.bfdConfig = BfdConfig().to_dict()
-            self.QoSConfiguration = QoSConfiguration().to_dict()
-
-        # Other keys
         self.Interface = port_name
         self.PortEnable = "yes"
         self.PortSide = port_side
 
-        if test_type not in ["AdvancedFuzzing"]:
+        # Dpdk Config
+        if ToolsUtils.is_dpdk_test_type(test_type):
+            self.VirtualRouterConfig = VirtualRouterConfig(side=port_side, test_type=test_type, port_name=port_name).to_dict()
+            self.NetworkZone = NetworkZone(test_type=test_type).to_dict()
+            self.PortSpeedLimit = [PortSpeedLimit(test_type).to_dict()]
+            self.PacketFilter = [PacketFilter().to_dict()]
+            self.VXLANTunnel = VXLANTunnel().to_dict()
+            self.GTPUTunnel = GTPUTunnel().to_dict()
+            self.MsgFragSet = MsgFragSet().to_dict()
+            self.MACSEC = MACSEC().to_dict()
+            self.QoSConfiguration = QoSConfiguration().to_dict()
+
             self.PortSpeedDetectMode = "Autoneg"
             self.MacMasquerade = "A2:01#disabled"
             self.TesterPortMacAddress = "68:91:d0:66:b1:b6#disabled"
             self.NextPortMacMethod = "ARP_NSNA#disabled"
-
-            if test_type in ["Rfc2544Latency", "BGPv4"]:
-                self.PortRXRSS = "yes"
-            else:
-                self.PortRXRSS = "no"
-
-            if test_type in ["Rfc2544Latency"]:
-                self.PortLinkSpeedNow = 10000
-                self.PortModuleType = "100G_40G_QSFP28"
-
+            self.PortRXRSS = "no"
+            self.PortLinkSpeedNow = 10000
+            self.PortModuleType = "100G_40G_QSFP28"
             self.HeadChecksumConf = {
                 "IPV4HeadChecksumType": "auto",
                 "TCPHeadChecksumType": "auto",
@@ -8843,6 +5475,41 @@ class PortConfig:
             self.QinqType = "0x88A8#disabled"
             self.VlanID = "1#disabled"
 
+        # DDos Config
+        if not ToolsUtils.is_ddos_type(test_type):
+            self.SimUserSpeedLimit = [SimUserSpeedLimit().to_dict()]
+
+        # TestType Special Config
+        port_config_callback_dict = {
+            "BGPv6": self._handle_bgp_v6_config,
+            'ScenarioDescrptionLanguage': self._handle_scenario_descrption_language_config,
+            'BGPv4': self._handle_bgp_v4_config,
+        }
+
+        no_param_port_config_callback_dict = {
+            'Rfc2544Throughput': self._handle_rfc2544_throughput_config,
+            'Rfc2544Latency': self._handle_rfc2544_latency_config,
+            'Rfc2544LossRate': self._handle_rfc2544_loss_rate_config,
+            'Rfc2544BackToBack': self._handle_rfc2544_back_to_back_config,
+            'HttpCc': self._handle_http_cc_config,
+            'HttpForceCps': self._handle_http_force_cps_config,
+            'WebScanner': self._handle_web_scanner_config,
+        }
+
+        if test_type in port_config_callback_dict:
+            config_dict = {
+                "test_type": test_type,
+                "port_side": port_side,
+                "dut_role": dut_role,
+                "proxy_mode": proxy_mode,
+                "port_name": port_name,
+            }
+
+            port_config_callback_dict[test_type](config_dict)
+
+        elif test_type in no_param_port_config_callback_dict:
+            no_param_port_config_callback_dict[test_type]()
+
     def set_port_core_bind(self, core_bind):
         self.CoreBind = core_bind
 
@@ -8856,30 +5523,12 @@ class CustomPortConfig:
         dut_role = config_json.get("DUTRole", "")
         proxy_mode = config_json.get("ProxyMode", "")
         test_type = config_json.get("TestType", "")
-        # if port_side == "client":
-        #     self.NetworkSubnets = [ClientSubnet(dut_role, proxy_mode).to_dict(),
-        #                            ClientSubnet(dut_role, proxy_mode, 6, 'no').to_dict()]
-        # elif port_side == "server":
-        #     self.NetworkSubnets = [ServerSubnet().to_dict(), ServerSubnet(6, 'no').to_dict()]
-
-        # self.NetworkSubnets = []
-        # if port_json.get("NetworkSubnets"):
-        #     if port_side == "client":
-        #         for network_subnets_json in port_json.get("NetworkSubnets"):
-        #             network_subnets_obj = ClientSubnet(dut_role, proxy_mode)
-        #             network_subnets_obj.__dict__.update(network_subnets_json)
-        #             self.NetworkSubnets.append(network_subnets_obj.to_dict())
-        #     elif port_side == "server":
-        #         for network_subnets_json in port_json.get("NetworkSubnets"):
-        #             network_subnets_obj = ServerSubnet(dut_role, proxy_mode)
-        #             network_subnets_obj.__dict__.update(network_subnets_json)
-        #             self.NetworkSubnets.append(network_subnets_obj.to_dict())
 
         self.NetworkSubnets = port_json.get("NetworkSubnets")
 
         # VirtualRouterConfig
         virtual_router_config_list = []
-        for virtual_router_config_json in port_json.get("VirtualRouterConfig"):
+        for virtual_router_config_json in port_json.get("VirtualRouterConfig", []):
             subnet_version = virtual_router_config_json.get("NetworkZone")
             virtual_router_config_obj = VirtualRouterConfigDict(version=subnet_version)
             virtual_router_config_obj.__dict__.update(virtual_router_config_json)
@@ -8888,7 +5537,7 @@ class CustomPortConfig:
 
         # NetworkZone
         network_zone_list = []
-        for network_zone_json in port_json.get("NetworkZone"):
+        for network_zone_json in port_json.get("NetworkZone", []):
             subnet_version = network_zone_json.get("NetworkZone")
             network_zone_obj = NetworkZoneDict(version=subnet_version)
             network_zone_obj.__dict__.update(network_zone_json)
@@ -8897,84 +5546,72 @@ class CustomPortConfig:
 
         # speed limit
         self.PortSpeedLimit = []
-        for port_speed_limit_json in port_json.get("PortSpeedLimit"):
+        for port_speed_limit_json in port_json.get("PortSpeedLimit", []):
             port_speed_limit_obj = PortSpeedLimit(test_type)
             port_speed_limit_obj.__dict__.update(port_speed_limit_json)
             self.PortSpeedLimit.append(port_speed_limit_obj.to_dict())
 
-        # SimUserSpeedLimit
-        self.SimUserSpeedLimit = []
-        if (test_type not in ["HttpCc", "HttpForceCps"]) and (not ToolsUtils.is_ddos_type(test_type)):
-            for sim_user_speed_limit_json in port_json.get("SimUserSpeedLimit"):
-                sim_user_speed_limit_obj = PortSpeedLimit(test_type)
-                sim_user_speed_limit_obj.__dict__.update(sim_user_speed_limit_json)
-                self.SimUserSpeedLimit.append(sim_user_speed_limit_obj.to_dict())
-
         # packet capture
         self.PacketCapture = []
-        for packet_capture_json in port_json.get("PacketCapture"):
+        for packet_capture_json in port_json.get("PacketCapture", []):
             packet_capture_obj = PacketCapture()
             packet_capture_obj.__dict__.update(packet_capture_json)
             self.PacketCapture.append(packet_capture_obj.to_dict())
 
         self.PacketFilter = []
-        for packet_filter_json in port_json.get("PacketFilter"):
+        for packet_filter_json in port_json.get("PacketFilter", []):
             packet_filter_obj = PacketFilter()
             packet_filter_obj.__dict__.update(packet_filter_json)
             self.PacketFilter.append(packet_filter_obj.to_dict())
 
         # VXLAN
-        if port_json.get("VXLANTunnel"):
+        if port_json.get("VXLANTunnel", {}):
             self.VXLANTunnel = VXLANTunnel()
-            self.VXLANTunnel.__dict__.update(port_json.get("VXLANTunnel"))
+            self.VXLANTunnel.__dict__.update(port_json.get("VXLANTunnel", {}))
             self.VXLANTunnel = self.VXLANTunnel.to_dict()
 
-        if port_json.get("GTPUTunnel"):
+        if port_json.get("GTPUTunnel", {}):
             self.GTPUTunnel = GTPUTunnel()
-            self.GTPUTunnel.__dict__.update(port_json.get("GTPUTunnel"))
+            self.GTPUTunnel.__dict__.update(port_json.get("GTPUTunnel", {}))
             self.GTPUTunnel = self.GTPUTunnel.to_dict()
 
-        if port_json.get("MsgFragSet"):
+        if port_json.get("MsgFragSet", {}):
             self.MsgFragSet = MsgFragSet()
-            self.MsgFragSet.__dict__.update(port_json.get("MsgFragSet"))
+            self.MsgFragSet.__dict__.update(port_json.get("MsgFragSet", {}))
             self.MsgFragSet = self.MsgFragSet.to_dict()
 
-        if test_type.startswith("Rfc"):
-            if port_json.get("PortStreamTemplate"):
-                self.PortStreamTemplate = PortStreamTemplate()
-                self.PortStreamTemplate.__dict__.update(port_json.get("PortStreamTemplate"))
-                self.PortStreamTemplate = self.PortStreamTemplate.to_dict()
-
-        if port_json.get("MACSEC"):
+        if port_json.get("MACSEC", {}):
             self.MACSEC = MACSEC()
-            self.MACSEC.__dict__.update(port_json.get("MACSEC"))
+            self.MACSEC.__dict__.update(port_json.get("MACSEC", {}))
             self.MACSEC = self.MACSEC.to_dict()
 
-        if port_json.get("QoSConfiguration"):
+        if port_json.get("QoSConfiguration", {}):
             self.QoSConfiguration = QoSConfiguration()
-            self.QoSConfiguration.__dict__.update(port_json.get("QoSConfiguration"))
+            self.QoSConfiguration.__dict__.update(port_json.get("QoSConfiguration", {}))
             self.QoSConfiguration = self.QoSConfiguration.to_dict()
 
         # Other keys
         self.Interface = port_name
         self.PortEnable = port_json.get("PortEnable")
         self.PortSide = port_side
-        self.PortSpeedDetectMode = port_json.get("PortSpeedDetectMode")
-        self.TesterPortMacAddress = port_json.get("TesterPortMacAddress")
-        self.NextPortMacMethod = port_json.get("NextPortMacMethod")
-        self.PortRXRSS = port_json.get("PortRXRSS")
-        self.HeadChecksumConf = port_json.get("HeadChecksumConf")
-        self.nb_txd = port_json.get("nb_txd")
-        self.nb_rxd = port_json.get("nb_rxd")
-        self.nictype = port_json.get("nictype")
-        self.device = port_json.get("device")
-        self.sendqueue = port_json.get("sendqueue")
-        self.receivequeue = port_json.get("receivequeue")
-        self.CoreBind = port_json.get("CoreBind")
-        self.OuterVlanID = port_json.get("OuterVlanID")
-        self.QinqType = port_json.get("QinqType")
-        self.VlanID = port_json.get("VlanID")
-        self.driver = port_json.get("driver")
+
+        if ToolsUtils.is_dpdk_test_type(test_type):
+            self.PortSpeedDetectMode = port_json.get("PortSpeedDetectMode")
+            self.TesterPortMacAddress = port_json.get("TesterPortMacAddress")
+            self.NextPortMacMethod = port_json.get("NextPortMacMethod")
+            self.PortRXRSS = port_json.get("PortRXRSS")
+            self.HeadChecksumConf = port_json.get("HeadChecksumConf")
+            self.nb_txd = port_json.get("nb_txd")
+            self.nb_rxd = port_json.get("nb_rxd")
+            self.nictype = port_json.get("nictype")
+            self.device = port_json.get("device")
+            self.sendqueue = port_json.get("sendqueue")
+            self.receivequeue = port_json.get("receivequeue")
+            self.CoreBind = port_json.get("CoreBind")
+            self.OuterVlanID = port_json.get("OuterVlanID")
+            self.QinqType = port_json.get("QinqType")
+            self.VlanID = port_json.get("VlanID")
+            self.driver = port_json.get("driver")
 
     def set_port_core_bind(self, core_bind):
         self.CoreBind = core_bind
@@ -9085,7 +5722,10 @@ class HttpClient:
         if response.status_code == 200:
             logger.info("Login successful.")
             self.user = payload["name"]
+            data = response.json().get("Data")
             self.token = response.json().get("token")
+            self.encrpt_name = data.get("encrpt_name")
+            self.encrpt_role = data.get("encrpt_role")
         else:
             msg = f"Login failed: {response.status_code} - {response.text}"
             logger.error(msg)
@@ -9193,6 +5833,15 @@ class TestCase:
                 raise ValueError(msg)
         self.case_object.base.set_test_duration(test_duration)
 
+    def _handle_server_port(self, server_port: int):
+        """
+        * Handle server port
+        """
+        if server_port is None:
+            return
+
+        self.case_object.case_model.ServerProfiles.set_server_port(server_port)
+
     def _handle_case_object(self, case_object_dict):
         """
         * Handle case object
@@ -9279,7 +5928,6 @@ class TestCase:
             self._apply_port_limit_value(port_name, limit_value_str)
             logger.info(f"Port {port_name} limit value set to {limit_value_str}")
 
-
     def _handle_load_limit_policy(self, load_limit_policy):
         """
         * Handle load_limit_policy
@@ -9288,6 +5936,40 @@ class TestCase:
             return
 
         self.case_object.case_model.Loads.set_load_limit_policy(load_limit_policy)
+
+    def _handle_index_start(self, index_start: int):
+        """
+        * Handle index start
+        """
+        if index_start is None:
+            return
+
+        self.case_object.case_model.Loads.set_index_start(index_start)
+
+    def _handle_index_end(self, index_end=""):
+
+        if not index_end:
+            index_end = ""
+
+        self.case_object.case_model.Loads.set_index_end(index_end)
+
+    def _handle_fuzz_db_keep_only_n_pass_cases(self, count: int):
+        """
+        * Handle fuzz db keep only N pass cases
+        """
+        if count is None:
+            return
+
+        self.case_object.case_model.Loads.set_fuzz_db_keep_only_n_pass_cases(count)
+
+    def _handle_reuse_target_connection(self, reuse: str):
+        """
+        * Handle reuse target connection
+        """
+        if not reuse:
+            return
+
+        self.case_object.case_model.Loads.set_reuse_target_connection(reuse)
 
     def _handle_fuzzing(self, fuzzing):
         """
@@ -9321,7 +6003,7 @@ class TestCase:
 
     def _handle_case_assign_memory_gb(self, case_assign_memory_gb: int):
         """
-        * Handle huge page memory
+        * Handle case running memory
         """
         if case_assign_memory_gb:
             case_assign_memory_gb = int(case_assign_memory_gb)
@@ -9339,6 +6021,96 @@ class TestCase:
             return
 
         self.case_object.base.set_test_name(test_name)
+
+    def _handle_descrption(self, descrption: str):
+        """
+        * Handle descrption
+        """
+        if not descrption:
+            return
+
+        self.case_object.case_model.CaseObject.set_descrption(descrption)
+
+    def _handle_app_scenario(self, app_scenario: str):
+        """
+        * Handle app_scenario
+        """
+        if not app_scenario:
+            return
+
+        self.case_object.case_model.CaseObject.set_app_scenario(app_scenario)
+
+    def _handle_malware(self, malware: str):
+        """
+        * Handle malware
+        """
+        if not malware:
+            return
+
+        self.case_object.case_model.CaseObject.set_malware(malware)
+
+    def _handle_mitre(self, mitre: str):
+        """
+        * Handle mitre
+        """
+        if not mitre:
+            return
+
+        self.case_object.case_model.CaseObject.set_mitre(mitre)
+
+    def _handle_send_wait_time(self, value: int):
+        """
+        * Handle send wait time
+        """
+        if value is None:
+            return
+
+        self.case_object.case_model.Loads.set_send_wait_time(value)
+
+    def _handle_send_num_cyles(self, value: int):
+        """
+        * Handle send num cyles
+        """
+        if value is None:
+            return
+
+        self.case_object.case_model.Loads.set_send_num_cyles(value)
+
+    def _handle_scenario_timeout(self, value: int):
+        """
+        * Handle scenario timeout
+        """
+        if value is None:
+            return
+
+        self.case_object.case_model.Loads.set_scenario_timeout(value)
+
+    def _handle_scenario_interval(self, value: int):
+        """
+        * Handle scenario interval
+        """
+        if value is None:
+            return
+
+        self.case_object.case_model.Loads.set_scenario_interval(value)
+
+    def _handle_sock_recv_timeout(self, value: int):
+        """
+        * Handle socket receive timeout
+        """
+        if value is None:
+            return
+
+        self.case_object.case_model.Loads.set_sock_recv_timeout(value)
+
+    def _handle_maximum_iterative_cycle(self, value: int):
+        if value:
+            value = int(value)
+            if value < 1 or value > 100:
+                msg = "test retry count must be between 1 and 100"
+                logger.error(msg)
+                raise ValueError(msg)
+        self.case_object.case_model.Loads.set_maximum_iterative_cycle(value)
 
     @staticmethod
     def parse_port_list(port_str):
@@ -9552,6 +6324,19 @@ class TestCase:
         }
         return self.client.post("/api/running/data/AdvancedFuzzing", payload)
 
+    def _get_scenario_descrption_language_running_data(self, report_id):
+
+        if not report_id:
+            print("report_id can not be empty.")
+            raise ValueError("report_id can not be empty.")
+
+        payload = {
+            "selectedTabs": [],
+            "ReportID": report_id,
+            "TestType": "ScenarioDescrptionLanguage"
+        }
+        return self.client.post("/api/running/data/ScenarioDescrptionLanguage", payload)
+
     def _get_layer7_running_data(self, report_id):
 
         if not report_id:
@@ -9667,6 +6452,86 @@ class TestCase:
 
         return self.client.get("/api/running/get/capture", payload)
 
+    def _get_descrption_report_paging_result_data(self, report_id):
+
+        if not report_id:
+            print("report_id can not be empty.")
+            raise ValueError("report_id can not be empty.")
+
+        payload = {
+            "offset": 0,
+            "size": 1000,
+            "ReportID": report_id,
+            "TestType": self.test_type
+        }
+
+        return self.client.get("/api/descrption_report/paging_result", payload)
+
+    def _get_descrption_report_number_paging_result_data(self, report_id):
+
+        if not report_id:
+            print("report_id can not be empty.")
+            raise ValueError("report_id can not be empty.")
+
+        payload = {
+            "ReportID": report_id,
+            "TestType": self.test_type
+        }
+
+        return self.client.get("/api/descrption_report_number/paging_result", payload)
+
+    def _get_fuzzing_sqlite_statistics(self, report_id):
+
+        if not report_id:
+            print("report_id can not be empty.")
+            raise ValueError("report_id can not be empty.")
+
+        params = {
+            "offset": 0,
+            "size": 1000,
+            "reportId": report_id,
+        }
+
+        return self.client.get("/api/history/fuzzing/sqlite_statistics", params)
+
+    def _get_fuzzing_sqlite_result(self, report_id):
+
+        if not report_id:
+            print("report_id can not be empty.")
+            raise ValueError("report_id can not be empty.")
+
+        params = {
+            "offset": 0,
+            "size": 1000,
+            "reportId": report_id,
+        }
+
+        return self.client.get("/api/history/fuzzing/sqlite_result", params)
+
+    def _fuzzing_sqlite_parser(self, report_id):
+
+        if not report_id:
+            print("report_id can not be empty.")
+            raise ValueError("report_id can not be empty.")
+
+        params = {
+            "historyID": report_id
+        }
+
+        return self.client.get("/api/history/fuzzing/sqlite_parser", params)
+
+    def _fuzzing_progress(self, report_id):
+
+        if not report_id:
+            print("report_id can not be empty.")
+            raise ValueError("report_id can not be empty.")
+
+        params = {
+            "historyID": report_id
+        }
+
+        return self.client.get("/api/history/fuzzing/progress", params)
+
     def ConfigNetworkIpAddress(self, port_name: str, ip_address: str):
         """
         * Configure IP address for a port
@@ -9698,18 +6563,46 @@ class TestCase:
         self.Config("InterfaceCPU", f"{port_name}:{cpu_list_str}")
 
     def Getresult(self):
-        payload = {
-            "ReportID": self.report_id,
-            "TestType": self.test_type,
-            "TestID": self.case_id,
-            "Layer": "layer2",
-            "LayerTabs": ["sum"]
-        }
-        res = self.client.post("/api/running/get/layer2", payload)
-        if res.get("ErrorCode") == 0:
-            print(res.get("Data"))
+        if self.test_type in ["ScenarioDescrptionLanguage"]:
+            res = self._get_descrption_report_number_paging_result_data(self.report_id)
+            print(res)
+        elif self.test_type in ["AdvancedFuzzing"]:
+            res = self._get_fuzzing_sqlite_statistics(self.report_id)
+            if res.get("ErrorCode") == 0:
+                data = res.get("Data", {})
+                result_json = {
+                    "Execution_passed": data.get("pass", None),
+                    "error": data.get("error", None),
+                    "Reconnection_num": data.get("restart", None),
+                    "total": data.get("total", None),
+                    "icmp_avg_latency": data.get("fuzzing_avg", None),
+                    "fuzzing_min": data.get("fuzzing_min", None),
+                    "fuzzing_max": data.get("fuzzing_max", None),
+                    "icmp_timeout_num": data.get("timeout_num", None)
+                }
+
+                print(result_json)
+            else:
+                print("get result error", res)
         else:
-            print("get layer2 error", res)
+            res = self._get_layer2_running_data(self.report_id, self.case_id)
+
+            if res.get("ErrorCode") == 0:
+                print(res.get("Data"))
+            else:
+                print("get result error", res)
+
+    def DownLoadLogFile(self, filepath="./"):
+        print("download log file start")
+        if self.test_type == "AdvancedFuzzing":
+            params = {
+                "reportID": self.report_id,
+                "testType": self.test_type,
+                "logFile": "fuzzing_log"
+            }
+            self.client.download_file("/api/case/logfile/down_file", params, filepath)
+
+        print(f"download log file end, filepath: {filepath}")
 
     def Monitor(self):
         while True:
@@ -9723,9 +6616,31 @@ class TestCase:
 
                     res = self._get_advanced_fuzzing_running_data(report_id)
                     if res.get("ErrorCode") == 0:
-                        print(res.get("Data", {}).get("Detail"))
+                        detail = res.get("Data", {}).get("Detail")
+                        if detail:
+                            session_info = detail.get("session_info", {})
+                            print({
+                                "crashes": session_info.get("crashes", []),
+                                "current_element": session_info.get("current_element", ""),
+                                "current_index": session_info.get("current_index", ""),
+                                "current_test_case_name": session_info.get("current_test_case_name", ""),
+                                "exec_speed": session_info.get("exec_speed", ""),
+                                "runtime": round(session_info.get("runtime", 0), 2)
+                            })
+                        else:
+                            print({})
                     else:
-                        print("get layer2 error", res)
+                        print("get advanced fuzzing data error", res)
+
+                elif test_type == "ScenarioDescrptionLanguage":
+                    # res = self._get_scenario_descrption_language_running_data(report_id)
+                    # if res.get("ErrorCode") == 0:
+                    #     print(res.get("Data", {}).get("Detail"))
+                    # else:
+                    #     print("get scenario descrption language data error", res)
+
+                    res = self._get_descrption_report_number_paging_result_data(self.report_id)
+                    print(res)
                 else:
                     res = self._get_layer2_running_data(report_id, self.case_id)
 
@@ -9745,6 +6660,39 @@ class TestCase:
 
         print("Test program ended!")
         return 'Test program ended!'
+
+    def AnalysisResult(self):
+
+        res_parse = self._fuzzing_sqlite_parser(self.report_id)
+
+        if res_parse.get("ErrorCode") == 0:
+            print("Test case start analysis result successful")
+        else:
+            print("Test case start analysis result failed", res_parse)
+            return res_parse
+
+        while True:
+            res = self._fuzzing_progress(self.report_id)
+            data = res.get("Data")
+            running_status = data["Status"] if res else ""
+            if running_status == "Running":
+                if res.get("ErrorCode") == 0:
+                    print(data)
+                else:
+                    print("get analysis result error", res)
+
+            if running_status == "Stopping":
+                print("Test analysis result is stopping!")
+
+            if running_status == "Stopped":
+                print("Test case analysis has stopped!, analysis result: ", data)
+                time.sleep(2)
+                break
+
+            time.sleep(1)
+
+        print("Test program analysis ended!")
+        return 'Test program analysis ended!'
 
     def CustomMonitorOutput(self):
 
@@ -9887,8 +6835,7 @@ class TestCase:
 
     def GetSummary(self):
         # http://192.168.15.100/api/history/report/{rptid}/start
-        # payload = {"selectedTabs": ["Status"], "reportId": self.report_id, "testType": self.test_type}
-        payload = {"selectedTabs": ["Status"], "reportId": '68240c33981ba6e24130b5fe', "testType": self.test_type}
+        payload = {"selectedTabs": ["Status"], "reportId": self.report_id, "testType": self.test_type}
         res = self.client.post("/api/history/by_tab", payload)
         if res.get("ErrorCode") == 0:
             # English to Chinese
@@ -9930,6 +6877,21 @@ class TestCase:
             print("get result view failed!  Errormsg:" + res.get("ErrorMessage"))
         time.sleep(1)
 
+    def GetFuzzingObjectCaseList(self, case_config):
+
+        payload = {
+            "dutRole": case_config.get("dutRole", "Gateway"),
+            "Role": self.client.encrpt_role,
+            "User": self.client.encrpt_name
+        }
+
+        res = self.client.get("/api/case/fuzzing", payload)
+        if res.get("ErrorCode") == 0:
+            print(res.get("payload"))
+        else:
+            print("Use case creation failed, Errormsg:" + res.get("ErrorMessage"))
+        time.sleep(1)
+
     def Apply(self, case_config):
         res = self.client.post("/api/case", case_config)
         if res.get("ErrorCode") == 0:
@@ -9946,6 +6908,47 @@ class TestCase:
             print("Test case startup successful")
         else:
             print("Test case startup failed", res)
+
+    def ModifyStreamConfig(self, payload: dict = None):
+
+        # get report id
+        status_ret = self.client.get("/api/running/status")
+        report_id = status_ret['Data']["ReportID"] if status_ret else ""
+
+        # have data, then start streaming
+        while True:
+            res = self._get_layer7_running_data(report_id)
+            if res.get("ErrorCode") == 0:
+                detail = res.get("Data", {}).get("Detail")
+                if detail:
+                    break
+            else:
+                print("get layer7 running data failed", res)
+
+        if not payload:
+            payload = {
+                "Action": "Send_Udp",
+                "IP_Version": "V4",
+                "PortName": "all_client",
+                "rt_strm_dst_port": "6000/0",
+                "rt_strm_dst_port_mode": "single",
+                "rt_strm_mode": "to_one",
+                "rt_strm_src": "Emu",
+                "rt_strm_src_port": "10000/0",
+                "rt_strm_src_port_mode": "single",
+                "rt_strm_target": "peer_port_sim",
+                "strm_appoint_ip": "17.1.1.3+10/0.0.1.0",
+                "strm_dst_ip": "65.1.1.3+10/0.0.1.0"
+            }
+
+        payload["ReportID"] = report_id
+
+        res = self.client.post(f"/api/stream_config/modify", payload)
+
+        if res.get("ErrorCode") == 0:
+            print(res.get("ErrorMessage"))
+        else:
+            print("modify stream config failed, ErrorMessage: ", res.get("ErrorMessage"))
 
     def GetCaseListByName(self, test_type):
         menu_mode_dict = {
@@ -10022,14 +7025,30 @@ class TestCase:
             "FrameSizePolicy": self._handle_frame_size_policy,
             "CycleDurationPolicy": self._handle_cycle_duration_policy,
             "PortLimitValue": self._handle_port_limit_value,
-
             "LoadLimitPolicy": self._handle_load_limit_policy,
             "Fuzzing": self._handle_fuzzing,
+            "IndexStart": self._handle_index_start,
+            "IndexEnd": self._handle_index_end,
+            "FuzzDbKeepOnlyNPassCases": self._handle_fuzz_db_keep_only_n_pass_cases,
+            "ReuseTargetConnection": self._handle_reuse_target_connection,
+            "ServerPort": self._handle_server_port,
             "TestMode": self._handle_test_mode,
-
             "NetworkZone": self._handle_network_zone,
             "VirtualRouterConfig": self._handle_virtual_router_config,
-            "AdditionalFields": self._handle_additional_fields
+            "AdditionalFields": self._handle_additional_fields,
+
+            "Descrption": self._handle_descrption,
+            "App_scenario": self._handle_app_scenario,
+            "Malware": self._handle_malware,
+            "Mitre": self._handle_mitre,
+
+            "SendWaitTime": self._handle_send_wait_time,
+            "SendNumCyles": self._handle_send_num_cyles,
+            "ScenarioTimeout": self._handle_scenario_timeout,
+            "ScenarioInterval": self._handle_scenario_interval,
+            "SockRecvTimeout": self._handle_sock_recv_timeout,
+            "MaximumIterativeCycle": self._handle_maximum_iterative_cycle,
+
         }
 
         handler = handler_map.get(key)
@@ -10071,7 +7090,7 @@ class TestCase:
 
         self.case_config["NetworkConfig"]["SlaveHost"][0]["Ports"] = port_subnet_list
 
-        if self.test_type not in ["AdvancedFuzzing"]:
+        if ToolsUtils.is_dpdk_test_type(self.test_type):
             self.update_port_default_values()
 
     def _handle_interface_by_json(self, config_json):
@@ -10174,15 +7193,40 @@ class TestCase:
             logger.error(str(repr(e)))
             sys.exit()
 
+    def write_json_to_file(self, json_data: dict, filepath: str = "./"):
+        """
+        Write the incoming dictionary data to the JSON file
+
+        :param json_data: The dictionary object to be written to
+        :param filepath: file save path
+        """
+        filename = f"{self.test_type}-config.json"
+        full_path = os.path.join(filepath, filename)
+        with open(full_path, "w", encoding="utf-8") as f:
+            json.dump(json_data, f, indent=4, ensure_ascii=False)
+
+        print(f"JSON 数据已写入文件: {full_path}")
+
     def ReplaceDefaultValue(self, json_data):
 
         # replace Base value
-        self.case_object.base.set_test_name(json_data["TestName"])
-        self.case_object.base.set_test_mode(json_data["TestMode"])
-        self.case_object.base.set_dut_role(json_data["DUTRole"])
-        self.case_object.base.set_proxy_mode(json_data["ProxyMode"])
-        self.case_object.base.set_test_duration(json_data["TestDuration"])
-        self.case_object.base.set_work_mode(json_data["WorkMode"])
+        if json_data["TestName"]:
+            self.case_object.base.set_test_name(json_data["TestName"])
+
+        if json_data.get("TestMode"):
+            self.case_object.base.set_test_mode(json_data["TestMode"])
+
+        if json_data.get("DUTRole"):
+            self.case_object.base.set_dut_role(json_data["DUTRole"])
+
+        if json_data.get("ProxyMode"):
+            self.case_object.base.set_proxy_mode(json_data["ProxyMode"])
+
+        if json_data.get("TestDuration"):
+            self.case_object.base.set_test_duration(json_data["TestDuration"])
+
+        if json_data.get("WorkMode"):
+            self.case_object.base.set_work_mode(json_data["WorkMode"])
 
         # replace Specifics value
         self.case_object.case_model.Loads.__dict__.update(json_data["Specifics"][0]["Loads"])
@@ -10193,121 +7237,19 @@ class TestCase:
         # replace NetworkConfig value
         self._handle_interface_by_json(json_data)
 
+    def WriteJsonToFile(self, json_data: dict, filepath: str = "./"):
+        self.write_json_to_file(json_data, filepath)
+
 
 class TestFactory:
     @staticmethod
     def create(test_type, dut_role):
-        if test_type == "HttpCps":
-            return HttpCps(dut_role, test_type)
-        elif test_type == "HttpForceCps":
-            return HttpForceCps(dut_role, test_type)
-        elif test_type == "HttpCc":
-            return HttpCc(dut_role, test_type)
-        elif test_type == "HttpThroughput":
-            return HttpThroughput(dut_role, test_type)
-        elif test_type == "UdpPps":
-            return UdpPps(dut_role, test_type)
-        elif test_type == "TurboTcp":
-            return TurboTcp(dut_role)
-        elif test_type == "Rfc2544Throughput":
-            return Rfc2544Throughput(dut_role)
-        elif test_type == "Rfc2544Latency":
-            return Rfc2544Latency(dut_role)
-        elif test_type == "Rfc2544LossRate":
-            return Rfc2544LossRate(dut_role)
-        elif test_type == "Rfc2544BackToBack":
-            return Rfc2544BackToBack(dut_role)
+        if not test_type:
+            raise ValueError("test_type must not be empty")
+        if not dut_role:
+            raise ValueError("dut_role must not be empty")
 
-        elif test_type == "Ipv4FragAttack":
-            return Ipv4FragAttack(dut_role)
-        elif test_type == "ICMPSinglePacketAttack":
-            return ICMPSinglePacketAttack(dut_role)
-        elif test_type == "IGMPv4SinglePacketAttack":
-            return IGMPv4SinglePacketAttack(dut_role)
-        elif test_type == "ARPv4SinglePacketAttack":
-            return ARPv4SinglePacketAttack(dut_role)
-        elif test_type == "TCPSinglePacketAttack":
-            return TCPSinglePacketAttack(dut_role)
-        elif test_type == "UDPSinglePacketAttack":
-            return UDPSinglePacketAttack(dut_role)
-        elif test_type == "UDPPayloadAttack":
-            return UDPPayloadAttack(dut_role)
-        elif test_type == "SipSinglePacketAttack":
-            return SipSinglePacketAttack(dut_role)
-        elif test_type == "DnsServiceAttack":
-            return DnsServiceAttack(dut_role)
-        elif test_type == "DnsAmplificationAttack":
-            return DnsAmplificationAttack(dut_role)
-        elif test_type == "SSDPAttack":
-            return SSDPAttack(dut_role)
-        elif test_type == "NtpAmplificationAttack":
-            return NtpAmplificationAttack(dut_role)
-
-        elif test_type == "MemcachedAmplificationAttack":
-            return MemcachedAmplificationAttack(dut_role)
-        elif test_type == "UnknownProtocolSinglePacketAttack":
-            return UnknownProtocolSinglePacketAttack()
-        elif test_type == "HttpRequestFlood":
-            return HttpRequestFlood(dut_role, test_type)
-        elif test_type == "HttpsFlood":
-            return HttpsFlood(dut_role)
-        elif test_type == "HTTPSlowRequestFlood":
-            return HTTPSlowRequestFlood(dut_role)
-        elif test_type == "MultiTypeFlood":
-            return MultiTypeFlood(dut_role)
-        elif test_type == "TcpSessionFlood":
-            return TcpSessionFlood(dut_role)
-        elif test_type == "TCPWinnuke":
-            return TCPWinnuke(dut_role)
-        elif test_type == "HttpMultipleRequest":
-            return HttpMultipleRequest(dut_role, test_type)
-        elif test_type == "HttpRecursionRequest":
-            return HttpRecursionRequest(dut_role, test_type)
-        elif test_type == "HttpConcurrentSlowRead":
-            return HttpConcurrentSlowRead(dut_role, test_type)
-        elif test_type == "HttpConcurrentSlowRequest":
-            return HttpConcurrentSlowRequest(dut_role, test_type)
-        elif test_type == "UnicastStorm":
-            return UnicastStorm(dut_role)
-        elif test_type == "BroadcastStorm":
-            return BroadcastStorm(dut_role)
-        elif test_type == "MulticastStorm":
-            return MulticastStorm(dut_role)
-        elif test_type == "SVStormTest":
-            return SVStormTest(dut_role)
-        elif test_type == "GooseStormTest":
-            return GooseStormTest(dut_role)
-        elif test_type == "MmsConnectStorm":
-            return MmsConnectStorm(dut_role)
-        elif test_type == "LLDPStormTest":
-            return LLDPStormTest(dut_role)
-        elif test_type == "VulnerabilityScanner":
-            return VulnerabilityScanner(dut_role)
-        elif test_type == "WebScanner":
-            return WebScanner(dut_role)
-        elif test_type == "NetworkDiscovery":
-            return NetworkDiscovery(dut_role)
-
-        elif test_type == "HttpsCps":
-            return HttpsCps(dut_role, test_type)
-        elif test_type == "HttpsCc":
-            return HttpsCc(dut_role, test_type)
-        elif test_type == "HttpsThroughput":
-            return HttpsThroughput(dut_role, test_type)
-        elif test_type == "SSLHandshake":
-            return SSLHandshake(dut_role)
-        elif test_type == "AdvancedFuzzing":
-            return AdvancedFuzzing(dut_role)
-
-        elif test_type == "BGPv4":
-            return BGPv4(dut_role)
-        elif test_type == "BGPv6":
-            return BGPv6(dut_role)
-
-        else:
-            msg = f"Unknown test type: {test_type}"
-            logger.error(msg)
-            raise ValueError(msg)
+        return GenericTestCaseModel(test_type=test_type, dut_role=dut_role)
 
 
 class CreateProject:
