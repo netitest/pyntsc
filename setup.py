@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
    
 setup(
     name="pyntsc",
-    version="25.06.14.5133",
+    version="25.06.18.5176",
     author="Beijing Netitest Technology Co., Ltd.",
     author_email="hfli@netitest.com",
     description="Python Object-Oriented Library to Automate Netitest Network Testing Instruments",
@@ -16,6 +16,9 @@ setup(
     install_requires=[
         "requests", 
         "ipaddress",
+        "pandas",
+        "openpyxl",
+        "wexpect"
     ],
     python_requires=">=3.6",
     classifiers=[

@@ -3,6 +3,7 @@
 
 
 import os
+import re
 import sys
 import time
 import json
@@ -75,11 +76,15 @@ class LoggerUtils:
 
     @staticmethod
     def get_logger(name='project') -> logging.Logger:
+        """
+        * Get logger instance
+        :param name:
+        :return:
+        """
         if LoggerUtils._logger:
             return LoggerUtils._logger
 
         log_file = os.path.join(os.getcwd(), 'project.log')  # current directory
-
         logger = logging.getLogger(name)
         logger.setLevel(logging.DEBUG)
 
@@ -112,6 +117,20 @@ logger = LoggerUtils.get_logger()
 """
   Tool class encapsulation
 """
+
+
+def global_exception_handler(exc_type, exc_value, exc_traceback):
+    """
+    * Global exception handler
+    :param exc_type:
+    :param exc_value:
+    :param exc_traceback:
+    """
+    logger.error(f"{exc_value}")
+    # 可以在这里记录日志、发送告警等
+
+
+sys.excepthook = global_exception_handler
 
 
 class ToolsUtils:
@@ -182,6 +201,11 @@ class ToolsUtils:
 
     @staticmethod
     def is_non_dpdk_test_type(test_type):
+        """
+        * check if the test type is non-dpdk type
+        :param test_type:
+        :return: bool
+        """
         non_dpdk_list = [
             "Jmeter",
             "AbNginxCps",
@@ -221,6 +245,11 @@ class ToolsUtils:
 
     @staticmethod
     def is_dpdk_test_type(test_type):
+        """
+        * check if the test type is dpdk type
+        :param test_type:
+        :return: bool
+        """
         test_type_list = [
             "HttpCps",
             "HttpsCps",
@@ -408,7 +437,7 @@ class ToolsUtils:
             "UDPPayloadAttack",
             "TcpDns",
             "GB28181",
-            "GMT0018",
+            #"GMT0018",
             "Netconf",
             "5gSip",
             "S7",
@@ -483,6 +512,13 @@ class ToolsUtils:
 class NetworkUtils:
     @staticmethod
     def ping_host(host, count=1, timeout=1):
+        """
+        * Ping the host to see if it is available
+        :param host:
+        :param count:
+        :param timeout:
+        :return: bool
+        """
         param = '-n' if platform.system().lower() == 'windows' else '-c'
         try:
             result = subprocess.run(
@@ -496,6 +532,13 @@ class NetworkUtils:
 
     @staticmethod
     def check_port(host, port, timeout=1):
+        """
+        * Check if the port is available
+        :param host:
+        :param port:
+        :param timeout:
+        :return: bool
+        """
         try:
             with socket.create_connection((host, port), timeout=timeout):
                 return True
@@ -509,6 +552,11 @@ class NetworkUtils:
 
 
 class PortSpeedLimit:
+    """
+    PortSpeedLimit class encapsulation
+    Args:
+        test_type (str): The test type to be set.
+    """
     def __init__(self, test_type):
         self.LimitMode = "Interface"
         self.LimitType = "case"
@@ -516,8 +564,8 @@ class PortSpeedLimit:
         self.SpeedLimit = 0
         self.Accumulate = "slice_add"
         self.FlushTokenUsecond = "1000"
-        self.Name = "HttpCps"
-        self.TestType = "HttpCps"
+        self.Name = test_type
+        self.TestType = test_type
 
         if test_type == "HttpForceCps":
             self.LimitForwardModel = "StrongRate"
@@ -525,11 +573,11 @@ class PortSpeedLimit:
 
         if test_type in ["BGPv4", "BGPv6"]:
             self.BandwidthUnit = "Mbps"
-
+        if test_type in ["UdpPps"]:
+            self.LimitType = "bandwidth"
     def set_limit_mode(self, mode):
         """
         Set the speed limit mode.
-
         Args:
             mode (str): The speed limit mode to be set.
         """
@@ -538,7 +586,6 @@ class PortSpeedLimit:
     def set_limit_type(self, type):
         """
         Set the speed limit type.
-
         Args:
             type (str): The speed limit type to be set.
         """
@@ -547,7 +594,6 @@ class PortSpeedLimit:
     def set_limit_graph(self, graph):
         """
         Set the speed limit graph.
-
         Args:
             graph (str): The speed limit graph to be set.
         """
@@ -556,7 +602,6 @@ class PortSpeedLimit:
     def set_speed_limit(self, limit):
         """
         Set the speed limit value.
-
         Args:
             limit (int): The speed limit value to be set.
         """
@@ -565,7 +610,6 @@ class PortSpeedLimit:
     def set_accumulate(self, accumulate):
         """
         Set the accumulation method.
-
         Args:
             accumulate (str): The accumulation method to be set.
         """
@@ -574,7 +618,6 @@ class PortSpeedLimit:
     def set_flush_token_usecond(self, usecond):
         """
         Set the time in microseconds to flush tokens.
-
         Args:
             usecond (str): The time in microseconds to flush tokens.
         """
@@ -583,7 +626,6 @@ class PortSpeedLimit:
     def set_name(self, name):
         """
         Set the name.
-
         Args:
             name (str): The name to be set.
         """
@@ -592,7 +634,6 @@ class PortSpeedLimit:
     def set_test_type(self, test_type):
         """
         Set the test type.
-
         Args:
             test_type (str): The test type to be set.
         """
@@ -601,7 +642,6 @@ class PortSpeedLimit:
     def set_limit_forward_model(self, limit_forward_model):
         """
         Set the test type.
-
         Args:
             limit_forward_model (str): The test type to be set.
         """
@@ -610,7 +650,6 @@ class PortSpeedLimit:
     def set_strong_limit_value(self, strong_limit_value):
         """
         Set the strong limit value.
-
         Args:
             strong_limit_value (str): The test type to be set.
         """
@@ -648,7 +687,6 @@ class SimUserSpeedLimit:
     def set_limit_mode(self, mode):
         """
         Set the speed limit mode.
-
         Args:
             mode (str): The speed limit mode to be set.
         """
@@ -657,7 +695,6 @@ class SimUserSpeedLimit:
     def set_limit_type(self, type):
         """
         Set the speed limit type.
-
         Args:
             type (str): The speed limit type to be set.
         """
@@ -666,7 +703,6 @@ class SimUserSpeedLimit:
     def set_limit_graph(self, graph):
         """
         Set the speed limit graph.
-
         Args:
             graph (str): The speed limit graph to be set.
         """
@@ -675,7 +711,6 @@ class SimUserSpeedLimit:
     def set_accumulate(self, accumulate):
         """
         Set the accumulation method.
-
         Args:
             accumulate (str): The accumulation method to be set.
         """
@@ -684,7 +719,6 @@ class SimUserSpeedLimit:
     def set_flush_token_usecond(self, usecond):
         """
         Set the time in microseconds to flush tokens.
-
         Args:
             usecond (str): The time in microseconds to flush tokens.
         """
@@ -693,7 +727,6 @@ class SimUserSpeedLimit:
     def set_iteration_standard(self, standard):
         """
         Set the iteration standard.
-
         Args:
             standard (int): The iteration standard to be set.
         """
@@ -702,7 +735,6 @@ class SimUserSpeedLimit:
     def set_iteration_range(self, range):
         """
         Set the iteration range.
-
         Args:
             range (int): The iteration range to be set.
         """
@@ -711,7 +743,6 @@ class SimUserSpeedLimit:
     def set_stabilize_test_time(self, time):
         """
         Set the stabilization test time.
-
         Args:
             time (int): The stabilization test time to be set.
         """
@@ -720,7 +751,6 @@ class SimUserSpeedLimit:
     def set_name(self, name):
         """
         Set the name.
-
         Args:
             name (str): The name to be set.
         """
@@ -729,7 +759,6 @@ class SimUserSpeedLimit:
     def set_test_type(self, test_type):
         """
         Set the test type.
-
         Args:
             test_type (str): The test type to be set.
         """
@@ -738,7 +767,6 @@ class SimUserSpeedLimit:
     def to_dict(self):
         """
         Convert the attributes of the SimUserSpeedLimit instance to a dictionary.
-
         Returns:
             dict: A dictionary containing the simulated user speed limit configuration information.
         """
@@ -763,14 +791,13 @@ class PacketCapture:
         try:
             # Try to convert the string to an IPv4 address object
             ipv4_obj = ipaddress.IPv4Address(ip)
-            # print(ipv4_obj)
             self.MgmtIp = ipv4_obj
         except ValueError:
             # If the conversion fails, throw an exception indicating that the string is not a valid IPv4 address
             raise ValueError(f"The input param {ip} is an invalid identifier.")
 
     def set_physical_port(self, port: str):
-        if port in ["port1", "port2", "port3", "port4"]:
+        if port.startswith("port"):
             self.PhysicalPort = port
         else:
             raise ValueError(f"The input param '{port}' is an invalid identifier.")
@@ -822,7 +849,6 @@ class PacketCapture:
     def to_dict(self):
         """
         Convert the attributes of the PacketCapture object to a dictionary.
-
         Returns:
             dict: A dictionary containing all the attributes of the object.
         """
@@ -847,10 +873,8 @@ class PacketFilter:
     def set_capture_packet_enable(self, enable: str):
         """
         Set whether packet capture is enabled.
-
         Args:
             enable (str): Either "yes" or "no".
-
         Raises:
             ValueError: If the input is not "yes" or "no".
         """
@@ -862,10 +886,8 @@ class PacketFilter:
     def set_filter_action(self, action: str):
         """
         Set the filter action.
-
         Args:
             action (str): Either "Drop" or "Queue".
-
         Raises:
             ValueError: If the input is not "Drop" or "Queue".
         """
@@ -877,10 +899,8 @@ class PacketFilter:
     def set_filtering_protocol(self, protocol: str):
         """
         Set the filtering protocol.
-
         Args:
             protocol (str): Can be "All", "TCP", or "UDP".
-
         Raises:
             ValueError: If the input is not "All", "TCP", or "UDP".
         """
@@ -892,10 +912,8 @@ class PacketFilter:
     def set_filtering_ip_Version(self, Version: str):
         """
         Set the filtering IP version.
-
         Args:
             Version (str): Either "v4" or "v6".
-
         Raises:
             ValueError: If the input is not "v4" or "v6".
         """
@@ -907,10 +925,8 @@ class PacketFilter:
     def set_src_port_mathes(self, src_port_mathes: str):
         """
         Set the source port matching rule.
-
         Args:
             src_port_mathes (str): Either "Eq" or "Neq".
-
         Raises:
             ValueError: If the input is not "Eq" or "Neq".
         """
@@ -922,10 +938,8 @@ class PacketFilter:
     def set_dst_port_mathes(self, dst_port_mathes: str):
         """
         Set the destination port matching rule.
-
         Args:
             dst_port_mathes (str): Either "Eq" or "Neq".
-
         Raises:
             ValueError: If the input is not "Eq" or "Neq".
         """
@@ -937,10 +951,8 @@ class PacketFilter:
     def set_filtering_src_ipv4(self, ip: str):
         """
         Set the source IPv4 address for filtering.
-
         Args:
             ip (str): A valid IPv4 address.
-
         Raises:
             ValueError: If the input is not a valid IPv4 address.
         """
@@ -953,10 +965,8 @@ class PacketFilter:
     def set_filtering_src_ipv6(self, ip: str):
         """
         Set the source IPv6 address for filtering.
-
         Args:
             ip (str): A valid IPv6 address.
-
         Raises:
             ValueError: If the input is not a valid IPv6 address.
         """
@@ -969,10 +979,8 @@ class PacketFilter:
     def set_filtering_dst_ipv4(self, ip: str):
         """
         Set the destination IPv4 address for filtering.
-
         Args:
             ip (str): A valid IPv4 address.
-
         Raises:
             ValueError: If the input is not a valid IPv4 address.
         """
@@ -985,10 +993,8 @@ class PacketFilter:
     def set_filtering_dst_ipv6(self, ip: str):
         """
         Set the destination IPv6 address for filtering.
-
         Args:
             ip (str): A valid IPv6 address.
-
         Raises:
             ValueError: If the input is not a valid IPv6 address.
         """
@@ -1001,10 +1007,8 @@ class PacketFilter:
     def set_filtering_src_port(self, src_port: str):
         """
         Set the source port for filtering.
-
         Args:
             src_port (str): A valid port number between 0 and 65535.
-
         Raises:
             ValueError: If the input is not a valid port number.
         """
@@ -1016,10 +1020,8 @@ class PacketFilter:
     def set_filtering_dst_port(self, dst_port: str):
         """
         Set the destination port for filtering.
-
         Args:
             dst_port (str): A valid port number between 0 and 65535.
-
         Raises:
             ValueError: If the input is not a valid port number.
         """
@@ -1031,7 +1033,6 @@ class PacketFilter:
     def to_dict(self):
         """
         Convert the object's attributes to a dictionary.
-
         Returns:
             dict: A dictionary containing all the attributes of the object.
         """
@@ -1039,7 +1040,9 @@ class PacketFilter:
 
 
 class NetworkControlConfig:
-    """NetworkControl"""
+    """
+    NetworkControl
+    """
 
     def __init__(self, test_type):
         self.WaitPortsUpSecond = 30
@@ -1078,11 +1081,17 @@ class NetworkControlConfig:
         self.TcpPerfectClose = "no"
         self.PromiscuousMode = "no"
         self.TesterMessagePort = 2002
+        if test_type in ['UdpPps']:
+            self.CaseRunMode = "DPDK"
 
         if test_type in ["Rfc2544Latency"]:
             self.FPGARxMode = "packet"
             self.FPGATxMode = "segment"
+        if test_type in ['WebScanner','UdpPps']:
+            self.PingConnectivityCheck = "no"
 
+    def set_case_run_mode(self, run_mode: str):
+        self.CaseRunMode = run_mode
     def set_wait_ports_up_second(self, seconds: int):
         self.WaitPortsUpSecond = seconds
 
@@ -1224,7 +1233,6 @@ class BaseSubnet:
     @staticmethod
     def config_subnet_parameters(args, port_config_list, dut_role, proxy_mode):
         """Configure subnet parameters
-
         Args:
             args (tuple): The tuple of the subnet attribute dictionary to be configured
             port_config_list (list): The list of network port objects needs to be modified
@@ -1255,7 +1263,6 @@ class BaseSubnet:
     @staticmethod
     def check_ip_address_validity(ip_addr_range):
         """ Check the legitimacy of the ip address
-
         Args:
             ip_addr_range (str): IP address range
         """
@@ -1287,7 +1294,6 @@ class BaseSubnet:
     @staticmethod
     def check_subnet_parameter_name_validity(modify_dict):
         """ Check the legitimacy of the subnet parameter names
-
         Args:
             modify_dict (dict): The subnet configuration parameters to be modified
         """
@@ -1305,7 +1311,6 @@ class BaseSubnet:
     @staticmethod
     def check_subnet_enable_value_validity(modify_dict, subnet_enable_val):
         """ The validity test of the value of the parameter 'SubnetEnable'
-
         Args:
             modify_dict (dict): The subnet configuration parameters to be modified
             subnet_enable_val (str): The value of the parameter 'SubnetEnable'
@@ -1321,7 +1326,6 @@ class BaseSubnet:
     @staticmethod
     def check_subnet_number_is_exist(modify_dict):
         """ Check whether the subnet configuration parameters are legal
-
         Args:
             modify_dict (dict): The subnet configuration parameters to be modified
         """
@@ -1338,7 +1342,6 @@ class BaseSubnet:
     @staticmethod
     def check_subnet_ip_addr_range_value_validity(modify_dict, ip_addr_range_val):
         """Check the legitimacy of the IP address range
-
         Args:
             modify_dict (dict): The subnet configuration parameters to be modified
             ip_addr_range_val (str): The value of the parameter 'IpAddrRange'
@@ -1352,7 +1355,6 @@ class BaseSubnet:
     @staticmethod
     def check_subnet_parameters_validity(modify_dict):
         """ Check whether the subnet configuration parameters are legal
-
         Args:
             modify_dict (dict): The subnet configuration parameters to be modified
         """
@@ -1514,7 +1516,6 @@ class HeadChecksumConf:
     def __init__(self, IPV4HeadChecksumType="auto", TCPHeadChecksumType="auto", UDPHeadChecksumType="auto"):
         """
         Initialize the header checksum configuration class.
-
         Args:
             IPV4HeadChecksumType (str, optional): IPV4 head check type, default value: "auto".
             TCPHeadChecksumType (str, optional): TCP head check type, default value: "auto".
@@ -1527,7 +1528,6 @@ class HeadChecksumConf:
     def to_dict(self):
         """
         Convert the header checksum configuration to a dictionary.
-
         Returns:
             dict: containing the checksum types of IPV4, TCP and UDP headers.
         """
@@ -1561,7 +1561,6 @@ class NICConfiguration:
     def to_dict(self):
         """
         Convert the network interface card configuration to a dictionary.
-
         Returns:
             dict: It contains all the configuration information of NIC
         """
@@ -1583,10 +1582,8 @@ class NICConfiguration:
     def to_json(self, indent=4):
         """
         Convert the NICConfiguration instance to a string in JSON format.
-
         Args:
         indent (int, optional): The number of indent Spaces in a JSON string, with a default of 4.
-
         Returns:
         str: A JSON format string containing NICConfiguration configuration information.
         """
@@ -1614,7 +1611,6 @@ class GTPUTunnel:
     def set_gtpu_enable(self, enable: bool):
         """
         Set the enable status of the GTPU tunnel.
-
         Args:
             enable (bool): If True, enable the GTPU tunnel; if False, disable it.
         """
@@ -1623,10 +1619,8 @@ class GTPUTunnel:
     def set_tunnel_ip_version(self, version: int):
         """
         Set the IP version used by the GTPU tunnel.
-
         Args:
             version (int): The IP version to be set, must be 4 or 6.
-
         Raises:
             ValueError: Thrown when the incoming IP version is not 4 or 6.
         """
@@ -1638,7 +1632,6 @@ class GTPUTunnel:
     def set_tunnel_port(self, port: int):
         """
         Set the port number of the GTPU tunnel.
-
         Args:
             port (int): The port number to be set.
         """
@@ -1647,7 +1640,6 @@ class GTPUTunnel:
     def set_tunnel_teid(self, teid: int):
         """
         Set the remote GTPU tunnel starting ID.
-
         Args:
             teid (int): The TEID to be set.
         """
@@ -1656,7 +1648,6 @@ class GTPUTunnel:
     def set_tunnel_qfi(self, qfi: int):
         """
         Set the GTPU extension header value.
-
         Args:
             qfi (int): The QFI to be set.
         """
@@ -1665,7 +1656,6 @@ class GTPUTunnel:
     def set_tunnel_ip_local(self, ip1: str):
         """
         Set the local IP address of the GTPU tunnel.
-
         Args:
             ip1 (str): The first IP address.
             ip2 (str): The second IP address.
@@ -1675,7 +1665,6 @@ class GTPUTunnel:
     def set_tunnel_ip_local(self, ip2: str):
         """
         Set the remote IP address of the GTPU tunnel.
-
         Args:
             ip2 (str): The first IP address.
         """
@@ -1684,10 +1673,8 @@ class GTPUTunnel:
     def set_network_mask(self, mask: int):
         """
         Set the GTPU network mask.
-
         Args:
             mask (int): The network mask to be set, must be between 0 and 32.
-
         Raises:
             ValueError: Thrown when the incoming network mask is not between 0 and 32.
         """
@@ -1699,7 +1686,6 @@ class GTPUTunnel:
     def to_dict(self):
         """
         Convert the attributes of the GTPUTunnel instance to a dictionary.
-
         Returns:
             dict: A dictionary containing the GTPU tunnel configuration information.
         """
@@ -1731,7 +1717,6 @@ class VXLANTunnel:
     def set_src_vtep_ip(self, ip: str):
         """
         Sets the source VTEP IP address.
-
         Args:
             ip (str): The source VTEP IP address to set.
         """
@@ -1740,7 +1725,6 @@ class VXLANTunnel:
     def set_dst_vtep_ip(self, ip: str):
         """
         Sets the destination VTEP IP address.
-
         Args:
             ip (str): The destination VTEP IP address to set.
         """
@@ -1749,7 +1733,6 @@ class VXLANTunnel:
     def set_start_vni_id(self, vni: int):
         """
         Sets the starting VNI identifier.
-
         Args:
             vni (int): The starting VNI identifier to set.
         """
@@ -1758,7 +1741,6 @@ class VXLANTunnel:
     def set_vxlan_vlan_id(self, vlan_id: str):
         """
         Sets the VXLAN VLAN ID.
-
         Args:
             vlan_id (str): The VLAN ID to set.
         """
@@ -1767,7 +1749,6 @@ class VXLANTunnel:
     def set_vtep_netmask(self, netmask: str):
         """
         Sets the VTEP IP network mask.
-
         Args:
             netmask (str): The network mask to set.
         """
@@ -1776,7 +1757,6 @@ class VXLANTunnel:
     def set_vxlan_enable(self, enable: bool):
         """
         Sets the VXLAN tunnel enable status.
-
         Args:
             enable (bool): If True, the VXLAN tunnel is enabled; if False, it is disabled.
         """
@@ -1785,7 +1765,6 @@ class VXLANTunnel:
     def set_vlan_id_step(self, step: str):
         """
         Sets the VLAN ID step size.
-
         Args:
             step (str): The VLAN ID step size to set.
         """
@@ -1794,7 +1773,6 @@ class VXLANTunnel:
     def set_vtep_dst_mac(self, mac: str):
         """
         Sets the destination VTEP MAC address.
-
         Args:
             mac (str): The destination VTEP MAC address to set.
         """
@@ -1803,7 +1781,6 @@ class VXLANTunnel:
     def set_step_vni_id(self, step: int):
         """
         Sets the VNI identifier step size.
-
         Args:
             step (int): The VNI identifier step size to set.
         """
@@ -1812,10 +1789,8 @@ class VXLANTunnel:
     def set_vtep_ip_version(self, version: int):
         """
         Sets the IP version used by the VTEP.
-
         Args:
             version (int): The IP version to set, must be either 4 or 6.
-
         Raises:
             ValueError: Raised when the provided IP version is neither 4 nor 6.
         """
@@ -1827,7 +1802,6 @@ class VXLANTunnel:
     def set_vni_id_count(self, count: int):
         """
         Sets the number of VNI identifiers.
-
         Args:
             count (int): The number of VNI identifiers to set.
         """
@@ -1836,7 +1810,6 @@ class VXLANTunnel:
     def set_tunnel_count(self, count: int):
         """
         Sets the number of tunnels.
-
         Args:
             count (int): The number of tunnels to set.
         """
@@ -1845,7 +1818,6 @@ class VXLANTunnel:
     def to_dict(self):
         """
         Converts the VXLANTunnel instance attributes to a dictionary.
-
         Returns:
             dict: A dictionary containing the VXLAN tunnel configuration.
         """
@@ -1871,7 +1843,6 @@ class QoSConfiguration:
     def set_roce_pfc_mode(self, enable: bool):
         """
         Sets the enable status of RoCEv2 PFC mode.
-
         Args:
             enable (bool): If True, enables RoCEv2 PFC mode; if False, disables it.
         """
@@ -1880,7 +1851,6 @@ class QoSConfiguration:
     def set_vlan_priority(self, priority: str):
         """
         Sets the VLAN priority.
-
         Args:
             priority (str): The VLAN priority to set.
         """
@@ -1889,7 +1859,6 @@ class QoSConfiguration:
     def set_ip_dscp_priority(self, dscp: str):
         """
         Sets the IP DSCP priority.
-
         Args:
             dscp (str): The IP DSCP priority to set.
         """
@@ -1898,7 +1867,6 @@ class QoSConfiguration:
     def set_ecn(self, ecn: str):
         """
         Sets the ECN field value.
-
         Args:
             ecn (str): The ECN field value to set, must be a 2-digit hexadecimal string.
 
@@ -1913,10 +1881,8 @@ class QoSConfiguration:
     def set_roce_pfc_list(self, pfc_list: str):
         """
         Sets the RoCEv2 PFC list.
-
         Args:
             pfc_list (str): The RoCEv2 PFC list to set, must be 8 comma-separated '0' or '1'.
-
         Raises:
             ValueError: If the provided RoCEv2 PFC list does not meet the format requirements.
         """
@@ -1928,10 +1894,8 @@ class QoSConfiguration:
     def set_priority_enable(self, mode: str):
         """
         Sets the priority enable mode.
-
         Args:
             mode (str): The priority enable mode to set, must be one of 'DscpBased', 'None', or 'VlanBased'.
-
         Raises:
             ValueError: If the provided mode is not 'DscpBased', 'None', or 'VlanBased'.
         """
@@ -1943,7 +1907,6 @@ class QoSConfiguration:
     def to_dict(self):
         """
         Converts the QoSConfiguration instance attributes to a dictionary.
-
         Returns:
             dict: A dictionary containing the QoS configuration.
         """
@@ -1970,7 +1933,6 @@ class MACSEC:
     def set_macsec_enable(self, enable: bool):
         """
         Sets the enable status of MACsec.
-
         Args:
             enable (bool): If True, enables MACsec; if False, disables it.
         """
@@ -1979,10 +1941,8 @@ class MACSEC:
     def set_cak_value(self, cak: str):
         """
         Sets the CAK value.
-
         Args:
             cak (str): The CAK value to set, must be a 32-character hexadecimal string.
-
         Raises:
             ValueError: If the provided CAK value is not a 32-character hexadecimal string.
         """
@@ -1994,7 +1954,6 @@ class MACSEC:
     def set_cak_name(self, name: str):
         """
         Sets the CAK name.
-
         Args:
             name (str): The CAK name to set.
         """
@@ -2003,10 +1962,8 @@ class MACSEC:
     def set_cipher_suite(self, suite: str):
         """
         Sets the cipher suite used by MACsec.
-
         Args:
             suite (str): The cipher suite to set, must be either 'gcm-aes-128' or 'gcm-aes-256'.
-
         Raises:
             ValueError: If the provided cipher suite is not supported.
         """
@@ -2018,10 +1975,8 @@ class MACSEC:
     def set_sci_mac(self, mac: str):
         """
         Sets the SCI MAC address.
-
         Args:
             mac (str): The SCI MAC address to set, must be a 12-character hexadecimal string.
-
         Raises:
             ValueError: If the provided SCI MAC address is not a 12-character hexadecimal string.
         """
@@ -2033,7 +1988,6 @@ class MACSEC:
     def set_port_identifier(self, port: int):
         """
         Sets the port identifier.
-
         Args:
             port (int): The port identifier to set.
         """
@@ -2042,7 +1996,6 @@ class MACSEC:
     def set_pn(self, pn: int):
         """
         Sets the MACsec PN value.
-
         Args:
             pn (int): The PN value to set.
         """
@@ -2051,7 +2004,6 @@ class MACSEC:
     def to_dict(self):
         """
         Converts the MACSEC instance attributes to a dictionary.
-
         Returns:
             dict: A dictionary containing the MACsec configuration information.
         """
@@ -2084,7 +2036,6 @@ class AdditionalFields:
     @staticmethod
     def config_additional_fields_parameters(args, port_config_list):
         """Configure Additional fields parameters
-
         Args:
             args (tuple): The tuple of the subnet attribute dictionary to be configured
             port_config_list (list): The list of network port objects needs to be modified
@@ -2106,7 +2057,6 @@ class AdditionalFields:
     def to_dict(self):
         """
         Converts the MACSEC instance attributes to a dictionary.
-
         Returns:
             dict: A dictionary containing the MACsec configuration information.
         """
@@ -2167,7 +2117,6 @@ class RouteStrmCfg:
     def to_dict(self):
         """
         Converts the MACSEC instance attributes to a dictionary.
-
         Returns:
             dict: A dictionary containing the MACsec configuration information.
         """
@@ -2188,7 +2137,6 @@ class BfdConfig:
     def to_dict(self):
         """
         Converts the MACSEC instance attributes to a dictionary.
-
         Returns:
             dict: A dictionary containing the MACsec configuration information.
         """
@@ -2219,7 +2167,6 @@ class MsgFragSet:
     def set_ipv6_frag_enable(self, enable: bool):
         """
         Sets the enable status of IPv6 fragmentation.
-
         Args:
             enable (bool): If True, enables IPv6 fragmentation; if False, disables it.
         """
@@ -2228,7 +2175,6 @@ class MsgFragSet:
     def set_ipv6_udp_enable(self, enable: bool):
         """
         Sets the enable status of IPv6 UDP.
-
         Args:
             enable (bool): If True, enables IPv6 UDP; if False, disables it.
         """
@@ -2237,7 +2183,6 @@ class MsgFragSet:
     def set_ipv4_frag_enable(self, enable: bool):
         """
         Sets the enable status of IPv4 fragmentation.
-
         Args:
             enable (bool): If True, enables IPv4 fragmentation; if False, disables it.
         """
@@ -2246,7 +2191,6 @@ class MsgFragSet:
     def set_ipv4_udp_enable(self, enable: bool):
         """
         Sets the enable status of IPv4 UDP.
-
         Args:
             enable (bool): If True, enables IPv4 UDP; if False, disables it.
         """
@@ -2255,7 +2199,6 @@ class MsgFragSet:
     def set_packet_disorder(self, enable: bool):
         """
         Sets the enable status of packet fragmentation disorder.
-
         Args:
             enable (bool): If True, enables packet fragmentation disorder; if False, disables it.
         """
@@ -2264,7 +2207,6 @@ class MsgFragSet:
     def set_packet_headpkt(self, enable: bool):
         """
         Sets the enable status of first fragment only.
-
         Args:
             enable (bool): If True, enables first fragment only; if False, disables it.
         """
@@ -2273,7 +2215,6 @@ class MsgFragSet:
     def set_packet_overlap(self, enable: bool):
         """
         Sets the enable status of packet fragmentation overlap.
-
         Args:
             enable (bool): If True, enables packet fragmentation overlap; if False, disables it.
         """
@@ -2282,7 +2223,6 @@ class MsgFragSet:
     def set_mtu_cover_enable(self, enable: bool):
         """
         Sets the enable status of MTU coverage.
-
         Args:
             enable (bool): If True, enables MTU coverage; if False, disables it.
         """
@@ -2291,10 +2231,8 @@ class MsgFragSet:
     def set_port_mtu(self, mtu: int):
         """
         Sets the port MTU value.
-
         Args:
             mtu (int): The port MTU value to set, must be a positive integer.
-
         Raises:
             ValueError: If the provided MTU value is not a positive integer.
         """
@@ -2306,7 +2244,6 @@ class MsgFragSet:
     def set_ipv4_tcp_mss(self, mss: str):
         """
         Sets the IPv4 TCP MSS value.
-
         Args:
             mss (str): The IPv4 TCP MSS value to set.
         """
@@ -2315,7 +2252,6 @@ class MsgFragSet:
     def set_ipv6_tcp_mss(self, mss: str):
         """
         Sets the IPv6 TCP MSS value.
-
         Args:
             mss (str): The IPv6 TCP MSS value to set.
         """
@@ -2324,7 +2260,6 @@ class MsgFragSet:
     def to_dict(self):
         """
         Converts the MsgFragSet instance attributes to a dictionary.
-
         Returns:
             dict: A dictionary containing message fragmentation settings.
         """
@@ -2347,7 +2282,6 @@ class Vlan:
     def set_outer_vlan_id(self, vlan_id: str):
         """
         Sets the outer VLAN ID.
-
         Args:
             vlan_id (str): The outer VLAN ID to set.
         """
@@ -2356,10 +2290,8 @@ class Vlan:
     def set_qinq_type(self, qinq: str):
         """
         Sets the QinQ type.
-
         Args:
             qinq (str): The QinQ type to set, must be a hexadecimal string starting with '0x'.
-
         Raises:
             ValueError: If the provided QinQ type doesn't start with '0x'.
         """
@@ -2370,7 +2302,6 @@ class Vlan:
     def set_vlan_id(self, vlan_id: str):
         """
         Sets the VLAN ID.
-
         Args:
             vlan_id (str): The VLAN ID to set.
         """
@@ -2379,7 +2310,6 @@ class Vlan:
     def to_dict(self):
         """
         Converts the Vlan instance attributes to a dictionary.
-
         Returns:
             dict: A dictionary containing VLAN configuration information.
         """
@@ -2430,7 +2360,6 @@ class VirtualRouterConfigDict:
     @staticmethod
     def config_virtual_router_parameters(args, port_config_list):
         """Configure virtual router parameters
-
         Args:
             args (tuple): The tuple of the subnet attribute dictionary to be configured
             port_config_list (list): The list of network port objects needs to be modified
@@ -2525,7 +2454,6 @@ class NetworkZone:
     def set_network_zone_dict(self, index, network_zone_dict):
         if index < 0 or index >= len(self.network_zone_list):
             msg = "Index out of range"
-            logger.error(msg)
             raise IndexError(msg)
         self.network_zone_list[index] = network_zone_dict
 
@@ -2566,7 +2494,6 @@ class NetworkZoneDict:
             self.SubnetVersion = version
         else:
             msg = "Subnet Version must be 'v4' or 'v6'"
-            logger.error(msg)
             raise ValueError(msg)
 
     def set_network_range(self, start: str, step: str):
@@ -2576,7 +2503,6 @@ class NetworkZoneDict:
     def set_network_mask(self, mask: str):
         if not mask.isdigit():
             msg = "Network mask must be numeric"
-            logger.error(msg)
             raise ValueError(msg)
         self.NetworkZoneMask = mask
 
@@ -2586,7 +2512,6 @@ class NetworkZoneDict:
     @staticmethod
     def config_zone_parameters(args, port_config_list):
         """Configure zone parameters
-
         Args:
             args (tuple): The tuple of the subnet attribute dictionary to be configured
             port_config_list (list): The list of network port objects needs to be modified
@@ -2609,9 +2534,13 @@ class NetworkZoneDict:
 
 class BaseCase:
     def set_test_name(self, test_name):
+        """
+        Set the test name. will add time at the end of test name to avoid duplicate test name
+        Args:
+            test_name (str): The test name to set.
+        """
         if not test_name:
             msg = "TestName cannot be empty"
-            logger.error(msg)
             raise ValueError(msg)
 
         if ToolsUtils.check_test_case_name(test_name):
@@ -2620,6 +2549,9 @@ class BaseCase:
 
     @staticmethod
     def get_current_time():
+        """
+        Get current time in the format of YYYYMMDD-HH_MM_SS
+        """
         current_time = time.localtime()
         formatted_time = time.strftime("%Y%m%d-%H_%M_%S", current_time)
         return formatted_time
@@ -2664,7 +2596,14 @@ class BaseCase:
         self.WorkMode = work_mode
 
     def to_dict(self):
+        """
+        Convert the object to a dictionary.
+        If the test type is Rfc or WebScanner, delete the TestDuration field.
+        :return:
+        """
         if self.TestType.startswith("Rfc") and hasattr(self, "TestDuration"):
+            delattr(self, "TestDuration")
+        elif self.TestType in ['WebScanner'] and hasattr(self, "TestDuration"):
             delattr(self, "TestDuration")
         return self.__dict__
 
@@ -2682,6 +2621,9 @@ class PortStreamTemplate:
 
 
 class BaseLoads:
+    """
+    Class for managing load configuration.
+    """
     def __init__(self, test_type):
         if ToolsUtils.is_dpdk_test_type(test_type):
             # The current user's memory occupancy
@@ -2745,6 +2687,9 @@ class BaseLoads:
             "BGPv6": self._handle_bgpv6_loads_config,
             "ScenarioDescrptionLanguage": self._handle_scenario_description_language_loads_config,
             "WeakPasswordDetection": self._handle_weak_password_detection_loads_config,
+            "AttackReplay": self._handle_attack_replay_loads_config,
+            "WebSiteScan": self._handle_web_site_scan_loads_config,
+            "GMT0018":  self._handle_gmt0018_loads_config
         }
 
         callback = loads_callback_dict.get(test_type)
@@ -2863,7 +2808,9 @@ class BaseLoads:
             "SizeChangeMode": "Fixed",
             "FrameSizeFormat": 1518
         }
-
+    def _handle_gmt0018_loads_config(self):
+        self.ConcurrentConnections = 50
+        self.DevOpenMode = 0
     def _handle_turbo_tcp_loads_config(self):
         self.SimUser = 256
 
@@ -3544,8 +3491,44 @@ class BaseLoads:
         self.RequestTimedOut = 32
         self.SslConnectEnable = "no"
 
+    def _handle_attack_replay_loads_config(self):
+        self.UserApplyMemoryMB = 60
+        self.CaseAssignMemoryGB = 60
+        self.DPDKHugeMemoryPct = 30
+        self.ReplayDelaySecond = 0
+        self.ReplayDelayTcpConnection = 0
+        self.RewritePcapMacAddr = "yes"
+        self.RewritePcapIPAddr = "no"
+        self.RewriteBMIPAddr = "no"
+        self.SourcePortRewrite = "no"
+        self.LogReplayLostDetail = "yes"
+        self.BreakOncePacketLost = "no"
+        self.ChangeSendMethod = "CyclicSend"
+        self.PcapReplayCount = 1
+        self.TcpReplayTimeOut = 10
+        self.AutoFilterEnable = "no"
+        self.SimUser = 8
+
+    def _handle_web_site_scan_loads_config(self):
+        self.IgnoreCode = ""
+        self.SearchDelay = ""
+        self.NoSearchRecursively = "no"
+        self.ShowNotFound = "no"
+        self.UserAgent = ""
+        self.AppendSuffix = ""
+        self.HttpAuth = ""
+        self.ProxyAddress = ""
+        self.ProxyAuth = ""
+        self.RequestCookie = ""
+        self.RequestHeader = ""
+        self.CaseInsensitive = "no"
+        self.Protocol = "http"
+        self.WebUrlPath = ""
+
     def set_send_wait_time(self, value):
         self.SendWaitTime = value
+    def set_concurrent_connections(self, value):
+        self.ConcurrentConnections = value
 
     def set_send_num_cyles(self, value):
         self.SendNumCyles = value
@@ -3569,7 +3552,7 @@ class BaseLoads:
         self.PacketPayloadPolicy = value
 
     def set_frame_size_policy(self, value):
-        self.FrameSizePolicy = value
+        self.FrameSizePolicy.update(value)
 
     def set_packet_max_count(self, value):
         self.PacketMaxCount = value
@@ -3892,10 +3875,8 @@ class BaseLoads:
     def set_ntp_amp_ddos(self, value: str):
         """
         Set the NTP amplification DDoS flag.
-
         Args:
             value (str): "yes" to enable, "no" to disable.
-
         Raises:
             ValueError: If input is not "yes" or "no".
         """
@@ -3906,7 +3887,6 @@ class BaseLoads:
     def set_ntp_monlist_timeout(self, value):
         """
         Set the NTP monlist timeout.
-
         Args:
             value (int): The timeout value.
         """
@@ -3915,10 +3895,8 @@ class BaseLoads:
     def set_attack_stute(self, value: str):
         """
         Set DDoS type traffic statistics flag
-
         Args:
             value (str): "yes" to enable statistics, "no" to disable
-
         Raises:
             ValueError: If input is not "yes" or "no"
         """
@@ -3929,7 +3907,6 @@ class BaseLoads:
     def set_ssdp_multicast_storm_ip(self, value: str):
         """
         Set the SSDP multicast storm IP address.
-
         Args:
             value (str): The IP address.
         """
@@ -3938,7 +3915,6 @@ class BaseLoads:
     def set_ssdp_multicast_storm_ip_ipv6(self, value: str):
         """
         Set the SSDP multicast storm IP address (IPv6).
-
         Args:
             value (str): The IP address.
         """
@@ -3947,7 +3923,6 @@ class BaseLoads:
     def set_ssdp_multi_port(self, value: str):
         """
         Set the SSDP multicast storm port.
-
         Args:
             value (str): The port number.
         """
@@ -3956,7 +3931,6 @@ class BaseLoads:
     def set_dns_query_timeout(self, value):
         """
         Set the DNS query timeout.
-
         Args:
             value (int): The timeout value.
         """
@@ -3965,7 +3939,6 @@ class BaseLoads:
     def set_ssdp_amp_ddos(self, value: str):
         """
         Set the SSDP amplification DDoS flag.
-
         Args:
             value (str): "yes" to enable, "no" to disable.
 
@@ -3979,7 +3952,6 @@ class BaseLoads:
     def set_from_name(self, value):
         """
         Set the FromName value.
-
         Args:
             value (str): The FromName value.
         """
@@ -3988,7 +3960,6 @@ class BaseLoads:
     def set_to_name(self, value):
         """
         Set the ToName value.
-
         Args:
             value (str): The ToName value.
         """
@@ -3997,7 +3968,6 @@ class BaseLoads:
     def set_ims_host(self, value):
         """
         Set the ImsHost value.
-
         Args:
             value (str): The ImsHost value.
         """
@@ -4006,10 +3976,7 @@ class BaseLoads:
     def set_multicast_ip(self, ip: str):
         """
         Set multicast IP address
-
         Args:
-            ip (str): Valid IPv4 multicast address (
-
             ip (str): Valid IPv4 multicast address (IP_ADDRESS - IP_ADDRESS): Valid IPv4 multicast address (IP_ADDRESS - 239.255.255.255)
         Raises:
             ValueError: If invalid multicast IP format
@@ -4026,7 +3993,6 @@ class BaseLoads:
     def set_udp_flood_frame(self, value):
         """
         Set the udp flood frame size.
-
         Args:
             value (int): The frame size.
         """
@@ -4035,7 +4001,6 @@ class BaseLoads:
     def set_syn_flood_frame(self, value):
         """
         Set the syn flood frame size.
-
         Args:
             value (int): The frame size.
         """
@@ -4044,7 +4009,6 @@ class BaseLoads:
     def set_arp_request_flood_frame(self, value):
         """
         Set the arp request flood frame size.
-
         Args:
             value (int): The frame size.
         """
@@ -4053,7 +4017,6 @@ class BaseLoads:
     def set_igmp_response_flood_frame(self, value):
         """
         Set the IGMPv3 response flood frame size.
-
         Args:
             value (int): The frame size.
         """
@@ -4062,7 +4025,6 @@ class BaseLoads:
     def set_icmp_request_flood_frame(self, value):
         """
         Set the ICMP request flood frame size.
-
         Args:
             value (int): The frame size.
         """
@@ -4071,7 +4033,6 @@ class BaseLoads:
     def set_dual_flow_mode(self, value):
         """
         Set whether dual - flow mode is enabled.
-
         Args:
             value (str): "enable" or "disable".
         """
@@ -4110,7 +4071,6 @@ class BaseLoads:
     def set_recv_packet_count(self, value):
         """
         Set the received packet count.
-
         Args:
             value (str): The received packet count.
         """
@@ -4119,7 +4079,6 @@ class BaseLoads:
     def set_simuser_send_pps(self, value):
         """
         Set the packets per second sent by simulated users.
-
         Args:
             value (int): The packets per second value.
         """
@@ -4128,7 +4087,6 @@ class BaseLoads:
     def set_udp_echo(self, value):
         """
         Set whether UDP echo is enabled.
-
         Args:
             value (str): "enable" or "disable".
         """
@@ -4137,7 +4095,6 @@ class BaseLoads:
     def set_frag_id_accumulates(self, value):
         """
         Set whether the fragment ID accumulates.
-
         Args:
             value (str): "yes" or "no".
         """
@@ -4146,7 +4103,6 @@ class BaseLoads:
     def set_first_packet_sent_delay(self, value):
         """
         Set the delay for sending the first packet.
-
         Args:
             value (int): The delay value.
         """
@@ -4155,7 +4111,6 @@ class BaseLoads:
     def set_max_ip_frag(self, value):
         """
         Set the maximum number of IP fragments.
-
         Args:
             value (int): The maximum number of IP fragments.
         """
@@ -4164,7 +4119,6 @@ class BaseLoads:
     def set_specify_payload_value(self, value):
         """
         Set the specified payload value.
-
         Args:
             value (str): The specified payload value, e.g., "00".
         """
@@ -4173,7 +4127,6 @@ class BaseLoads:
     def set_simuser_send_packet_second(self, value):
         """
         Set the number of packets sent by simulated users per second.
-
         Args:
             value (int): The number of packets.
         """
@@ -4182,7 +4135,6 @@ class BaseLoads:
     def set_udp_send_packet_count(self, value):
         """
         Set the number of UDP packets sent.
-
         Args:
             value (int): The number of UDP packets.
         """
@@ -4191,7 +4143,6 @@ class BaseLoads:
     def set_ipv4_flags_df(self, value):
         """
         Set the IPv4 Flags DF value.
-
         Args:
             value (int): The IPv4 Flags DF value.
         """
@@ -4218,11 +4169,17 @@ class BaseLoads:
     def set_dpdk_huge_memory_pct(self, value):
         self.DPDKHugeMemoryPct = value
 
+    def set_send_speed_policy(self, value):
+        self.SendSpeedPolicy.update(value)
+
     def to_dict(self):
         return self.__dict__
 
 
 class BaseCaseObject:
+    """
+    Base class for case objects.
+    """
     def __init__(self, test_type):
         case_object_callback_dict = {
             "HttpCps": self._handle_http_cps_case_object_config,
@@ -4253,7 +4210,10 @@ class BaseCaseObject:
             "SSLHandshake": self._handle_ssl_handshake_case_object_config,
             "AdvancedFuzzing": self._handle_advanced_fuzzing_case_object_config,
             "ScenarioDescrptionLanguage": self._handle_scenario_descrption_language_case_object_config,
-            "WebScanner": self._handle_web_scanner_case_object_config
+            "WebScanner": self._handle_web_scanner_case_object_config,
+            "AttackReplay": self._handle_attack_replay_case_object_config,
+            "WebSiteScan": self._handle_web_site_scan_case_object_config,
+            "GMT0018": self._handle_gmt0018_case_object_config
         }
 
         callback = case_object_callback_dict.get(test_type)
@@ -4289,9 +4249,7 @@ class BaseCaseObject:
 
     def _handle_udp_pps_case_object_config(self):
         self.Monitor = "默认监控器对象Ping"
-        self.Variate = "无"
-        self.WebTestProjectName = "默认网络设备测试项目"
-        self.FileObject = "默认156字节网页请求"
+        self.iMixName = "默认混合流量"
 
     def _handle_http_request_flood_case_object_config(self):
         self.Variate = "无"
@@ -4371,7 +4329,9 @@ class BaseCaseObject:
     def _handle_vulnerability_scanner_case_object_config(self):
         self.VulnerabilityScannerMap = "默认漏洞数据库"
         self.Credential = ""
-
+    def _handle_gmt0018_case_object_config(self):
+        self.Gmt0018Name = "30720字节192位AES_192密钥CBC加密"
+        self.Gmt0018ProjectName = "默认密码机测试对象"
     def _handle_https_cps_case_object_config(self):
         self.Monitor = "默认监控器对象Ping"
         self.Variate = "无"
@@ -4416,8 +4376,18 @@ class BaseCaseObject:
         self.Mitre = "无"
 
     def _handle_web_scanner_case_object_config(self):
-        self.Webattack = "默认SqliLabs靶场攻击列表"
+        self.Webattack = "默认Web漏洞攻击列表"
 
+    def _handle_attack_replay_case_object_config(self):
+        self.Pcap = "默认系统攻击流量"
+        self.Monitor = "默认监控器对象Ping"
+
+    def _handle_web_site_scan_case_object_config(self):
+        self.Websitescandict = "无"
+    def set_gmt0018_name(self, value):
+        self.Gmt0018Name = value
+    def set_gmt0018_project_name(self, value):
+        self.Gmt0018ProjectName = value
     def set_descrption(self, value):
         self.Descrption = value
 
@@ -4472,11 +4442,20 @@ class BaseCaseObject:
     def set_file_object(self, value):
         self.FileObject = value
 
+    def set_web_attack(self, value):
+        self.Webattack = value
+
+    def set_i_mix_name(self, value):
+        self.iMixName = value
+
     def to_dict(self):
         return self.__dict__
 
 
 class BaseClientProfiles:
+    """
+    Base class for client profiles.
+    """
     def __init__(self, test_type, dut_role="Gateway"):
 
         # General Config
@@ -4517,6 +4496,10 @@ class BaseClientProfiles:
             "SSLHandshake": self._handle_ssl_handshake_general_config,
             "DnsAmplificationAttack": self._handle_dns_amplification_attack_general_config,
             "WeakPasswordDetection": self._handle_weak_password_detection_general_config,
+            "AttackReplay": self._handle_attack_replay_general_config,
+            "WebSiteScan": self._handle_web_site_scan_general_config,
+            "VulnerabilityScanner": self._handle_vulnerability_scanner_general_config,
+            "WebScanner":{}
         }
 
         general_callback = general_callback_dict.get(test_type)
@@ -4743,6 +4726,16 @@ class BaseClientProfiles:
     def _handle_weak_password_detection_general_config(self):
         del self.SourcePortRange
 
+    def _handle_attack_replay_general_config(self):
+        self.SourcePortRange = "10000-65535"
+        self.Actions = {}
+
+    def _handle_web_site_scan_general_config(self):
+        del self.SourcePortRange
+
+    def _handle_vulnerability_scanner_general_config(self):
+        del self.SourcePortRange
+
     def set_ssl_quiet_down(self, value):
         self.SSLQuietDown = value
 
@@ -4809,6 +4802,9 @@ class BaseClientProfiles:
 
 
 class BaseServerProfiles:
+    """
+    Base class for server profiles.
+    """
     def __init__(self, test_type, dut_role="Gateway"):
 
         # General Config
@@ -4855,6 +4851,7 @@ class BaseServerProfiles:
             "Rfc2544LossRate": self._handle_rfc2544_lossrate_general_config,
             "Rfc2544BackToBack": self._handle_rfc2544_backtoback_general_config,
             "WeakPasswordDetection": self._handle_weak_password_detection_general_config,
+            "WebSiteScan": self._handle_web_site_scan_general_config,
         }
 
         general_callback = general_callback_dict.get(test_type)
@@ -5178,6 +5175,10 @@ class BaseServerProfiles:
     def _handle_weak_password_detection_general_config(self):
         self.ServerPort = "502"
 
+    def _handle_web_site_scan_general_config(self):
+        self.SpecifiedPort = "80"
+        self.ServerPort = 20000
+
     def _handle_dns_server_port_53_server_config(self):
         self.DNSServerPort = "53"
 
@@ -5343,6 +5344,9 @@ class BaseServerProfiles:
 
 
 class GenericTestCaseModel:
+    """
+    Builds a generic test case model with predefined attributes.
+    """
     def __init__(self, test_type: str, dut_role: str):
         self.Loads = BaseLoads(test_type)
         self.CaseObject = BaseCaseObject(test_type)
@@ -5386,7 +5390,9 @@ class PortConfig:
         if port_side == "client":
             self.NetworkSubnets = [ClientSubnet(dut_role, proxy_mode, server_address_format='Port').to_dict(),
                                    ClientSubnet(dut_role, proxy_mode, 6, 'no', server_address_format='Port').to_dict()]
-
+    def _handle_gmt1008_config(self):
+        del self.SimUserSpeedLimit
+        self.PortSide = "client"
     def _handle_rfc2544_throughput_config(self):
         self.PortStreamTemplate = PortStreamTemplate().to_dict()
 
@@ -5487,6 +5493,7 @@ class PortConfig:
         }
 
         no_param_port_config_callback_dict = {
+            'GMT0018': self._handle_gmt1008_config,
             'Rfc2544Throughput': self._handle_rfc2544_throughput_config,
             'Rfc2544Latency': self._handle_rfc2544_latency_config,
             'Rfc2544LossRate': self._handle_rfc2544_loss_rate_config,
@@ -5511,7 +5518,47 @@ class PortConfig:
             no_param_port_config_callback_dict[test_type]()
 
     def set_port_core_bind(self, core_bind):
+        """
+        Set the port core bind .
+        Args:
+            value (str):
+        """
         self.CoreBind = core_bind
+
+    def configure_network(self, subnet_dict):
+        """
+        Set the network subnet.
+        Args:
+            subnet_dict (dict):
+        :return:
+        """
+        if "SubnetNumber" not in subnet_dict:
+            subnet_dict["SubnetNumber"] = "1"
+        for subnet in self.NetworkSubnets:
+            if subnet["SubnetNumber"] == subnet_dict["SubnetNumber"]:
+                subnet.update(subnet_dict)
+
+    def set_port_limit_value(self, value):
+        """
+        Set the port speed limit value .
+        Args:
+            value (int):
+        """
+        for limit_dict in self.PortSpeedLimit:
+            if "StrongLimitValue" in limit_dict:
+                limit_dict["StrongLimitValue"] = int(value)
+            else:
+                limit_dict["SpeedLimit"] = int(value)
+
+    def set_port_limit_type(self, value):
+        """
+        Set the port speed limit type .
+        Args:
+            value (str):
+        """
+        for limit_dict in self.PortSpeedLimit:
+            limit_dict["LimitType"] = value
+
 
     def to_dict(self):
         # return ToolsUtils.to_dict(self)
@@ -5520,8 +5567,6 @@ class PortConfig:
 
 class CustomPortConfig:
     def __init__(self, port_name, port_side, port_json, config_json):
-        dut_role = config_json.get("DUTRole", "")
-        proxy_mode = config_json.get("ProxyMode", "")
         test_type = config_json.get("TestType", "")
 
         self.NetworkSubnets = port_json.get("NetworkSubnets")
@@ -5604,6 +5649,7 @@ class CustomPortConfig:
             self.nb_txd = port_json.get("nb_txd")
             self.nb_rxd = port_json.get("nb_rxd")
             self.nictype = port_json.get("nictype")
+            self.PortModuleType = port_json.get("PortModuleType")
             self.device = port_json.get("device")
             self.sendqueue = port_json.get("sendqueue")
             self.receivequeue = port_json.get("receivequeue")
@@ -5617,8 +5663,8 @@ class CustomPortConfig:
         self.CoreBind = core_bind
 
     def to_dict(self):
-        # return ToolsUtils.to_dict(self)
         return self.__dict__
+
 
 
 class HttpClient:
@@ -5640,8 +5686,7 @@ class HttpClient:
         response = self.session.post(url, headers=headers, files=files)
         if response.status_code != 200:
             msg = f"Request failed: {response.status_code} - {response.text}"
-            logger.error(msg)
-            sys.exit()
+            raise Exception(msg)
         else:
             ret = response.json()
             error_code = ret.get("ErrorCode", 0)
@@ -5657,8 +5702,7 @@ class HttpClient:
         response = self.session.get(url, params=params)
         if response.status_code != 200:
             msg = f"Request failed: {response.status_code} - {response.text}"
-            logger.error(msg)
-            sys.exit()
+            raise Exception(msg)
         content_disposition = response.headers.get("content-disposition")
         specific_ret = re.search(r'filename="(.*)"', content_disposition)
         normal_ret = re.search(r'filename=(.*)', content_disposition)
@@ -5676,15 +5720,12 @@ class HttpClient:
     def get_download(self, path, params=None, file_path=None):
         """
         Send file download request and save to local
-
         Args:
             path (str): API endpoint path
             params (dict): Request parameters
             file_path (str): Local file save path
-
         Returns:
             str: Saved file path
-
         Raises:
             Exception: Throws when request fails or file save fails
         """
@@ -5696,7 +5737,6 @@ class HttpClient:
             response = self.session.get(url, headers=headers, params=params, stream=True)
             if response.status_code != 200:
                 msg = f"File download failed: {response.status_code} - {response.text}"
-                logger.error(msg)
                 raise Exception(msg)
 
             # Write to local file
@@ -5709,11 +5749,9 @@ class HttpClient:
             return file_path
 
         except IOError as e:
-            logger.exception("File write failed")
             raise Exception(f"Unable to write file: {str(e)}")
         except Exception as e:
-            logger.error(f"Download request error: {str(e)}")
-            raise Exception(f"File write failed: {str(e)}")
+            raise Exception(f"Download request error: {str(e)}")
 
     def login(self, payload):
         url = f"{self.base_url}/api/user/login"
@@ -5728,7 +5766,6 @@ class HttpClient:
             self.encrpt_role = data.get("encrpt_role")
         else:
             msg = f"Login failed: {response.status_code} - {response.text}"
-            logger.error(msg)
             raise Exception(msg)
 
     def get(self, path, params=None):
@@ -5737,7 +5774,6 @@ class HttpClient:
         response = self.session.get(url, headers=headers, params=params)
         if response.status_code != 200:
             msg = f"Request failed: {response.status_code} - {response.text}"
-            logger.error(msg)
             raise Exception(msg)
 
         return response.json()
@@ -5748,7 +5784,6 @@ class HttpClient:
         response = self.session.post(url, headers=headers, json=data)
         if response.status_code != 200:
             msg = f"Request failed: {response.status_code} - {response.text}"
-            logger.error(msg)
             raise Exception(msg)
 
         return response.json()
@@ -5795,6 +5830,9 @@ class TestCaseBuilder:
 
 
 class TestCase:
+    """
+    * Test case class
+    """
     def __init__(self, host, http_client, test_type, dut_role, proxy_mode):
         self.report_id = None
         self.test_type = test_type
@@ -5802,6 +5840,9 @@ class TestCase:
         self.host = host
         self.client = http_client
         self.case_id = None
+
+        self._get_port_and_nic_info()
+
         # self.case_config = TestCaseBuilder(self.host, test_type, dut_role, proxy_mode).build()
         self.case_object = TestCaseBuilder(self.host, test_type, dut_role, proxy_mode)
         self.case_config = self.case_object.build()
@@ -5817,7 +5858,6 @@ class TestCase:
             if user_apply_memory < 2 or user_apply_memory > self.case_object.case_model.Loads.CaseAssignMemoryGB:
                 msg = "User apply memory must be in the range of 2-{} GB".format(
                     self.case_object.case_model.Loads.CaseAssignMemoryGB)
-                logger.error(msg)
                 raise ValueError(msg)
         self.case_object.case_model.Loads.set_user_apply_memory_mb(user_apply_memory)
 
@@ -5829,7 +5869,6 @@ class TestCase:
             test_duration = int(test_duration)
             if test_duration < 1:
                 msg = "Test duration must be greater than 0"
-                logger.error(msg)
                 raise ValueError(msg)
         self.case_object.base.set_test_duration(test_duration)
 
@@ -5871,7 +5910,6 @@ class TestCase:
             sim_user = int(sim_user)
             if sim_user < 1:
                 msg = "sim user must be greater than 0"
-                logger.error(msg)
                 raise ValueError(msg)
         self.case_object.case_model.Loads.set_sim_user(sim_user)
 
@@ -5997,7 +6035,6 @@ class TestCase:
             huge_page_memory = int(huge_page_memory)
             if huge_page_memory < 10 or huge_page_memory > 95:
                 msg = "Huge page memory must be greater than 10 and less than 95"
-                logger.error(msg)
                 raise ValueError(msg)
         self.case_object.case_model.Loads.set_dpdk_huge_memory_pct(huge_page_memory)
 
@@ -6009,7 +6046,6 @@ class TestCase:
             case_assign_memory_gb = int(case_assign_memory_gb)
             if case_assign_memory_gb < 2 or case_assign_memory_gb > 28:
                 msg = "Case Assign Memory GB must be greater than 2 and less than 28"
-                logger.error(msg)
                 raise ValueError(msg)
         self.case_object.case_model.Loads.set_case_assign_memory_gb(case_assign_memory_gb)
 
@@ -6030,7 +6066,29 @@ class TestCase:
             return
 
         self.case_object.case_model.CaseObject.set_descrption(descrption)
+    def _handle_concurrent_connections(self, concurrent_connections: int):
+        """
+        * Handle concurrent_connections
+        """
+        if not concurrent_connections:
+            return
+        self.case_object.case_model.Loads.set_concurrent_connections(concurrent_connections)
+    def _handle_gmt0018_project_name(self, project_name: str):
+        """
+        * Handle descrption
+        """
+        if not project_name:
+            return
 
+        self.case_object.case_model.CaseObject.set_gmt0018_project_name(project_name)
+
+    def _handle_gmt0018_name(self, name: str):
+        """
+        * Handle test_case_name
+        """
+        if not name:
+            return
+        self.case_object.case_model.CaseObject.set_gmt0018_name(name)
     def _handle_app_scenario(self, app_scenario: str):
         """
         * Handle app_scenario
@@ -6057,7 +6115,13 @@ class TestCase:
             return
 
         self.case_object.case_model.CaseObject.set_mitre(mitre)
-
+    def set_concurrent_connections(self, concurrent_connections: int):
+        """
+        * Handle concurrent_connections
+        """
+        if not concurrent_connections:
+            return
+        self.case_object.case_model.Loads.set_concurrent_connections(concurrent_connections)
     def _handle_send_wait_time(self, value: int):
         """
         * Handle send wait time
@@ -6108,9 +6172,14 @@ class TestCase:
             value = int(value)
             if value < 1 or value > 100:
                 msg = "test retry count must be between 1 and 100"
-                logger.error(msg)
                 raise ValueError(msg)
         self.case_object.case_model.Loads.set_maximum_iterative_cycle(value)
+
+    def _handle_web_attack(self, value: str):
+        if not value:
+            return
+
+        self.case_object.case_model.CaseObject.set_web_attack(value)
 
     @staticmethod
     def parse_port_list(port_str):
@@ -6129,7 +6198,6 @@ class TestCase:
                     other_core_set = set(other_port.CoreBind.split(','))
                     if other_port != port and one_core_set & other_core_set:
                         msg = f"CPU core {port.CoreBind}: duplicate binding"
-                        logger.error(msg)
                         raise ValueError(msg)
 
     def get_default_values(self):
@@ -6152,6 +6220,9 @@ class TestCase:
         if self.test_type in ["HttpCc", "HttpsCc"]:
             self._get_concurrent_connection_config()
 
+        if ToolsUtils.is_dpdk_test_type(self.test_type):
+            self._get_dpdk_run_mode()
+
         return self.case_config
 
     def _get_system_infos(self):
@@ -6161,12 +6232,10 @@ class TestCase:
         infos_ret = self.client.get("/api/system/infos")
         if infos_ret.get("ErrorCode") != 0:
             msg = f"get system infos failed: {infos_ret.get('ErrorMessage')}"
-            logger.error(msg)
             raise Exception(msg)
 
         if "Data" not in infos_ret or not infos_ret["Data"]:
             msg = f"get system infos Data failed"
-            logger.error(msg)
             raise Exception(msg)
 
         infos_dict = infos_ret["Data"]
@@ -6195,7 +6264,6 @@ class TestCase:
         dpdk_huge_memory_pct = self.client.get("/api/case/DpdkHugeMemoryPct", {"testType": self.test_type})
         if dpdk_huge_memory_pct.get("ErrorCode") != 0:
             msg = f"get dpdk huge memory pct failed: {dpdk_huge_memory_pct.get('ErrorMessage')}"
-            logger.error(msg)
             raise Exception(msg)
 
         # Huge page memory percentage
@@ -6211,6 +6279,22 @@ class TestCase:
         default_value = cc_cfg.get("Data", {}).get("def", 1296000)
         self.case_config["Specifics"][0]["Loads"]["ConcurrentConnection"] = default_value
 
+
+    def _get_dpdk_run_mode(self):
+        """
+        * Get DPDK huge page memory percentage
+        """
+        default_value = "DPDK"
+        for port_dict in self.nic_infos_ret["Data"]["PortArray"]:
+            if "name_info" in port_dict:
+                nic_is_fpga = port_dict["name_info"].get("nic_is_fpga", 0)
+                nic_is_mdx = port_dict["name_info"].get("nic_is_mdx", 0)
+                if nic_is_fpga or nic_is_mdx:
+                    default_value = "FPGA"
+                    break
+
+        self.case_config["NetworkConfig"]["NetworkControl"]["CaseRunMode"]= default_value
+
     def update_port_default_values(self):
         """
         Update port default values
@@ -6222,18 +6306,15 @@ class TestCase:
             Exception: When API request fails
         """
         logger.info("Start to update port default values")
-        # Get port and NIC information
-        port_info_ret, nic_infos_ret = self._get_port_and_nic_info()
-
         # Update each port's configuration
         for port in self.port_list:
             port_name = port.Interface
 
             # Update NIC information
-            self._update_nic_info(port, port_name, nic_infos_ret["Data"]["PortArray"])
+            self._update_nic_info(port, port_name, self.nic_infos_ret["Data"]["PortArray"])
 
             # Update core binding information
-            self._update_core_binding(port, port_name, port_info_ret["Data"]["TrafficPorts"])
+            self._update_core_binding(port, port_name, self.port_info_ret["Data"]["TrafficPorts"])
 
             # Update send and receive queue information
             self._update_tx_rx_info(port)
@@ -6245,23 +6326,22 @@ class TestCase:
         port_info_ret = self.client.get("/api/system/ports/show")
         if port_info_ret.get("ErrorCode") != 0:
             msg = f"get port info failed: {port_info_ret.get('ErrorMessage')}"
-            logger.error(msg)
             raise Exception(msg)
         if "Data" not in port_info_ret or not port_info_ret["Data"]:
             msg = f"get port info Data failed"
-            logger.error(msg)
             raise Exception(msg)
 
         nic_infos_ret = self.client.get("/api/system/netnic/infos")
         if nic_infos_ret.get("ErrorCode") != 0:
             msg = f"get nic info failed: {nic_infos_ret.get('ErrorMessage')}"
-            logger.error(msg)
             raise Exception(msg)
 
         if "Data" not in nic_infos_ret or not nic_infos_ret["Data"]:
             msg = f"get nic info Data failed"
-            logger.error(msg)
             raise Exception(msg)
+
+        self.port_info_ret = port_info_ret
+        self.nic_infos_ret = nic_infos_ret
 
         return port_info_ret, nic_infos_ret
 
@@ -6277,7 +6357,48 @@ class TestCase:
                 port.sendqueue = name_info["combined"]
                 port.receivequeue = name_info["combined"]
                 port.nictype = name_info["nictype"]
+
+                nic_model = port.device.split()[1]
+                port.PortModuleType = self.get_port_module_type_by_nic(nic_model)
+
                 break
+
+    def get_port_module_type_by_nic(self, nic_model):
+        card_module_map = {
+            'NT2X010GF27LA': [3, 4, 5],
+            'NT4X010GF27LA': [3, 4, 5],
+            'NT4X010GF27LB': [3, 4, 5],
+            'NT2X100GF27LA': [0, 1, 7, 2, 3],
+            'NT2X100GF27LB': [0, 1, 2, 3, 7],
+            'NT2X025GF27LB': [1, 7, 3, 4, 5],
+            'NT4X025GF27LB': [1, 7, 3, 4, 5],
+            'MN1X100GF47LA': [0, 1, 2, 3, 4],
+            'MN2X100GF47LA': [0, 1, 2, 3, 4],
+            'MN2X025GF47LA': [1, 2, 3, 4],
+            'MN2X025GF47LB': [1, 2, 3, 4],
+            'SC4X010GF47LA': [3, 4, 5],
+            'IT2X010GF47LA': [3, 4, 5],
+            'IT4X001GC47LA': [6],
+            'IT2X001GC47LA': [6],
+            'MD4X010GF27LA': [3, 4, 5],
+            'MD2X100GF27LA': [0, 1, 2, 3, 7],
+            'MD4X025GF27LA': [1, 2, 3, 4]
+        }
+
+        module_type_map = {
+            7: 'QSFP28_TO_4SFP+',
+            6: '1G_COPPER_RJ45',
+            5: '1G_SFP_RJ45',
+            4: '1G_SFP',
+            3: '10G_SFP+',
+            2: 'QSFP28_TO_SFP+',
+            1: 'QSFP28_TO_SFP28',
+            0: '100G_40G_QSFP28'
+        }
+
+        module_type = module_type_map[card_module_map[nic_model][0]]
+
+        return module_type
 
     def _update_core_binding(self, port, port_name: str, traffic_port_list: list):
         """
@@ -6299,12 +6420,10 @@ class TestCase:
                                      {"Driver": port.driver, "Type": self.test_type})
         if tx_rx_dict.get("ErrorCode") != 0:
             msg = f"get tx rx info failed: {tx_rx_dict.get('ErrorMessage')}"
-            logger.error(msg)
             raise Exception(msg)
 
         if "Data" not in tx_rx_dict or not tx_rx_dict["Data"]:
             msg = f"get tx rx info Data failed"
-            logger.error(msg)
             raise Exception(msg)
 
         tx_rx_info = tx_rx_dict["Data"]
@@ -6314,7 +6433,6 @@ class TestCase:
     def _get_advanced_fuzzing_running_data(self, report_id):
 
         if not report_id:
-            print("report_id can not be empty.")
             raise ValueError("report_id can not be empty.")
 
         payload = {
@@ -6327,7 +6445,6 @@ class TestCase:
     def _get_scenario_descrption_language_running_data(self, report_id):
 
         if not report_id:
-            print("report_id can not be empty.")
             raise ValueError("report_id can not be empty.")
 
         payload = {
@@ -6340,7 +6457,6 @@ class TestCase:
     def _get_layer7_running_data(self, report_id):
 
         if not report_id:
-            print("report_id can not be empty.")
             raise ValueError("report_id can not be empty.")
 
         payload = {
@@ -6355,11 +6471,9 @@ class TestCase:
     def _get_layer2_running_data(self, report_id, test_id):
 
         if not report_id:
-            print("report_id can not be empty.")
             raise ValueError("report_id can not be empty.")
 
         if not test_id:
-            print("test_id can not be empty.")
             raise ValueError("test_id can not be empty.")
 
         payload = {
@@ -6375,11 +6489,9 @@ class TestCase:
     def _get_layer3_running_data(self, report_id, test_id):
 
         if not report_id:
-            print("report_id can not be empty.")
             raise ValueError("report_id can not be empty.")
 
         if not test_id:
-            print("test_id can not be empty.")
             raise ValueError("test_id can not be empty.")
 
         payload = {
@@ -6395,11 +6507,9 @@ class TestCase:
     def _get_layer4_running_data(self, report_id, test_id):
 
         if not report_id:
-            print("report_id can not be empty.")
             raise ValueError("report_id can not be empty.")
 
         if not test_id:
-            print("test_id can not be empty.")
             raise ValueError("test_id can not be empty.")
 
         payload = {
@@ -6413,10 +6523,19 @@ class TestCase:
 
         return self.client.post("/api/running/get/layer4", payload)
 
+    def _get_web_scanner_data(self, report_id):
+        if not report_id:
+            raise ValueError("report_id can not be empty.")
+        payload = {
+            "ReportID": report_id,
+            "TestType": self.test_type,
+            "selectedTabs": []
+        }
+        return self.client.post("/api/running/data/WebScanner", payload)
+
     def _get_key_result_running_data(self, report_id):
 
         if not report_id:
-            print("report_id can not be empty.")
             raise ValueError("report_id can not be empty.")
 
         payload = {
@@ -6429,7 +6548,6 @@ class TestCase:
     def _get_system_resource_running_data(self, report_id):
 
         if not report_id:
-            print("report_id can not be empty.")
             raise ValueError("report_id can not be empty.")
 
         payload = {
@@ -6442,7 +6560,6 @@ class TestCase:
     def _get_capture_running_data(self, report_id):
 
         if not report_id:
-            print("report_id can not be empty.")
             raise ValueError("report_id can not be empty.")
 
         payload = {
@@ -6455,7 +6572,6 @@ class TestCase:
     def _get_descrption_report_paging_result_data(self, report_id):
 
         if not report_id:
-            print("report_id can not be empty.")
             raise ValueError("report_id can not be empty.")
 
         payload = {
@@ -6470,7 +6586,6 @@ class TestCase:
     def _get_descrption_report_number_paging_result_data(self, report_id):
 
         if not report_id:
-            print("report_id can not be empty.")
             raise ValueError("report_id can not be empty.")
 
         payload = {
@@ -6483,7 +6598,6 @@ class TestCase:
     def _get_fuzzing_sqlite_statistics(self, report_id):
 
         if not report_id:
-            print("report_id can not be empty.")
             raise ValueError("report_id can not be empty.")
 
         params = {
@@ -6494,10 +6608,20 @@ class TestCase:
 
         return self.client.get("/api/history/fuzzing/sqlite_statistics", params)
 
+    def _get_webscanner_report(self, report_id):
+
+        if not report_id:
+            raise ValueError("report_id can not be empty.")
+
+        params = {
+            "ReportID": report_id,
+        }
+
+        return self.client.get("/api/webscanner_report/tabs", params)
+
     def _get_fuzzing_sqlite_result(self, report_id):
 
         if not report_id:
-            print("report_id can not be empty.")
             raise ValueError("report_id can not be empty.")
 
         params = {
@@ -6511,7 +6635,6 @@ class TestCase:
     def _fuzzing_sqlite_parser(self, report_id):
 
         if not report_id:
-            print("report_id can not be empty.")
             raise ValueError("report_id can not be empty.")
 
         params = {
@@ -6523,7 +6646,6 @@ class TestCase:
     def _fuzzing_progress(self, report_id):
 
         if not report_id:
-            print("report_id can not be empty.")
             raise ValueError("report_id can not be empty.")
 
         params = {
@@ -6565,7 +6687,7 @@ class TestCase:
     def Getresult(self):
         if self.test_type in ["ScenarioDescrptionLanguage"]:
             res = self._get_descrption_report_number_paging_result_data(self.report_id)
-            print(res)
+            logger.info(str(res))
         elif self.test_type in ["AdvancedFuzzing"]:
             res = self._get_fuzzing_sqlite_statistics(self.report_id)
             if res.get("ErrorCode") == 0:
@@ -6581,19 +6703,33 @@ class TestCase:
                     "icmp_timeout_num": data.get("timeout_num", None)
                 }
 
-                print(result_json)
+                logger.info(str(result_json))
             else:
-                print("get result error", res)
+                logger.error("get result error" + str(res))
+        elif self.test_type in ["WebScanner"]:
+            res = self._get_webscanner_report(self.report_id)
+            if res.get("ErrorCode") == 0:
+                statistics = res.get("Data", {}).get("statistics")
+                result_json = {
+                    "attack_total_all": statistics.get("attack_total_all", None),
+                    "attack_total_run": statistics.get("attack_total_run", None),
+                    "attack_fail_count": statistics.get("attack_fail_count", None),
+                    "attack_success_count": statistics.get("attack_success_count", None),
+                }
+
+                logger.info(str(result_json))
+            else:
+                logger.error("get result error" + str(res))
         else:
             res = self._get_layer2_running_data(self.report_id, self.case_id)
 
             if res.get("ErrorCode") == 0:
-                print(res.get("Data"))
+                logger.info(str(res.get("Data")))
             else:
-                print("get result error", res)
+                logger.error("get result error" + str(res))
 
     def DownLoadLogFile(self, filepath="./"):
-        print("download log file start")
+        logger.info("download log file start")
         if self.test_type == "AdvancedFuzzing":
             params = {
                 "reportID": self.report_id,
@@ -6602,7 +6738,7 @@ class TestCase:
             }
             self.client.download_file("/api/case/logfile/down_file", params, filepath)
 
-        print(f"download log file end, filepath: {filepath}")
+        logger.info(f"download log file end, filepath: {filepath}")
 
     def Monitor(self):
         while True:
@@ -6619,18 +6755,18 @@ class TestCase:
                         detail = res.get("Data", {}).get("Detail")
                         if detail:
                             session_info = detail.get("session_info", {})
-                            print({
+                            logger.info(str({
                                 "crashes": session_info.get("crashes", []),
                                 "current_element": session_info.get("current_element", ""),
                                 "current_index": session_info.get("current_index", ""),
                                 "current_test_case_name": session_info.get("current_test_case_name", ""),
                                 "exec_speed": session_info.get("exec_speed", ""),
                                 "runtime": round(session_info.get("runtime", 0), 2)
-                            })
+                            }))
                         else:
                             print({})
                     else:
-                        print("get advanced fuzzing data error", res)
+                        logger.error("get advanced fuzzing data error" + str(res))
 
                 elif test_type == "ScenarioDescrptionLanguage":
                     # res = self._get_scenario_descrption_language_running_data(report_id)
@@ -6640,25 +6776,31 @@ class TestCase:
                     #     print("get scenario descrption language data error", res)
 
                     res = self._get_descrption_report_number_paging_result_data(self.report_id)
-                    print(res)
+                    logger.info(str(res))
+                elif test_type == "WebScanner":
+                    res = self._get_web_scanner_data(self.report_id)
+                    if res.get("ErrorCode") == 0:
+                        logger.info(str(res.get("Data", {}).get("Layer3", {}).get("tol")))
+                    else:
+                        logger.error("get web scanner data error" + str(res))
                 else:
                     res = self._get_layer2_running_data(report_id, self.case_id)
 
                     if res.get("ErrorCode") == 0:
-                        print(res.get("Detail"))
+                        logger.info(str(res.get("Detail")))
                     else:
-                        print("get layer2 error", res)
+                        logger.error("get layer2 error", + str(res))
 
             if running_status == "Stopping":
-                print("Test case is stopping!")
+                logger.info("Test case is stopping!")
 
             if running_status == "Stopped":
-                print("Test case has stopped!, running result: " + status_ret['Data']['ErrorMessage'])
+                logger.info("Test case has stopped!, running result: " + status_ret['Data']['ErrorMessage'])
                 break
 
             time.sleep(1)
 
-        print("Test program ended!")
+        logger.info("Test program ended!")
         return 'Test program ended!'
 
     def AnalysisResult(self):
@@ -6666,9 +6808,9 @@ class TestCase:
         res_parse = self._fuzzing_sqlite_parser(self.report_id)
 
         if res_parse.get("ErrorCode") == 0:
-            print("Test case start analysis result successful")
+            logger.info("Test case start analysis result successful")
         else:
-            print("Test case start analysis result failed", res_parse)
+            logger.error("Test case start analysis result failed" + str(res_parse))
             return res_parse
 
         while True:
@@ -6677,21 +6819,21 @@ class TestCase:
             running_status = data["Status"] if res else ""
             if running_status == "Running":
                 if res.get("ErrorCode") == 0:
-                    print(data)
+                    logger.info(str(data))
                 else:
-                    print("get analysis result error", res)
+                    logger.error("get analysis result error" + str(res))
 
             if running_status == "Stopping":
-                print("Test analysis result is stopping!")
+                logger.info("Test analysis result is stopping!")
 
             if running_status == "Stopped":
-                print("Test case analysis has stopped!, analysis result: ", data)
+                logger.info("Test case analysis has stopped!, analysis result: " + str(data))
                 time.sleep(2)
                 break
 
             time.sleep(1)
 
-        print("Test program analysis ended!")
+        logger.info("Test program analysis ended!")
         return 'Test program analysis ended!'
 
     def CustomMonitorOutput(self):
@@ -6714,7 +6856,7 @@ class TestCase:
             if not custom_dict:
                 if running_status == "Running":
                     self.report_id = report_id
-                    print("Not set custom monitor output")
+                    logger.info("Not set custom monitor output")
                     time.sleep(1)
 
             else:
@@ -6733,19 +6875,19 @@ class TestCase:
                             for data_key in data_list:
                                 output_msg[data_key] = app.get(data_key)
 
-                    print(f"{test_type}: {output_msg}")
+                    logger.info(f"{test_type}: {output_msg}")
                     time.sleep(1)
 
             if running_status == "Stopping":
-                print("Test case is stopping!")
+                logger.info("Test case is stopping!")
 
             if running_status == "Stopped":
-                print("Test case has stopped!")
+                logger.info("Test case has stopped!")
                 break
 
             time.sleep(1)
 
-        print("Test program ended!")
+        logger.info("Test program ended!")
         return 'Test program ended!'
 
     def TestedResult(self):
@@ -6757,17 +6899,17 @@ class TestCase:
             if running_status == "Running":
                 self.report_id = report_id
 
-                print('case running...')
+                logger.info('case running...')
             test_status = status_ret['Data']["ErrorCode"]
             if test_status == 0:
                 test_status = 'Success'
             else:
                 test_status = 'Fail'
             if running_status == "Stopping":
-                print('case stoping...')
+                logger.info('case stoping...')
                 ret[status_ret['Data']['TestName']] = test_status
             if running_status == "Stopped":
-                print('case stopped...')
+                logger.info('case stopped...')
                 ret[status_ret['Data']['TestName']] = test_status
                 # ret = status_ret['Data']["ErrorMessage"]
                 break
@@ -6794,11 +6936,11 @@ class TestCase:
             time.sleep(1)
             if res.get("ErrorCode") == 0:
                 summary_progress = res.get("ReportProgress").get('summary').get('progress')
-                print(f"Summary progress: {summary_progress}")
+                logger.info(f"Summary progress: {summary_progress}")
                 if summary_progress == 100:
                     break
             else:
-                print("get report monitor error", res)
+                logger.error("get report monitor error" + str(res))
                 break
         return 'generte report end'
 
@@ -6820,7 +6962,7 @@ class TestCase:
                 if (html_summary_progress == 100) and (pdf_summary_progress == 100) and (word_summary_progress == 100) and (excel_summary_progress == 100):
                     break
             else:
-                print("get report monitor error", res)
+                logger.error("get report monitor error" + str(res))
                 break
         # download document
         if "html" in down_file_type:
@@ -6856,10 +6998,10 @@ class TestCase:
                             chinese_dict_list.append(chinese_dict)
                         port_data["data"] = chinese_dict_list
 
-            print('Summary:', res.get("Data"))
+            logger.info('Summary:' + str(res.get("Data")))
             return res.get("Data")
         else:
-            print("get summary error", res)
+            logger.error("get summary error" + str(res))
             return None
 
     def GetResultView(self):
@@ -6872,9 +7014,9 @@ class TestCase:
         res = self.client.post("/api/history/result_view", payload)
         if res.get("ErrorCode") == 0:
             self.case_id = res.get("Data")
-            print('get result view successfully', res)
+            logger.info('get result view successfully' + str(res))
         else:
-            print("get result view failed!  Errormsg:" + res.get("ErrorMessage"))
+            logger.error("get result view failed!  Errormsg:" + res.get("ErrorMessage", ""))
         time.sleep(1)
 
     def GetFuzzingObjectCaseList(self, case_config):
@@ -6887,27 +7029,28 @@ class TestCase:
 
         res = self.client.get("/api/case/fuzzing", payload)
         if res.get("ErrorCode") == 0:
-            print(res.get("payload"))
+            print([item.get("Name") for item in res.get("payload")])
         else:
-            print("Use case creation failed, Errormsg:" + res.get("ErrorMessage"))
+            logger.error("Get fuzzing object list failed, Errormsg:" + res.get("ErrorMessage", ""))
         time.sleep(1)
 
     def Apply(self, case_config):
         res = self.client.post("/api/case", case_config)
         if res.get("ErrorCode") == 0:
             self.case_id = res.get("Data")
-            print('Use case created successfully', res)
+            logger.info('Use case created successfully', res)
         else:
-            print("Use case creation failed, Errormsg:" + res.get("ErrorMessage"))
+            raise Exception("Use case creation failed, Errormsg:" + res.get("ErrorMessage", ""))
         time.sleep(1)
 
     def Start(self):
         res = self.client.get(f"/api/case/{self.case_id}/start")
 
         if res.get("ErrorCode") == 0:
-            print("Test case startup successful")
+            logger.info("Test case startup successful")
         else:
-            print("Test case startup failed", res)
+            logger.error("Test case startup failed" + res.get("ErrorMessage", ""))
+            raise Exception("Test case startup failed" + res.get("ErrorMessage", ""))
 
     def ModifyStreamConfig(self, payload: dict = None):
 
@@ -6923,7 +7066,7 @@ class TestCase:
                 if detail:
                     break
             else:
-                print("get layer7 running data failed", res)
+                logger.error("get layer7 running data failed" + str(res))
 
         if not payload:
             payload = {
@@ -6946,9 +7089,9 @@ class TestCase:
         res = self.client.post(f"/api/stream_config/modify", payload)
 
         if res.get("ErrorCode") == 0:
-            print(res.get("ErrorMessage"))
+            logger.info(res.get("ErrorMessage", ""))
         else:
-            print("modify stream config failed, ErrorMessage: ", res.get("ErrorMessage"))
+            logger.error("modify stream config failed, ErrorMessage: " + res.get("ErrorMessage", ""))
 
     def GetCaseListByName(self, test_type):
         menu_mode_dict = {
@@ -7004,9 +7147,9 @@ class TestCase:
         res = self.client.get(f"/api/case/{case_id}/start")
 
         if res.get("ErrorCode") == 0:
-            print("Test case startup successful")
+            logger.info("Test case startup successful")
         else:
-            print("Test case startup failed", res)
+            raise Exception("Test case startup failed")
 
     def Config(self, key, *args):
         handler_map = {
@@ -7048,14 +7191,18 @@ class TestCase:
             "ScenarioInterval": self._handle_scenario_interval,
             "SockRecvTimeout": self._handle_sock_recv_timeout,
             "MaximumIterativeCycle": self._handle_maximum_iterative_cycle,
-
+            "Webattack": self._handle_web_attack,
+            "Gmt0018Name": self._handle_gmt0018_name,
+            "Gmt0018ProjectName": self._handle_gmt0018_project_name,
+            "ConcurrentConnections":  self._handle_concurrent_connections,
+            "SendSpeedPolicy": self._handle_send_speed_policy,
+            "iMixName": self._handle_imix_name,
         }
 
         handler = handler_map.get(key)
         if handler:
             return handler(*args)
         msg = f"Unsupported config key: {key}"
-        logger.error(msg)
         raise ValueError(msg)
 
     def _handle_interface(self, *args):
@@ -7133,12 +7280,10 @@ class TestCase:
                 port_info_ret = self.client.get(f"/api/system/ports/show")
                 if port_info_ret.get("ErrorCode") != 0:
                     msg = f"get port info failed: {port_info_ret.get('ErrorMessage')}"
-                    logger.error(msg)
                     raise Exception(msg)
 
                 if "Data" not in port_info_ret or "TrafficCpus" not in port_info_ret["Data"]:
                     msg = f"get port info Data failed"
-                    logger.error(msg)
                     raise Exception(msg)
 
                 traffic_cpu_dict = port_info_ret["Data"]["TrafficCpus"]
@@ -7150,53 +7295,43 @@ class TestCase:
                 invalid_cores = set(core_numbers) - available_cores
                 if invalid_cores:
                     msg = f"CPU core: {invalid_cores} is out of available range: {available_cores}"
-                    logger.error(msg)
                     raise ValueError(msg)
 
                 port.set_port_core_bind(core_list_str)
 
     def _handle_network_subnet(self, *args):
-        logger = LoggerUtils.get_logger()
         logger.info("Start modifying the subnet configuration.")
         try:
             dut_role = self.case_config.get("DUTRole")
             proxy_mode = self.case_config.get("ProxyMode")
             BaseSubnet.config_subnet_parameters(args, self.port_list, dut_role, proxy_mode)
         except Exception as e:
-            logger.error(str(repr(e)))
-            sys.exit()
+            raise Exception(str(repr(e)))
 
     def _handle_network_zone(self, *args):
-        logger = LoggerUtils.get_logger()
         logger.info("Start modifying the zone configuration.")
         try:
             NetworkZoneDict.config_zone_parameters(args, self.port_list)
         except Exception as e:
-            logger.error(str(repr(e)))
-            sys.exit()
+            raise Exception(str(repr(e)))
 
     def _handle_virtual_router_config(self, *args):
-        logger = LoggerUtils.get_logger()
         logger.info("Start modifying the zone configuration.")
         try:
             VirtualRouterConfigDict.config_virtual_router_parameters(args, self.port_list)
         except Exception as e:
-            logger.error(str(repr(e)))
-            sys.exit()
+            raise Exception(str(repr(e)))
 
     def _handle_additional_fields(self, *args):
-        logger = LoggerUtils.get_logger()
         logger.info("Start modifying the additional fields configuration.")
         try:
             AdditionalFields.config_additional_fields_parameters(args, self.port_list)
         except Exception as e:
-            logger.error(str(repr(e)))
-            sys.exit()
+            raise Exception(str(repr(e)))
 
     def write_json_to_file(self, json_data: dict, filepath: str = "./"):
         """
         Write the incoming dictionary data to the JSON file
-
         :param json_data: The dictionary object to be written to
         :param filepath: file save path
         """
@@ -7205,7 +7340,7 @@ class TestCase:
         with open(full_path, "w", encoding="utf-8") as f:
             json.dump(json_data, f, indent=4, ensure_ascii=False)
 
-        print(f"JSON 数据已写入文件: {full_path}")
+        logger.info(f"JSON 数据已写入文件: {full_path}")
 
     def ReplaceDefaultValue(self, json_data):
 
@@ -7238,10 +7373,117 @@ class TestCase:
         self._handle_interface_by_json(json_data)
 
     def WriteJsonToFile(self, json_data: dict, filepath: str = "./"):
+        """
+        Write the incoming dictionary data to the JSON file
+        :param json_data: The dictionary object to be written to
+        :param filepath: file save path
+        """
         self.write_json_to_file(json_data, filepath)
 
+    def use_ports(self, *args):
+        """
+        * Set Interface For Test Case
+        :param args:
+        :return:
+        """
+        self.Config("Interface", *args)
+        return self.port_list
+
+    def set_case_user_apply_memory(self, memory_size: int):
+        """
+        * Set User Apply Memory
+        :param memory_size:
+        """
+        self.Config("UserApplyMemoryMB", memory_size)
+
+    def set_case_sim_user(self, count: int):
+        """
+        * Set Sim User
+        :param count:
+        """
+        self.Config("SimUser", count)
+
+    def set_case_dpdk_huge_memory_percent(self, percent: int):
+        """
+        * Set DPDK Huge Memory Percentage
+        :param percent:
+        """
+        self.Config("DPDKHugeMemoryPct", percent)
+
+    def set_case_assign_memory_gb(self, memory_size: int):
+        """
+        * Set Case Assign Memory
+        :param memory_size:
+        """
+        self.Config("CaseAssignMemoryGB", memory_size)
+
+    def set_test_name(self, test_name):
+        """
+        * Set Test Name
+        :param test_name:
+        """
+        self.Config("TestName", test_name)
+
+    def set_run_time(self, run_time):
+        """
+        * Set Test Duration
+        :param run_time:
+        """
+        self.Config("TestDuration", run_time)
+
+    def set_frame_size_change_mode(self, mode):
+        """
+        *Set Frame Size Change Mode
+        :param mode:
+        """
+        self.Config("FrameSizePolicy", {"SizeChangeMode":mode})
+
+    def set_frame_size_format(self, size):
+        """
+        Set Frame Size Format
+        :param size:
+        """
+        self.Config("FrameSizePolicy", {"FrameSizeFormat":size})
+
+    def set_traffic_direction(self, direction):
+        self.Config("DualFlowMode", direction)
+
+    def set_load_iteration_mode(self, mode):
+        self.Config("SendSpeedPolicy", {"SpeedIterateMode": mode})
+
+    def set_rate_limit(self, size):
+        self.Config("SendSpeedPolicy", {"UpperSpeedRate": size})
+
+    def set_initial_rate(self, size):
+        self.Config("SendSpeedPolicy", {"InitialSpeedRate": size})
+
+    def set_rate_step(self, size):
+        self.Config("SendSpeedPolicy", {"UpDownStepRate": size})
+
+    def _handle_send_speed_policy(self, send_speed_policy):
+        """
+        * Handle send_speed_policy
+        """
+        if not send_speed_policy:
+            return
+
+        self.case_object.case_model.Loads.set_send_speed_policy(send_speed_policy)
+
+    def set_imix_frame_sizes(self, name):
+        self.Config("iMixName", name)
+
+    def _handle_imix_name(self, imix_name):
+        """
+        * Handle _handle_imix_name
+        """
+        if not imix_name:
+            return
+        self.case_object.case_model.CaseObject.set_i_mix_name(imix_name)
 
 class TestFactory:
+    """
+    Create Test Case Factory
+    """
     @staticmethod
     def create(test_type, dut_role):
         if not test_type:
@@ -7253,6 +7495,9 @@ class TestFactory:
 
 
 class CreateProject:
+    """
+    Create Project
+    """
     def __init__(self):
         self.host = ''
         self.host_port = 80
@@ -7260,13 +7505,11 @@ class CreateProject:
 
     def delete_case(self, test_type='', test_name_list=[]):
         """ Import Use Case
-
         Args:
             test_name_list (list): case test_name list
             test_type (str): user case type
         """
         if (not test_type) or (not test_name_list):
-            print("test_type and test_name_list can not be empty")
             raise ValueError("test_type and test_name_list can not be empty")
 
         payload = {
@@ -7279,7 +7522,6 @@ class CreateProject:
 
     def import_case(self, file_name, test_type=''):
         """ Import Use Case
-
         Args:
             file_name (str): local file path
             test_type (str): user case type
@@ -7291,7 +7533,6 @@ class CreateProject:
 
     def export_case(self, test_name):
         """ Export Use Case
-
         Args:
             test_name: use-case name
         """
@@ -7300,22 +7541,22 @@ class CreateProject:
         logger.info("Export of use cases was successful.")
 
     def _check_packet(self, report_id: str) -> str:
-        """Validate packet file availability"""
+        """
+        Validate packet file availability
+        """
         response = self.client.get(
             "/api/history/check_packet",
             params={"historyId": report_id}
         )
         if response.get("ErrorCode") != 0:
-            logger.error("Packet check failed. Code: %s, Message: %s",
+            raise Exception("Packet check failed. Code: %s, Message: %s",
                          response.get("ErrorCode"),
                          response.get("ErrorMessage", "Unknown error"))
-            raise Exception("Packet file not available")
         return response.get("ErrorMessage", "")
 
     def DownloadHistoryPcap(self, test_name: str, start_time: str = "", save_dir: str = "") -> str:
         """
         Download historical packet capture files with enhanced error handling
-
         Args:
             test_name (str): Test case name (required)
             start_time (str, optional): Start time filter in ISO 8601 format
@@ -7356,39 +7597,37 @@ class CreateProject:
             return save_path
 
         except requests.exceptions.RequestException as e:
-            logger.error(f"Network error: {str(e)}")
-            raise
+            raise Exception(f"Network error: {str(e)}")
         except IOError as e:
-            logger.error(f"File write error: {str(e)}")
-            raise
+            raise Exception(f"File write error: {str(e)}")
         except Exception as e:
-            logger.exception("Unexpected error in packet download")
-            raise
+            raise Exception(f"An unexpected error occurred in packet download: {str(e)}")
 
     def _check_testerlog(self, report_id):
-        """Helper method to validate log availability"""
+        """
+        Helper method to validate log availability
+        """
         response = self.client.get(
             "/api/history/check_testerlog",
             params={"historyId": report_id}
         )
         if response.get("ErrorCode") != 0:
-            logger.error("Log check failed. Response: %s", response)
             raise Exception(f"Log validation failed: {response.get('ErrorMessage', 'Unknown error')}")
         return response.get("ErrorMessage", "")
 
     def _get_report_id(self, query: dict) -> str:
-        """Get report ID from API"""
+        """
+        Get report ID from API
+        """
         response = self.client.post("/api/history/get_report_id", query)
         if response.get("ErrorCode") != 0:
-            logger.error("Report ID request failed. Code: %s, Message: %s",
+            raise Exception("Report ID request failed. Code: %s, Message: %s",
                          response.get("ErrorCode"),
                          response.get("ErrorMessage", "Unknown error"))
-            raise Exception("Failed to get report ID")
         return response.get("Data", {}).get("ReportID", "")
 
     def DownloadHistoryTesterLog(self, test_name, start_time=None, save_dir=None):
         """Download historical tester logs with enhanced error handling and progress tracking
-
         Args:
             test_name (str): Name of the test case
             start_time (str, optional): Start time filter in ISO format
@@ -7424,39 +7663,49 @@ class CreateProject:
             return save_path
 
         except requests.exceptions.RequestException as e:
-            logger.error(f"Network error during download: {str(e)}")
-            raise
+            raise Exception(f"Network error during download: {str(e)}")
         except IOError as e:
-            logger.error(f"File write error: {str(e)}")
-            raise
+            raise Exception(f"File write error: {str(e)}")
         except Exception as e:
-            logger.exception("Unexpected error during log download")
-            raise
+            raise  Exception(f"Unexpected error during log download: {str(e)}")
 
     def is_accessible(self):
+        """
+        Check if the network is accessible
+        :return:
+        """
         if not NetworkUtils.ping_host(self.host):
-            print(f"Host {self.host} network unreachable")
+            logger.error(f"Host {self.host} network unreachable")
             return False
         if not NetworkUtils.check_port(self.host, self.host_port):
-            print(f"Port {self.host_port} unreachable")
+            logger.error(f"Port {self.host_port} unreachable")
             return False
         return True
 
     def Connect(self, host, port):
+        """
+        Connect to the server
+        :param host:
+        :param port:
+        """
         self.host = host
         self.host_port = port
 
         base_url = f"http://{self.host}:{self.host_port}"
 
         if not self.is_accessible():
-            logger.error(f"Connection to {base_url} failed")
-            sys.exit()
+            raise Exception(f"Connection to {base_url} failed")
 
         base_url = f"http://{self.host}:{self.host_port}"
         self.client = HttpClient(base_url)
         logger.info(f"Connected to {self.client.base_url}")
 
     def Login(self, username, password):
+        """
+        Login to the server
+        :param username:
+        :param password:
+        """
         if not self.is_accessible():
             return None
 
@@ -7467,12 +7716,18 @@ class CreateProject:
         self.client.login(payload)
 
     def CreateCase(self, test_type, dut_role, proxy_mode="Reverse"):
+        """
+        Create default test case
+        :param test_type:
+        :param dut_role:
+        :param proxy_mode:
+        """
         logger.info(f"Start to create test case: {test_type}")
         try:
             case = TestCase(self.host, self.client, test_type, dut_role, proxy_mode)
         except Exception as e:
-            logger.error("Create test case failed")
-            sys.exit()
+            print(e)
+            raise Exception("Create test case failed")
         else:
             logger.info(f"Create test case: {test_type} successfully")
 
@@ -7482,7 +7737,7 @@ class CreateProject:
         import zipfile
 
         if not os.path.exists(zip_file_name):
-            print(f"zip_file_name: {zip_file_name} not exists")
+            logger.error(f"zip_file_name: {zip_file_name} not exists")
             return None
 
         read_json_file = False
@@ -7494,11 +7749,168 @@ class CreateProject:
             for file_name in file_names:
                 if file_name.endswith(".json"):
                     read_json_file = True
-                    print(f"read json file: {file_name}")
+                    logger.info(f"read json file: {file_name}")
                     with zip_file.open(file_name) as file:
                         content = file.read().decode('utf-8')
                         return content
 
         if not read_json_file:
-            print("not read json file")
+            logger.error("not read json file")
             return None
+
+
+import re
+import os
+import pandas as pd
+import wexpect
+
+
+class SshToFirewall:
+    def __init__(self, excel_path, test_number):
+        self.excel_path = excel_path
+        self.test_number = test_number
+        self.expect_str = ''
+        self.ssh_to_firewall_and_execute_cmd()
+
+    def contains_chinese(self, text):
+        """
+        check if the string contains Chinese characters
+        :param text:
+        :return:
+        """
+        return re.search(r'[\u4e00-\u9fff]', text) is not None
+
+    def get_firewall_command(self, cmd_id):
+        """
+        get firewall command by cmd_id
+        :param cmd_id:
+        :return:
+        """
+        if hasattr(self, 'df'):
+            row = self.df[self.df["命令ID"] == cmd_id]
+            if not row.empty:
+                return row.iloc[0]["防火墙命令"]
+        raise Exception("未找到该命令ID")
+
+    def read_test_excel(self):
+        """
+        read test excel and get ssh info and commands
+        :return:
+        """
+        if not os.path.exists(self.excel_path):
+            raise FileNotFoundError(f"文件不存在: {self.excel_path}")
+
+        user = ip = password = ''
+        commands = []
+
+        try:
+            # 读取并存储 DataFrame
+            self.df = pd.read_excel(self.excel_path)
+            self.df = self.df.dropna(subset=["命令ID", "防火墙命令"])
+
+            # 获取 SSH 连接信息
+            ip = self.get_firewall_command('1.0.0.1_1')
+            user,password = (self.get_firewall_command('1.0.0.2_2')).split('/')
+            expect_str = self.get_firewall_command('1.0.0.3_3')
+            self.expect_str = expect_str
+
+            cmd_text = self.get_firewall_command(self.test_number)
+            if cmd_text:
+                commands = [
+                    line.strip() for line in cmd_text.splitlines()
+                    if line.strip() and line.strip() != '#'
+                       and not self.contains_chinese(line)
+                ]
+        except Exception as e:
+            raise Exception(f"读取 Excel 错误: {e}")
+
+        return user, ip, password, commands
+
+    def exec_firewall_cmds(self, host, user, password, commands=None):
+        """
+        execute commands on firewall
+        :param host:
+        :param user:
+        :param password:
+        :param commands:
+        :return:
+        """
+        if commands is None:
+            commands = []
+
+        port = 22
+        ssh_command = f"ssh -o StrictHostKeyChecking=no -p {port} {user}@{host}"
+
+        try:
+            child = wexpect.spawn(ssh_command, encoding='utf-8', timeout=15)
+            child.expect(r'Password:')
+            child.sendline(password)
+
+            # 等待登录成功
+            child.expect([r'>', r'#', r'\$'])
+            logger.info(">>> 登录成功")
+            child.sendline("system-view")
+            logger.info(">>> 进入系统视图")
+            child.expect(r"\[.*\]")
+
+            # 执行所有命令
+            for cmd in commands:
+                logger.info(f">>> 执行命令: {cmd}")
+                child.sendline(cmd)
+                child.expect(r"\[.*\]", timeout=10)
+
+            logger.info(">>> 命令执行完成")
+        except wexpect.TIMEOUT:
+            raise Exception(">>> 操作超时")
+        except Exception as e:
+            raise Exception(f">>> SSH错误: {e}")
+        finally:
+            try:
+                child.sendline("quit")
+                child.sendline("exit")
+                child.close()
+            except:
+                pass
+
+    def ssh_to_firewall_and_execute_cmd(self):
+        """
+        ssh to firewall and execute commands
+        :return:
+        """
+        user, ip, password, commands = self.read_test_excel()
+        if ip and user and password:
+            logger.info(f"执行测试 {self.test_number}，共 {len(commands)} 条命令")
+            self.exec_firewall_cmds(ip, user, password, commands)
+        else:
+            raise Exception("错误：缺少SSH连接信息")
+
+
+class ExpectedResult:
+    def __init__(self, key: str, data):
+        self.key = key
+        self.data = data
+
+    def get_response(self):
+        if self.key == "6.7.1_1":
+            if isinstance(self.data, dict):
+                expect_send_mbps = 4000
+                expect_lose_rate = '0'
+                if 'ErrorCode' in self.data and self.data['ErrorCode'] == 0:
+                    send_mbps = self.data['Data']['Detail'][-1].get('Send_Mbps')
+                    lose_rate = self.data['Data']['Detail'][-1].get('Lose_Rate')
+                    if float(expect_lose_rate) != float(lose_rate.rstrip('%')):
+                        msg = f'Failed: LoseRate({lose_rate}) is not equal to 0%.'
+                        logger.info(msg)
+                        print(msg)
+                        return
+                    if float(expect_send_mbps) > float(send_mbps):
+                        msg = f'Failed:The throughput({send_mbps}) is less than 4 Gbps.'
+                        logger.info(msg)
+                        print(msg)
+                        return
+                    print('Passed')
+            else:
+                return "Error: Data is not a dict."
+
+        else:
+            return "Error: Unsupported test_id."
