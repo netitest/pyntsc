@@ -15,6 +15,7 @@ import subprocess
 import logging
 from logging.handlers import RotatingFileHandler
 
+
 # translate English result to Chinese
 EnglishChineseDict = {
     "Traffic_Direction": "数据方向",
@@ -127,7 +128,6 @@ def global_exception_handler(exc_type, exc_value, exc_traceback):
     :param exc_traceback:
     """
     logger.error(f"{exc_value}")
-    # 可以在这里记录日志、发送告警等
 
 
 sys.excepthook = global_exception_handler
@@ -287,17 +287,14 @@ class ToolsUtils:
             "Ipv4SinglePacketFlood",
             "UDPv4SinglePacketAttack",
             "UDPv6SinglePacketAttack",
-            # 合并v4v6
             "UDPSinglePacketAttack",
             "ARPv4SinglePacketAttack",
             "IGMPv4SinglePacketAttack",
             "TCPv4SinglePacketAttack",
             "TCPv6SinglePacketAttack",
-            # 合并v4v6
             "TCPSinglePacketAttack",
             "ICMPv4SinglePacketAttack",
             "ICMPv6SinglePacketAttack",
-            # 合并v4v6
             "ICMPSinglePacketAttack",
             "UnknownProtocolSinglePacketAttack",
             "DnsAmplificationAttack",
@@ -2640,6 +2637,7 @@ class BaseLoads:
             "HttpThroughput": self._handle_http_throughput_loads_config,
             "UdpPps": self._handle_udp_pps_loads_config,
             "TurboTcp": self._handle_turbo_tcp_loads_config,
+            "TcpThroughput": self._handle_tcp_throughput_loads_config,
             "MultiTypeFlood": self._handle_multi_type_flood_loads_config,
             "TcpSessionFlood": self._handle_tcp_session_flood_loads_config,
             "TCPWinnuke": self._handle_tcp_winnuke_loads_config,
@@ -2813,6 +2811,15 @@ class BaseLoads:
         self.DevOpenMode = 0
     def _handle_turbo_tcp_loads_config(self):
         self.SimUser = 256
+
+    def _handle_tcp_throughput_loads_config(self):
+        self.SimUser = 256
+        self.PayloadSendCounts = 0
+        self.EchoEnable = "no"
+        self.ThroughPutPacketSize = 10485760
+        self.SendPayloadLength = 1024
+        self.EchoPayloadLength = 1024
+        self.Latency = "disable"
 
     def _handle_multi_type_flood_loads_config(self):
         self.SimUser = 256
@@ -4172,6 +4179,12 @@ class BaseLoads:
     def set_send_speed_policy(self, value):
         self.SendSpeedPolicy.update(value)
 
+    def set_payload_send_count(self, value):
+        self.PayloadSendCounts = value
+
+    def set_payload_size(self, value):
+        self.ThroughPutPacketSize = value
+
     def to_dict(self):
         return self.__dict__
 
@@ -4813,6 +4826,7 @@ class BaseServerProfiles:
             "HttpForceCps": self._handle_http_force_cps_general_config,
             "HttpCc": self._handle_http_cc_general_config,
             "HttpThroughput": self._handle_http_throughput_general_config,
+            "TcpThroughput": self._handle_tcp_throughput_general_config,
             "HttpRequestFlood": self._handle_http_request_flood_general_config,
             "HTTPSlowRequestFlood": self._handle_http_slow_request_flood_general_config,
             "TcpSessionFlood": self._handle_tcp_session_flood_general_config,
@@ -4989,6 +5003,9 @@ class BaseServerProfiles:
             "Server: nginx/1.9.5",
             "Content-Type: text/html"
         ]
+
+    def _handle_tcp_throughput_general_config(self):
+        self.ServerPort = "80"
 
     def _handle_http_request_flood_general_config(self):
         self.ServerPort = "80"
@@ -5559,6 +5576,31 @@ class PortConfig:
         for limit_dict in self.PortSpeedLimit:
             limit_dict["LimitType"] = value
 
+    def enable_packet_capture(self, enable_packet_capture: str):
+        """
+        * enable or disable packet capture
+        """
+        if enable_packet_capture not in ["yes", "no"]:
+            raise ValueError('The value of the "enable_packet_capture" parameter can only be "yes" or "no"')
+        for packet_capture_dict in self.PacketCapture:
+            packet_capture_dict["CapturePacketEnable"] = enable_packet_capture
+
+    def set_capture_protocol(self, capture_protocol: str):
+        """
+        * Set the protocol for capturing packets
+        """
+        if capture_protocol not in ["All", "ARP", "NDP", "ICMP", "IGMP", "TCP", "UDP"]:
+            raise ValueError(f"The protocol type set on {self.Interface} for packet capture is not valid.")
+        for packet_capture_dict in self.PacketCapture:
+            # When setting the protocol for packet capture, enable packet capture
+            packet_capture_dict["CapturePacketEnable"] = 'yes'
+            packet_capture_dict["CaptureProtocol"] = capture_protocol
+
+    def set_next_hop_mac_obtain_method(self, next_hop_mac_obtain_method):
+        logger.info("")
+        if next_hop_mac_obtain_method not in ["ARP_NSNA", "User_INPUT", "NextMacAddressSetPeer"]:
+            raise ValueError(f'The method for obtaining the next-hop MAC address set on {self.Interface} is illegal.')
+        self.NextPortMacMethod = next_hop_mac_obtain_method
 
     def to_dict(self):
         # return ToolsUtils.to_dict(self)
@@ -5828,6 +5870,232 @@ class TestCaseBuilder:
             "SlaveHost": [{"Host": self.host, "Ports": []}]
         }
 
+class TestManager:
+    """
+    * TestOrchestrator
+    """
+    def __init__(self, host, http_client):
+        self.report_id = None
+        self.case_id = None
+        self.test_type = None
+        self.host = host
+        self.client = http_client
+    def run_test_case_by_name(self, test_name):
+        """ run_test_case_by_name
+        Args:
+            test_name (str): case_name
+        """
+        if not test_name:
+            raise ValueError("test_name can not be empty")
+        logger.info("run_test_case_by_name")
+        ret = self.client.get(f"/api/case/{test_name}/rerun")
+        if ret.get("ErrorCode") != 0:
+            raise Exception("run_test_case_by_name failed, ErrorMessage: " + ret.get("ErrorMessage", ""))
+        else:
+            logger.info("run successful.")
+            return ret.get("Data")
+
+    def monitor(self,test_name):
+        ret_caes_id = self.client.get(f'/api/case/query/{test_name}')
+        if ret_caes_id.get("ErrorCode")!= 0:
+            raise Exception("get case_id failed, ErrorMessage: " + ret_caes_id.get("ErrorMessage", ""))
+        self.case_id = ret_caes_id.get("Data")
+        time.sleep(1)
+        while True:
+            status_ret = self.client.get("/api/running/status")
+            running_status = status_ret['Data']["TestStatus"] if status_ret else ""
+            self.report_id = status_ret['Data']["ReportID"] if status_ret else ""
+            self.test_type = status_ret['Data']["TestType"] if status_ret else ""
+           # self.case_id = status_ret['Data']["TestID"] if status_ret else ""
+            if running_status == "Running":
+
+                if self.test_type == "AdvancedFuzzing":
+                    res = self._get_advanced_fuzzing_running_data(self.report_id)
+                    if res.get("ErrorCode") == 0:
+                        detail = res.get("Data", {}).get("Detail")
+                        if detail:
+                            session_info = detail.get("session_info", {})
+                            logger.info(str({
+                                "crashes": session_info.get("crashes", []),
+                                "current_element": session_info.get("current_element", ""),
+                                "current_index": session_info.get("current_index", ""),
+                                "current_test_case_name": session_info.get("current_test_case_name", ""),
+                                "exec_speed": session_info.get("exec_speed", ""),
+                                "runtime": round(session_info.get("runtime", 0), 2)
+                            }))
+                        else:
+                            logger.info("{}")
+                    else:
+                        logger.error("get advanced fuzzing data error" + str(res))
+                elif self.test_type == "ScenarioDescrptionLanguage":
+                    res = self._get_descrption_report_number_paging_result_data(self.report_id)
+                    logger.info(str(res))
+                elif self.test_type == "WebScanner":
+                    res = self._get_web_scanner_data(self.report_id)
+                    if res.get("ErrorCode") == 0:
+                        logger.info(str(res.get("Data", {}).get("Layer3", {}).get("tol")))
+                    else:
+                        logger.error("get web scanner data error" + str(res))
+                else:
+                    res = self._get_layer2_running_data(self.report_id, self.case_id)
+
+                    if res.get("ErrorCode") == 0:
+                        logger.info(str(res.get("Detail")))
+                    else:
+                        logger.error("get layer2 error", + str(res))
+
+            if running_status == "Stopping":
+                logger.info("Test case is stopping!")
+
+            if running_status == "Stopped":
+                logger.info("Test case has stopped!, running result: " + status_ret['Data']['ErrorMessage'])
+                break
+
+            time.sleep(1)
+
+        logger.info("Test program ended!")
+        return 'Test program ended!'
+    def generate_report(self,test_name=''):
+        if not test_name and not self.report_id:
+            raise ValueError("test_name or report_id can not be empty")
+        if test_name:
+            self.report_id = self._get_report_id_by_test_name(test_name)
+        self.client.get(f"/api/history/report/{self.report_id}/start")
+        time.sleep(1)
+        while True:
+            res = self.client.get(f"/api/history/report/{self.report_id}/monitor")
+            time.sleep(1)
+            if res.get("ErrorCode") == 0:
+                summary_progress = res.get("ReportProgress").get('summary').get('progress')
+                logger.info(f"Summary progress: {summary_progress}")
+                if summary_progress == 100:
+                    break
+            else:
+                logger.error("get report monitor error" + str(res))
+                break
+        return 'generte report end'
+
+    def generate_and_download_report(self, down_file_type, test_name='',filepath="./"):
+        if test_name:
+            self.report_id = self._get_report_id_by_test_name(test_name)
+        self.client.get(f"/api/history/pdf/{self.report_id}/start", {"reportTypes": "html,pdf,word,excel"})
+        time.sleep(1)
+        while True:
+            # monitor progress
+            res = self.client.get(f"/api/history/report/{self.report_id}/monitor")
+            time.sleep(1)
+            if res.get("ErrorCode") == 0:
+                html_summary_progress = res.get("ReportProgress").get('html').get('progress')
+                pdf_summary_progress = res.get("ReportProgress").get('pdf').get('progress')
+                word_summary_progress = res.get("ReportProgress").get('word').get('progress')
+                excel_summary_progress = res.get("ReportProgress").get('excel').get('progress')
+                print(f"html_summary_progress: {html_summary_progress}", f"pdf_summary_progress: {pdf_summary_progress}",
+                      f"word_summary_progress: {word_summary_progress}", f"excel_summary_progress: {excel_summary_progress}")
+                if (html_summary_progress == 100) and (pdf_summary_progress == 100) and (word_summary_progress == 100) and (excel_summary_progress == 100):
+                    break
+            else:
+                logger.error("get report monitor error" + str(res))
+                break
+        # download document
+        if "html" in down_file_type:
+            self.client.download_file(f"/api/history/down_html", {"historyId": self.report_id}, filepath)
+        if "pdf" in down_file_type:
+            self.client.download_file(f"/api/history/down_pdf", {"historyId": self.report_id}, filepath)
+        if "word" in down_file_type:
+            self.client.download_file(f"/api/history/down_word", {"historyId": self.report_id}, filepath)
+        if "excel" in down_file_type:
+            self.client.download_file(f"/api/history/down_excel", {"historyId": self.report_id}, filepath)
+        return 'download report end'
+
+    def GetSummary(self):
+        # http://192.168.15.100/api/history/report/{rptid}/start
+        payload = {"selectedTabs": ["Status"], "reportId": self.report_id, "testType": self.test_type}
+        res = self.client.post("/api/history/by_tab", payload)
+        if res.get("ErrorCode") == 0:
+            # English to Chinese
+            if self.test_type == "Rfc2544Throughput":
+                port_list = res.get("Data", {}).get("Port", [])
+                for port_dict in port_list:
+                    port_data_list = port_dict.get("data")
+                    for port_data in port_data_list:
+                        chinese_dict_list = []
+                        result_data_list = port_data.get("data")
+                        for result_data in result_data_list:
+                            result_data["Lose_Rate_Passed"] = "成功" if result_data["Lose_Rate_Passed"] == 1 else "失败"
+                            # key change chinese
+                            chinese_dict = {
+                                EnglishChineseDict.get(k, k): v
+                                for k, v in result_data.items()
+                            }
+                            chinese_dict_list.append(chinese_dict)
+                        port_data["data"] = chinese_dict_list
+
+            logger.info('Summary:' + str(res.get("Data")))
+            return res.get("Data")
+        else:
+            logger.error("get summary error" + str(res))
+            return {}
+    def _get_layer2_running_data(self, report_id, test_id):
+
+        if not report_id:
+            raise ValueError("report_id can not be empty.")
+
+        if not test_id:
+            raise ValueError("test_id can not be empty.")
+
+        payload = {
+            "selectedTabs": ["Status"],
+            "LayerTabs": ["sum"],
+            "ReportID": report_id,
+            "TestType": self.test_type,
+            "Layer": "layer2"
+        }
+
+        return self.client.post("/api/running/get/layer2", payload)
+    def _get_web_scanner_data(self, report_id):
+        if not report_id:
+            raise ValueError("report_id can not be empty.")
+        payload = {
+            "ReportID": report_id,
+            "TestType": self.test_type,
+            "selectedTabs": []
+        }
+        return self.client.post("/api/running/data/WebScanner", payload)
+    def _get_descrption_report_number_paging_result_data(self, report_id):
+
+        if not report_id:
+            raise ValueError("report_id can not be empty.")
+
+        payload = {
+            "ReportID": report_id,
+            "TestType": self.test_type
+        }
+
+        return self.client.get("/api/descrption_report_number/paging_result", payload)
+    def _get_advanced_fuzzing_running_data(self, report_id):
+
+        if not report_id:
+            raise ValueError("report_id can not be empty.")
+
+        payload = {
+            "selectedTabs": [],
+            "ReportID": report_id,
+            "TestType": "AdvancedFuzzing"
+        }
+        return self.client.post("/api/running/data/AdvancedFuzzing", payload)
+
+    def _get_report_id_by_test_name(self, test_name):
+        if not test_name:
+            raise ValueError("test_name can not be empty.")
+        payload = {
+            "TestName": test_name
+        }
+        ret = self.client.post("/api/history/get_report_id", payload)
+        if ret.get("ErrorCode") == 0:
+            return ret.get("Data").get('ReportID')
+        else:
+            raise Exception("get report id failed, ErrorMessage: " + ret.get("ErrorMessage", ""))
+
 
 class TestCase:
     """
@@ -6044,8 +6312,8 @@ class TestCase:
         """
         if case_assign_memory_gb:
             case_assign_memory_gb = int(case_assign_memory_gb)
-            if case_assign_memory_gb < 2 or case_assign_memory_gb > 28:
-                msg = "Case Assign Memory GB must be greater than 2 and less than 28"
+            if case_assign_memory_gb < 2 or case_assign_memory_gb > self.case_object.case_model.Loads.CaseAssignMemoryGB:
+                msg = "Case Assign Memory GB must be greater than 2 and less than {}".format(self.case_object.case_model.Loads.CaseAssignMemoryGB)
                 raise ValueError(msg)
         self.case_object.case_model.Loads.set_case_assign_memory_gb(case_assign_memory_gb)
 
@@ -6122,6 +6390,10 @@ class TestCase:
         if not concurrent_connections:
             return
         self.case_object.case_model.Loads.set_concurrent_connections(concurrent_connections)
+
+    def set_delay_jitter_calculation(self, setup: str):
+        if setup:
+            self.case_object.case_model.Loads.set_latency(setup)
     def _handle_send_wait_time(self, value: int):
         """
         * Handle send wait time
@@ -6180,6 +6452,36 @@ class TestCase:
             return
 
         self.case_object.case_model.CaseObject.set_web_attack(value)
+
+    def _handle_udp_send_packet_count(self, value: int):
+        if value:
+            value = int(value)
+            self.case_object.case_model.Loads.set_udp_send_packet_count(value)
+
+    def _handle_send_gratuitous_arp(self, value: str):
+        if value not in ["yes", "no"]:
+            msg = 'The value of send_gratuitous_arp must be either "yes" or "no"'
+            raise ValueError(msg)
+        self.case_config["NetworkConfig"]["NetworkControl"]["SendGratuitousArp"] = value
+
+    def _handle_ping_connectivity_check(self, value: str):
+        if value not in ["yes", "no"]:
+            msg = 'The value for ping_connectivity_check must be either "yes" or "no"'
+            raise ValueError(msg)
+        self.case_config["NetworkConfig"]["NetworkControl"]["PingConnectivityCheck"] = value
+
+    def _handle_protocol_stack_options(self, value: str):
+        self.case_config["NetworkConfig"]["NetworkControl"]["NetWork"] = value
+
+    def _handle_payload_send_count(self, value: int):
+        self.case_object.case_model.Loads.set_payload_send_count(int(value))
+
+    def _handle_payload_size(self, value: int):
+        self.case_object.case_model.Loads.set_payload_size(int(value))
+
+    def _handle_access_server_port(self, value: str):
+        if value:
+            self.case_object.case_model.ServerProfiles.set_server_port(str(value))
 
     @staticmethod
     def parse_port_list(port_str):
@@ -6253,8 +6555,10 @@ class TestCase:
         """
         for mem in memory_info:
             if mem["ResourceUser"] == self.client.user:
-                self.case_config["Specifics"][0]["Loads"]["CaseAssignMemoryGB"] = mem["ResourceOccupy"]
-                self.case_config["Specifics"][0]["Loads"]["UserApplyMemoryMB"] = mem["ResourceOccupy"]
+                # self.case_config["Specifics"][0]["Loads"]["CaseAssignMemoryGB"] = mem["ResourceOccupy"]
+                # self.case_config["Specifics"][0]["Loads"]["UserApplyMemoryMB"] = mem["ResourceOccupy"]
+                self.case_object.case_model.Loads.set_case_assign_memory_gb(mem["ResourceOccupy"])
+                self.case_object.case_model.Loads.set_user_apply_memory_mb(mem["ResourceOccupy"])
                 break
 
     def _get_dpdk_memory_percentage(self):
@@ -6357,9 +6661,9 @@ class TestCase:
                 port.sendqueue = name_info["combined"]
                 port.receivequeue = name_info["combined"]
                 port.nictype = name_info["nictype"]
-
-                nic_model = port.device.split()[1]
-                port.PortModuleType = self.get_port_module_type_by_nic(nic_model)
+                if port.device != "unknown":
+                    nic_model = port.device.split()[1]
+                    port.PortModuleType = self.get_port_module_type_by_nic(nic_model)
 
                 break
 
@@ -6745,9 +7049,11 @@ class TestCase:
             status_ret = self.client.get("/api/running/status")
             running_status = status_ret['Data']["TestStatus"] if status_ret else ""
             report_id = status_ret['Data']["ReportID"] if status_ret else ""
+            test_id = status_ret['Data']["TestID"] if status_ret else ""
             test_type = self.test_type
             if running_status == "Running":
                 self.report_id = report_id
+                self.case_id = test_id
                 if test_type == "AdvancedFuzzing":
 
                     res = self._get_advanced_fuzzing_running_data(report_id)
@@ -6803,6 +7109,22 @@ class TestCase:
         logger.info("Test program ended!")
         return 'Test program ended!'
 
+    def GetRfcResult(self, cport, sport):
+        select_port = f"{cport}-{sport}"
+
+        payload = {"LayerTabs": ["sum"],
+                   "selectedTabs": [
+                       self.host,
+                       select_port
+                   ],
+                   "ReportID": self.report_id,
+                   "TestType": self.test_type
+                   }
+        rfc_ret = self.client.post("/api/running/data/rfc", payload)
+        if rfc_ret.get("ErrorCode") == 0:
+            return rfc_ret
+        else:
+            print(rfc_ret)
     def AnalysisResult(self):
 
         res_parse = self._fuzzing_sqlite_parser(self.report_id)
@@ -7197,6 +7519,13 @@ class TestCase:
             "ConcurrentConnections":  self._handle_concurrent_connections,
             "SendSpeedPolicy": self._handle_send_speed_policy,
             "iMixName": self._handle_imix_name,
+            "UDPSendPacketCount": self._handle_udp_send_packet_count,
+            "SendGratuitousArp": self._handle_send_gratuitous_arp,
+            "PingConnectivityCheck": self._handle_ping_connectivity_check,
+            "ProtocolStackOptions": self._handle_protocol_stack_options,
+            "PayloadSendCount": self._handle_payload_send_count,
+            "PayloadSize": self._handle_payload_size,
+            "AccessServerPort": self._handle_access_server_port
         }
 
         handler = handler_map.get(key)
@@ -7423,7 +7752,8 @@ class TestCase:
         :param test_name:
         """
         self.Config("TestName", test_name)
-
+    def set_source_port_range(self):
+        pass
     def set_run_time(self, run_time):
         """
         * Set Test Duration
@@ -7480,6 +7810,27 @@ class TestCase:
             return
         self.case_object.case_model.CaseObject.set_i_mix_name(imix_name)
 
+    def set_udp_send_packet_count(self, udp_send_packet_count):
+        self.Config("UDPSendPacketCount", udp_send_packet_count)
+
+    def set_send_gratuitous_arp(self, send_gratuitous_arp):
+        self.Config("SendGratuitousArp", send_gratuitous_arp)
+
+    def set_ping_connectivity_check(self, ping_connectivity_check):
+        self.Config("PingConnectivityCheck", ping_connectivity_check)
+
+    def set_protocol_stack_options(self, protocol_stack_options):
+        self.Config("ProtocolStackOptions", protocol_stack_options)
+
+    def set_payload_send_count(self, payload_send_count):
+        self.Config("PayloadSendCount", payload_send_count)
+
+    def set_payload_size(self, payload_size):
+        self.Config("PayloadSize", payload_size)
+
+    def set_access_server_port(self, access_server_port):
+        self.Config("AccessServerPort", access_server_port)
+
 class TestFactory:
     """
     Create Test Case Factory
@@ -7502,6 +7853,7 @@ class CreateProject:
         self.host = ''
         self.host_port = 80
         self.client = None
+
 
     def delete_case(self, test_type='', test_name_list=[]):
         """ Import Use Case
@@ -7714,7 +8066,17 @@ class CreateProject:
             "password": password
         }
         self.client.login(payload)
+    def CreateTestManager(self):
+        logger.info(f"start create TestManager")
+        try:
+            test_manager = TestManager(self.host, self.client)
+        except Exception as e:
+            print(e)
+            raise Exception("Create TestManager Failed")
+        else:
+            logger.info(f"Create TestManager successfully")
 
+        return test_manager
     def CreateCase(self, test_type, dut_role, proxy_mode="Reverse"):
         """
         Create default test case
@@ -7759,12 +8121,6 @@ class CreateProject:
             return None
 
 
-import re
-import os
-import pandas as pd
-import wexpect
-
-
 class SshToFirewall:
     def __init__(self, excel_path, test_number):
         self.excel_path = excel_path
@@ -7790,15 +8146,17 @@ class SshToFirewall:
             row = self.df[self.df["命令ID"] == cmd_id]
             if not row.empty:
                 return row.iloc[0]["防火墙命令"]
-        raise Exception("未找到该命令ID")
+        raise Exception("Can not find this command ID")
 
     def read_test_excel(self):
         """
         read test excel and get ssh info and commands
         :return:
         """
+        import pandas as pd
+
         if not os.path.exists(self.excel_path):
-            raise FileNotFoundError(f"文件不存在: {self.excel_path}")
+            raise FileNotFoundError(f"File not exists: {self.excel_path}")
 
         user = ip = password = ''
         commands = []
@@ -7822,7 +8180,7 @@ class SshToFirewall:
                        and not self.contains_chinese(line)
                 ]
         except Exception as e:
-            raise Exception(f"读取 Excel 错误: {e}")
+            raise Exception(f"Read Excel Error: {e}")
 
         return user, ip, password, commands
 
@@ -7835,6 +8193,8 @@ class SshToFirewall:
         :param commands:
         :return:
         """
+        import wexpect
+
         if commands is None:
             commands = []
 
@@ -7846,24 +8206,25 @@ class SshToFirewall:
             child.expect(r'Password:')
             child.sendline(password)
 
-            # 等待登录成功
+            # wait for login
             child.expect([r'>', r'#', r'\$'])
-            logger.info(">>> 登录成功")
-            child.sendline("system-view")
-            logger.info(">>> 进入系统视图")
-            child.expect(r"\[.*\]")
+            logger.info(">>> Login Successful")
+            # child.sendline("system-view")
+            # logger.info(">>> 进入系统视图")
+            # child.expect(r"\[.*\]")
 
-            # 执行所有命令
+            # execute commands
             for cmd in commands:
-                logger.info(f">>> 执行命令: {cmd}")
+                logger.info(f">>> Execute conmand: {cmd}")
                 child.sendline(cmd)
-                child.expect(r"\[.*\]", timeout=10)
+                # child.expect(r"\[.*\]", timeout=10)
+                child.expect(self.expect_str, timeout=10)
 
-            logger.info(">>> 命令执行完成")
+            logger.info(">>> Command Execution Completed")
         except wexpect.TIMEOUT:
-            raise Exception(">>> 操作超时")
+            raise Exception(">>> Operation Timeout")
         except Exception as e:
-            raise Exception(f">>> SSH错误: {e}")
+            raise Exception(f">>> SSH Error: {e}")
         finally:
             try:
                 child.sendline("quit")
@@ -7879,38 +8240,10 @@ class SshToFirewall:
         """
         user, ip, password, commands = self.read_test_excel()
         if ip and user and password:
-            logger.info(f"执行测试 {self.test_number}，共 {len(commands)} 条命令")
+            logger.info(f"Run test {self.test_number}，total {len(commands)} commands")
             self.exec_firewall_cmds(ip, user, password, commands)
         else:
-            raise Exception("错误：缺少SSH连接信息")
+            raise Exception("Error：Missing SSH connection information")
 
 
-class ExpectedResult:
-    def __init__(self, key: str, data):
-        self.key = key
-        self.data = data
 
-    def get_response(self):
-        if self.key == "6.7.1_1":
-            if isinstance(self.data, dict):
-                expect_send_mbps = 4000
-                expect_lose_rate = '0'
-                if 'ErrorCode' in self.data and self.data['ErrorCode'] == 0:
-                    send_mbps = self.data['Data']['Detail'][-1].get('Send_Mbps')
-                    lose_rate = self.data['Data']['Detail'][-1].get('Lose_Rate')
-                    if float(expect_lose_rate) != float(lose_rate.rstrip('%')):
-                        msg = f'Failed: LoseRate({lose_rate}) is not equal to 0%.'
-                        logger.info(msg)
-                        print(msg)
-                        return
-                    if float(expect_send_mbps) > float(send_mbps):
-                        msg = f'Failed:The throughput({send_mbps}) is less than 4 Gbps.'
-                        logger.info(msg)
-                        print(msg)
-                        return
-                    print('Passed')
-            else:
-                return "Error: Data is not a dict."
-
-        else:
-            return "Error: Unsupported test_id."
