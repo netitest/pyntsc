@@ -508,7 +508,7 @@ class ToolsUtils:
 
 class NetworkUtils:
     @staticmethod
-    def ping_host(host, count=1, timeout=1):
+    def ping_host(host, count=1, timeout=20):
         """
         * Ping the host to see if it is available
         :param host:
@@ -528,7 +528,7 @@ class NetworkUtils:
             return False
 
     @staticmethod
-    def check_port(host, port, timeout=1):
+    def check_port(host, port, timeout=20):
         """
         * Check if the port is available
         :param host:
@@ -3542,7 +3542,8 @@ class BaseLoads:
 
     def set_scenario_timeout(self, value):
         self.ScenarioTimeout = value
-
+    def set_echo_enable(self, value):
+        self.EchoEnable = value
     def set_scenario_interval(self, value):
         self.ScenarioInterval = value
 
@@ -3898,7 +3899,14 @@ class BaseLoads:
             value (int): The timeout value.
         """
         self.NTPMonlistTimeout = value
+    def set_ddos_types_frame_size(self, value: list):
+        """
+        Set the DDoS type frame size.
 
+        """
+        for item in value:
+            for key, val in item.items():
+                setattr(self, key, val)
     def set_attack_stute(self, value: str):
         """
         Set DDoS type traffic statistics flag
@@ -4908,6 +4916,8 @@ class BaseServerProfiles:
                 "HttpConcurrentSlowRead": self._handle_dns_server_port_53_server_config,
                 "HttpConcurrentSlowRequest": self._handle_dns_server_port_53_server_config,
                 "MmsConnectStorm": self._handle_dns_server_port_53_server_config,
+                "TurboTcp": self._handle_turbo_tcp_gateway_config,
+                "UdpPps": self._handle_udp_pps_config,
 
             }
 
@@ -5177,6 +5187,8 @@ class BaseServerProfiles:
     def _handle_bgpv6_general_config(self):
         self.ServerPort = "6001"
 
+    def _handle_udp_pps_config(self):
+        self.ServerPort = "6001"
     def _handle_rfc2544_throughput_general_config(self):
         self.ServerPort = "6006"
 
@@ -5566,6 +5578,127 @@ class PortConfig:
                 limit_dict["StrongLimitValue"] = int(value)
             else:
                 limit_dict["SpeedLimit"] = int(value)
+    def set_http_req_rate_limit(self, value):
+        """
+        Set the port http_req_rate_limit.
+        Args:
+            value (int):
+        """
+        if value:
+            for limit_dict in self.PortSpeedLimit:
+                limit_dict["HttpCcRequestRate"] = int(value)
+    def set_http_stable_request_rate(self, value):
+        """
+        Set the port http_stable_request_rate
+        Args:
+            value (int):
+        """
+        if value:
+            for limit_dict in self.PortSpeedLimit:
+                limit_dict["HttpCcSteadyRequestRate"] = int(value)
+
+    def set_rate_limit_mode(self, value):
+        """
+        Set the port rate_limit_mode
+        Args:
+            value (int):
+        """
+        if value:
+            for limit_dict in self.PortSpeedLimit:
+                limit_dict["LimitGraph"] = value
+    def set_tcp_throughput_min_rate(self, value):
+        """
+        Set the port tcp_throughput_min_rate
+        Args:
+            value (int):
+        """
+        if value:
+            for limit_dict in self.PortSpeedLimit:
+                limit_dict["RandomMinSpeed"] = int(value)
+
+    def set_rate_ramp_mode(self, value):
+        """
+        Set the port rate_ramp_mode
+        Args:
+            value (int):
+        """
+        if value:
+            for limit_dict in self.PortSpeedLimit:
+                limit_dict["RampManners"] = value
+
+    def set_rate_decrement_seconds(self, value):
+        """
+        Set the port rate_decrement_seconds
+        Args:
+            value (int):
+        """
+        if value:
+            for limit_dict in self.PortSpeedLimit:
+                limit_dict["RampDownSecond"] = int(value)
+    def set_rate_increment_seconds(self, value):
+        """
+        Set the port rate_increment_seconds
+        Args:
+            value (int):
+        """
+        if value:
+            for limit_dict in self.PortSpeedLimit:
+                limit_dict["RampUpSecond"] = int(value)
+    def set_max_rate_duration(self, value):
+        """
+        Set the port max_rate_duration
+        Args:
+            value (int):
+        """
+        if value:
+            for limit_dict in self.PortSpeedLimit:
+                limit_dict["ShakeMaxSecond"] = int(value)
+    def set_min_rate_duration(self, value):
+        """
+        Set the port min_rate_duration
+        Args:
+            value (int):
+        """
+        if value:
+            for limit_dict in self.PortSpeedLimit:
+                limit_dict["ShakeMinSecond"] = int(value)
+
+    def set_ramp_time(self, value):
+        """
+        Set the port ramp_time
+        Args:
+            value (int):
+        """
+        if value:
+            for limit_dict in self.PortSpeedLimit:
+                limit_dict["SinPeriod"] = int(value)
+    def set_rate_increment_per_step(self, value):
+        """
+        Set the port rate_increment_per_step
+        Args:
+            value (int):
+        """
+        if value:
+            for limit_dict in self.PortSpeedLimit:
+                limit_dict["StairsRampupSpeed"] = int(value)
+    def set_rate_hold_duration(self, value):
+        """
+        Set the port rate_hold_duration
+        Args:
+            value (int):
+        """
+        if value:
+            for limit_dict in self.PortSpeedLimit:
+                limit_dict["StairsFixedSecond"] = int(value)
+    def set_tcp_throughput_max_rate(self, value):
+        """
+        Set the port tcp_throughput_max_rate
+        Args:
+            value (int):
+        """
+        if value:
+            for limit_dict in self.PortSpeedLimit:
+                limit_dict["RandomMaxSpeed"] = int(value)
 
     def set_port_limit_type(self, value):
         """
@@ -6181,6 +6314,44 @@ class TestCase:
                 raise ValueError(msg)
         self.case_object.case_model.Loads.set_sim_user(sim_user)
 
+    def _handle_http_over_lap_mode(self, http_over_lap_mode: str):
+        """
+        * Handle http_over_lap_mode
+        """
+        if http_over_lap_mode:
+            self.case_object.case_model.Loads.set_http_over_lap_mode(http_over_lap_mode)
+
+    def _handle_http_think_time_mode(self, http_think_time_mode: str):
+        """
+        * Handle http_think_time_mode
+        """
+        if http_think_time_mode:
+            self.case_object.case_model.Loads.set_http_think_time_mode(http_think_time_mode)
+    def _handle_think_time(self, think_time: int):
+        """
+        * Handle think_time
+        """
+        if think_time:
+            self.case_object.case_model.Loads.set_think_time(think_time)
+    def _handle_max_think_time(self, max_think_time: int):
+        """
+        * Handle max_think_time
+        """
+        if max_think_time:
+            self.case_object.case_model.Loads.set_max_think_time(max_think_time)
+    def _handle_min_think_time(self, min_think_time: int):
+        """
+        * Handle min_think_time
+        """
+        if min_think_time:
+            self.case_object.case_model.Loads.set_min_think_time(min_think_time)
+    def _handle_http_think_time_max_cc(self, http_think_time_max_cc: int):
+        """
+        * Handle http_think_time_max_cc
+        """
+        if http_think_time_max_cc:
+            self.case_object.case_model.Loads.set_http_think_time_max_cc(http_think_time_max_cc)
+
     def _handle_latency(self, latency: str):
         """
         * Handle latency
@@ -6341,6 +6512,28 @@ class TestCase:
         if not concurrent_connections:
             return
         self.case_object.case_model.Loads.set_concurrent_connections(concurrent_connections)
+    def _handle_concurrent_connection(self, concurrent_connection: int):
+        """
+        * Handle concurrent_connection
+        """
+        if not concurrent_connection:
+            return
+        self.case_object.case_model.Loads.set_concurrent_connection(concurrent_connection)
+    def _handle_payload_size(self, payload_size: int):
+        """
+        * Handle set_payload_size
+        """
+        if not payload_size:
+            return
+        self.case_object.case_model.Loads.set_payload_size(payload_size)
+    def _handle_echo_enable(self, echo_enabled: str):
+        """
+        * Handle echo_enabled
+        """
+        if not echo_enabled:
+            return
+        self.case_object.case_model.Loads.set_echo_enable(echo_enabled)
+
     def _handle_gmt0018_project_name(self, project_name: str):
         """
         * Handle descrption
@@ -6394,6 +6587,20 @@ class TestCase:
     def set_delay_jitter_calculation(self, setup: str):
         if setup:
             self.case_object.case_model.Loads.set_latency(setup)
+    def set_configured_ddos_type(self, configured_ddos_type: list):
+        if configured_ddos_type:
+            ddos_type = {}
+            ddos_type_frame = []
+            percent = 0
+            for type in configured_ddos_type:
+                for type_key, type_value in type.items():
+                    ddos_type[type_key] = type_value[0]
+                    percent += type_value[0]
+                    ddos_type_frame.append({f'{type_key}_FRAME': type_value[1]})
+            if percent != 100:
+                raise ValueError("set_configured_ddos_type The sum of the percentage cannot exceed 100")
+            self.case_object.case_model.Loads.set_ddos_types(ddos_type)
+            self.case_object.case_model.Loads.set_ddos_types_frame_size(ddos_type_frame)
     def _handle_send_wait_time(self, value: int):
         """
         * Handle send wait time
@@ -6470,6 +6677,7 @@ class TestCase:
             raise ValueError(msg)
         self.case_config["NetworkConfig"]["NetworkControl"]["PingConnectivityCheck"] = value
 
+
     def _handle_protocol_stack_options(self, value: str):
         self.case_config["NetworkConfig"]["NetworkControl"]["NetWork"] = value
 
@@ -6482,6 +6690,21 @@ class TestCase:
     def _handle_access_server_port(self, value: str):
         if value:
             self.case_object.case_model.ServerProfiles.set_server_port(str(value))
+
+    def _handle_tcp_lose_second(self, value: int):
+        if value:
+            self.case_config["NetworkConfig"]["NetworkControl"]["TCPCloseSecond"] = value
+    def _handle_tcp_close_mode(self, value: str):
+        if value:
+            self.case_config["NetworkConfig"]["NetworkControl"]["TcpStopCloseMethod"] = value
+    def _handle_tcp_conn_close(self, value: str):
+        if value:
+            self.case_config["NetworkConfig"]["NetworkControl"]["TcpPerfectClose"] = value
+
+
+    def _handle_source_port_range(self, value: str):
+        if value:
+            self.case_object.case_model.ClientProfiles.set_source_port_range(str(value))
 
     @staticmethod
     def parse_port_list(port_str):
@@ -6672,12 +6895,12 @@ class TestCase:
             'NT2X010GF27LA': [3, 4, 5],
             'NT4X010GF27LA': [3, 4, 5],
             'NT4X010GF27LB': [3, 4, 5],
-            'NT2X100GF27LA': [0, 1, 7, 2, 3],
-            'NT2X100GF27LB': [0, 1, 2, 3, 7],
+            'NT2X100GF27LA': [0,9, 1, 7, 2, 3],
+            'NT2X100GF27LB': [0, 9, 1, 2, 3, 7],
             'NT2X025GF27LB': [1, 7, 3, 4, 5],
             'NT4X025GF27LB': [1, 7, 3, 4, 5],
-            'MN1X100GF47LA': [0, 1, 2, 3, 4],
-            'MN2X100GF47LA': [0, 1, 2, 3, 4],
+            'MN1X100GF47LA': [0,9, 1, 2, 3, 4],
+            'MN2X100GF47LA': [0,9, 1, 2, 3, 4],
             'MN2X025GF47LA': [1, 2, 3, 4],
             'MN2X025GF47LB': [1, 2, 3, 4],
             'SC4X010GF47LA': [3, 4, 5],
@@ -6685,11 +6908,13 @@ class TestCase:
             'IT4X001GC47LA': [6],
             'IT2X001GC47LA': [6],
             'MD4X010GF27LA': [3, 4, 5],
-            'MD2X100GF27LA': [0, 1, 2, 3, 7],
-            'MD4X025GF27LA': [1, 2, 3, 4]
+            'MD2X100GF27LA': [0, 9, 1, 2, 3, 7, 10],
+            'MD4X025GF27LA': [1, 2, 3, 4, 10]
         }
 
         module_type_map = {
+            10:'QSFP28_TO_4SFP28',
+            9: '40G_QSFP28',
             7: 'QSFP28_TO_4SFP+',
             6: '1G_COPPER_RJ45',
             5: '1G_SFP_RJ45',
@@ -6699,9 +6924,10 @@ class TestCase:
             1: 'QSFP28_TO_SFP28',
             0: '100G_40G_QSFP28'
         }
-
-        module_type = module_type_map[card_module_map[nic_model][0]]
-
+        if card_module_map.get(nic_model,''):
+            module_type = module_type_map[card_module_map[nic_model][0]]
+        else:
+            return '10G_SFP+'
         return module_type
 
     def _update_core_binding(self, port, port_name: str, traffic_port_list: list):
@@ -7006,8 +7232,8 @@ class TestCase:
                     "fuzzing_max": data.get("fuzzing_max", None),
                     "icmp_timeout_num": data.get("timeout_num", None)
                 }
-
                 logger.info(str(result_json))
+                return result_json
             else:
                 logger.error("get result error" + str(res))
         elif self.test_type in ["WebScanner"]:
@@ -7126,7 +7352,7 @@ class TestCase:
         else:
             print(rfc_ret)
     def AnalysisResult(self):
-
+        time.sleep(3)
         res_parse = self._fuzzing_sqlite_parser(self.report_id)
 
         if res_parse.get("ErrorCode") == 0:
@@ -7501,12 +7727,10 @@ class TestCase:
             "NetworkZone": self._handle_network_zone,
             "VirtualRouterConfig": self._handle_virtual_router_config,
             "AdditionalFields": self._handle_additional_fields,
-
             "Descrption": self._handle_descrption,
             "App_scenario": self._handle_app_scenario,
             "Malware": self._handle_malware,
             "Mitre": self._handle_mitre,
-
             "SendWaitTime": self._handle_send_wait_time,
             "SendNumCyles": self._handle_send_num_cyles,
             "ScenarioTimeout": self._handle_scenario_timeout,
@@ -7525,7 +7749,20 @@ class TestCase:
             "ProtocolStackOptions": self._handle_protocol_stack_options,
             "PayloadSendCount": self._handle_payload_send_count,
             "PayloadSize": self._handle_payload_size,
-            "AccessServerPort": self._handle_access_server_port
+            "AccessServerPort": self._handle_access_server_port,
+            "SourcePortRange":self._handle_source_port_range,
+            "HttpOverLapMode":self._handle_http_over_lap_mode,
+            "HttpThinkTimeMode":self._handle_http_think_time_mode,
+            "ThinkTime":self._handle_think_time,
+            "MaxThinkTime":self._handle_max_think_time,
+            "MinThinkTime":self._handle_min_think_time,
+            "HttpThinkTimeMaxCc":self._handle_http_think_time_max_cc,
+            "ConcurrentConnection": self._handle_concurrent_connection,
+            "TCPCloseSecond":self._handle_tcp_lose_second,
+            "TcpStopCloseMethod":self._handle_tcp_close_mode,
+            "TcpPerfectClose":self._handle_tcp_conn_close,
+            "ThroughPutPacketSize":self._handle_payload_size,
+            "EchoEnable":self._handle_echo_enable,
         }
 
         handler = handler_map.get(key)
@@ -7731,6 +7968,86 @@ class TestCase:
         :param count:
         """
         self.Config("SimUser", count)
+    def set_http_over_lap_mode(self, count: str):
+        """
+        *set_http_over_lap_mode
+        :param count:
+        """
+        self.Config("HttpOverLapMode", count)
+    def set_http_think_time_mode(self, count: str):
+        """
+        *set_http_think_time_mode
+        :param count:
+        """
+        self.Config("HttpThinkTimeMode", count)
+    def set_think_time(self, count: int):
+        """
+        *set_think_time
+        :param count:
+        """
+        self.Config("ThinkTime", count)
+    def set_max_think_time(self, count: int):
+        """
+        *set_max_think_time
+        :param count:
+        """
+        self.Config("MaxThinkTime", count)
+
+    def set_min_think_time(self, count: int):
+        """
+        *set_min_think_time
+        :param count:
+        """
+        self.Config("MinThinkTime", count)
+    def set_http_think_time_max_cc(self, count: int):
+        """
+        *set_min_think_time
+        :param count:
+        """
+        self.Config("HttpThinkTimeMaxCc", count)
+    def set_concurrent_connection(self, count: int):
+        """
+        *set_concurrent_connection
+        :param count:
+        """
+        self.Config("ConcurrentConnection", count)
+    def set_tcp_lose_second(self, count: int):
+        """
+        *set_tcp_lose_second
+        :param count:
+        """
+        self.Config("TCPCloseSecond", count)
+    def set_tcp_close_mode(self, count: str):
+        """
+        *set_tcp_close_mode
+        :param count:
+        """
+        self.Config("TcpStopCloseMethod", count)
+    def set_tcp_conn_close(self, count: str):
+        """
+        *set_tcp_conn_close
+        :param count:
+        """
+        self.Config("TcpPerfectClose", count)
+    def set_source_port_range(self, count: str):
+        """
+        *set_source_port_range
+        :param count:
+        """
+        self.Config("SourcePortRange", count)
+
+    def set_interactive_mode(self, count: str):
+        """
+        *set_echo_enable
+        :param count:
+        """
+        self.Config("EchoEnable", count)
+    def set_payload_send_count(self, count: int):
+        """
+        *set_payload_send_count
+        :param count:
+        """
+        self.Config("PayloadSendCount", count)
 
     def set_case_dpdk_huge_memory_percent(self, percent: int):
         """
@@ -7752,8 +8069,7 @@ class TestCase:
         :param test_name:
         """
         self.Config("TestName", test_name)
-    def set_source_port_range(self):
-        pass
+
     def set_run_time(self, run_time):
         """
         * Set Test Duration
@@ -7822,14 +8138,18 @@ class TestCase:
     def set_protocol_stack_options(self, protocol_stack_options):
         self.Config("ProtocolStackOptions", protocol_stack_options)
 
-    def set_payload_send_count(self, payload_send_count):
-        self.Config("PayloadSendCount", payload_send_count)
 
     def set_payload_size(self, payload_size):
         self.Config("PayloadSize", payload_size)
-
+    def set_through_payload_size(self, count: int):
+        """
+        *set_payload_size
+        :param count:
+        """
+        self.Config("ThroughPutPacketSize", count)
     def set_access_server_port(self, access_server_port):
         self.Config("AccessServerPort", access_server_port)
+
 
 class TestFactory:
     """
@@ -8066,6 +8386,32 @@ class CreateProject:
             "password": password
         }
         self.client.login(payload)
+
+    def add_imix_object(self,obj_name,Data):
+        """
+        Add iMix object
+        :param obj_name:
+        :param Data:
+        """
+        payload = {"Name": obj_name,"Role": "admin","User": "admin"}
+        obj_imix = self.client.post("/api/object_config/imix", payload)
+        if obj_imix.get("ErrorCode")!= 0:
+            raise Exception("Add iMix object failed. Code: %s, Message: %s",
+                         obj_imix.get("ErrorCode"),
+                         obj_imix.get("ErrorMessage", "Unknown error"))
+        else:
+            obj_id = obj_imix.get("ImixConfigId", '')
+            if obj_id:
+                payload = {"Data":Data}
+                insert_ret = self.client.post("/api/object_config/imix/content", payload)
+                if insert_ret.get("ErrorCode")!= 0:
+                    raise Exception("Add iMix object failed. Code: %s, Message: %s",
+                                 insert_ret.get("ErrorCode"),
+                                 insert_ret.get("ErrorMessage", "Unknown error"))
+                else:
+                    logger.info(f"Add iMix object {obj_name} successful")
+    def get_imix_object(self,obj_name):
+        ""
     def CreateTestManager(self):
         logger.info(f"start create TestManager")
         try:
