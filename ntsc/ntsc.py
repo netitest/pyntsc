@@ -480,7 +480,8 @@ class ToolsUtils:
             "BaseStationConnThroughput",
             "TrafficGenerator",
             "RoCEv2CpsAttack",
-            "MqttCps"
+            "MqttCps",
+            "MixedTraffic"
         ]
         if test_type in test_type_list:
             return True
@@ -1086,6 +1087,9 @@ class NetworkControlConfig:
             self.FPGATxMode = "segment"
         if test_type in ['WebScanner','UdpPps']:
             self.PingConnectivityCheck = "no"
+        if test_type in ['MixedTraffic']:
+            self.CaseAssignMemoryGB = 50
+            self.DPDKHugeMemoryPct = 10
 
     def set_case_run_mode(self, run_mode: str):
         self.CaseRunMode = run_mode
@@ -1250,12 +1254,12 @@ class BaseSubnet:
                                 BaseSubnet.check_subnet_parameters_to_be_modified(network_subnet, val_dict)
                                 BaseSubnet.modify_subnet_parameters(network_subnet, val_dict)
                                 break
-                        else:
-                            # Add subnet configuration
-                            BaseSubnet.check_subnet_parameters_to_be_added(val_dict)
-                            new_subnet_dict = BaseSubnet.add_subnet(dut_role, port_side, val_dict, proxy_mode)
-                            port_config.NetworkSubnets.append(new_subnet_dict)
-                        break
+                            else:
+                                # Add subnet configuration
+                                BaseSubnet.check_subnet_parameters_to_be_added(val_dict)
+                                new_subnet_dict = BaseSubnet.add_subnet(dut_role, port_side, val_dict, proxy_mode)
+                                port_config.NetworkSubnets.append(new_subnet_dict)
+                            break
 
     @staticmethod
     def check_ip_address_validity(ip_addr_range):
@@ -1435,9 +1439,9 @@ class ClientSubnet(BaseSubnet):
         if version == 4:
             self.ServerIPRange = '17.{}.1.2+10'.format(self.ipv4_occurs_num)
             ClientSubnet.ipv4_occurs_num += 1
-        else:
-            self.ServerIPRange = '3ffe:0:17:{}::1:2+10'.format(self.ipv6_occurs_num)
-            ClientSubnet.ipv6_occurs_num += 1
+        #else:
+            # self.ServerIPRange = '3ffe:0:17:{}::1:2+10'.format(self.ipv6_occurs_num)
+            # ClientSubnet.ipv6_occurs_num += 1
 
         # When the server type is selected as "Port", specify the server port and the server subnet number
         self.SubnetServicePort = 'port2'
@@ -2354,6 +2358,8 @@ class VirtualRouterConfigDict:
     def set_downward_network_zone_count(self, value):
         self.VirtualRouterNextHop = value
 
+
+
     @staticmethod
     def config_virtual_router_parameters(args, port_config_list):
         """Configure virtual router parameters
@@ -2362,6 +2368,7 @@ class VirtualRouterConfigDict:
             port_config_list (list): The list of network port objects needs to be modified
             dut_role (str): Type of tested equipment
         """
+
         for arg_dict in args:
             for key, val_dict in arg_dict.items():
                 port_name = key
@@ -2389,17 +2396,28 @@ class VirtualRouterConfig:
     * VirtualRouterConfig Class
     """
 
-    def __init__(self, config_list=[], side="client", test_type="", port_name=""):
+    def __init__(self, config_list=None, side="client", test_type="", port_name=""):
         self.side = side
+        if config_list is None:
+            config_list = []
         if not config_list:
             v4_config = VirtualRouterConfigDict(version="v4", side=side, test_type=test_type)
             config_list.append(v4_config)
-
             if test_type not in ["BGPv4"]:
                 v6_config = VirtualRouterConfigDict(version="v6", side=side)
                 config_list.append(v6_config)
-
-        self.config_list = config_list  # list of VirtualRouterConfigDict objects
+        self.config_list = config_list
+    # def __init__(self, config_list=[], side="client", test_type="", port_name=""):
+    #     self.side = side
+    #     if not config_list:
+    #         v4_config = VirtualRouterConfigDict(version="v4", side=side, test_type=test_type)
+    #         config_list.append(v4_config)
+    #
+    #         if test_type not in ["BGPv4"]:
+    #             v6_config = VirtualRouterConfigDict(version="v6", side=side)
+    #             config_list.append(v6_config)
+    #
+    #     self.config_list = config_list  # list of VirtualRouterConfigDict objects
 
     def set_config(self, index, config_dict):
         if index < 0 or index >= len(self.config_list):
@@ -5465,9 +5483,9 @@ class PortConfig:
         # General Config
         if port_side == "client":
             self.NetworkSubnets = [ClientSubnet(dut_role, proxy_mode).to_dict(),
-                                   ClientSubnet(dut_role, proxy_mode, 6, 'no').to_dict()]
+                                   ClientSubnet(dut_role, proxy_mode, 6, 'yes').to_dict()]
         elif port_side == "server":
-            self.NetworkSubnets = [ServerSubnet().to_dict(), ServerSubnet(6, 'no').to_dict()]
+            self.NetworkSubnets = [ServerSubnet().to_dict(), ServerSubnet(6, 'yes').to_dict()]
 
         self.PacketCapture = [PacketCapture().to_dict()]
 
@@ -5554,6 +5572,27 @@ class PortConfig:
         """
         self.CoreBind = core_bind
 
+    def setup_rss_multi_queue_distribution(self, status):
+        """
+        Set the port rss multi queue distribution.
+        """
+        self.PortRXRSS = status
+    def set_next_hop_interface_mac(self, mac):
+        """
+        Set the next hop interface mac.
+        Args:
+            mac (str):
+        """
+        self.NextPortMacAddress = mac
+
+    def set_next_hop_mac_acquisition_method(self, method):
+        """
+        Set the next hop mac acquisition method.
+        Args:
+            method (str):
+        """
+        self.NextPortMacMethod = method
+
     def configure_network(self, subnet_dict):
         """
         Set the network subnet.
@@ -5563,10 +5602,31 @@ class PortConfig:
         """
         if "SubnetNumber" not in subnet_dict:
             subnet_dict["SubnetNumber"] = "1"
-        for subnet in self.NetworkSubnets:
-            if subnet["SubnetNumber"] == subnet_dict["SubnetNumber"]:
-                subnet.update(subnet_dict)
+        if subnet_dict["SubnetNumber"] == "1":
+            self.NetworkSubnets[0].update(subnet_dict)
+            del self.NetworkSubnets[1]
+        else:
+            self.NetworkSubnets[1].update(subnet_dict)
+            del self.NetworkSubnets[0]
+        # for subnet in self.NetworkSubnets:
+        #     if subnet["SubnetNumber"] == subnet_dict["SubnetNumber"]:
+        #         subnet.update(subnet_dict)
 
+    def configure_virtual_router(self, virtual_router_dict):
+        """
+        Set the virtual_router.
+        Args:
+            subnet_dict (dict):
+        :return:
+        """
+        if "SubnetNumber" not in virtual_router_dict:
+            virtual_router_dict["SubnetNumber"] = "1"
+        if virtual_router_dict["SubnetNumber"] == "1":
+            self.VirtualRouterConfig[0].update(virtual_router_dict)
+            del self.VirtualRouterConfig[1]
+        else:
+            self.VirtualRouterConfig[1].update(virtual_router_dict)
+            del self.VirtualRouterConfig[0]
     def set_port_limit_value(self, value):
         """
         Set the port speed limit value .
@@ -5963,6 +6023,16 @@ class HttpClient:
 
         return response.json()
 
+    def put(self, path, data=None):
+        url = f"{self.base_url}{path}"
+        headers = self._build_headers()
+        response = self.session.put(url, headers=headers, json=data)
+        if response.status_code != 200:
+            msg = f"Request failed: {response.status_code} - {response.text}"
+            raise Exception(msg)
+
+        return response.json()
+
     def _build_headers(self):
         headers = {"Content-Type": "application/json"}
         if self.token:
@@ -6271,6 +6341,12 @@ class TestCase:
             if test_duration < 1:
                 msg = "Test duration must be greater than 0"
                 raise ValueError(msg)
+
+        if self.test_type.startswith("Rfc") or (self.test_type in ['WebScanner']):
+            if "TestDuration" in self.case_config:
+                del self.case_config["TestDuration"]
+            return
+
         self.case_object.base.set_test_duration(test_duration)
 
     def _handle_server_port(self, server_port: int):
@@ -6677,7 +6753,10 @@ class TestCase:
             raise ValueError(msg)
         self.case_config["NetworkConfig"]["NetworkControl"]["PingConnectivityCheck"] = value
 
-
+    def set_mix_test_case_memory_limit(self, memory_gb: int):
+        self.case_config["NetworkConfig"]["NetworkControl"]["CaseAssignMemoryGB"] = memory_gb
+    def set_mix_dpdk_huge_memory_percent(self, percent: int):
+        self.case_config["NetworkConfig"]["NetworkControl"]["DPDKHugeMemoryPct"] = percent
     def _handle_protocol_stack_options(self, value: str):
         self.case_config["NetworkConfig"]["NetworkControl"]["NetWork"] = value
 
@@ -7214,6 +7293,11 @@ class TestCase:
         """
         self.Config("InterfaceCPU", f"{port_name}:{cpu_list_str}")
 
+    def GetresultByRportId(self,report_id):
+        if self.test_type in ["ScenarioDescrptionLanguage"]:
+            res = self._get_descrption_report_number_paging_result_data(report_id)
+            logger.info(str(res))
+            return res
     def Getresult(self):
         if self.test_type in ["ScenarioDescrptionLanguage"]:
             res = self._get_descrption_report_number_paging_result_data(self.report_id)
@@ -7254,7 +7338,10 @@ class TestCase:
             res = self._get_layer2_running_data(self.report_id, self.case_id)
 
             if res.get("ErrorCode") == 0:
-                logger.info(str(res.get("Data")))
+                if res.get("Data"):
+                    logger.info(str(res.get("Data")))
+                elif res.get("Detail"):
+                    logger.info(str(res.get("Detail")))
             else:
                 logger.error("get result error" + str(res))
 
@@ -7270,6 +7357,34 @@ class TestCase:
 
         logger.info(f"download log file end, filepath: {filepath}")
 
+    def Stop(self, report_id):
+        params = {
+            "TestID": self.case_id,
+            "ReportID": report_id,
+        }
+        self.client.get("/api/case/stop", params)
+    def QueryMultipleCaseStatus(self):
+        #Detail
+        params = {
+            'type':'case_status',
+            "Role": self.client.encrpt_role
+        }
+        status_ret = self.client.get("/api/running/get/case_status", params)
+        if status_ret:
+            return status_ret
+        else:
+            logger.info("Test case has stopped!")
+            return ''
+    def QueryCaseStatus(self):
+        status_ret = self.client.get("/api/running/status")
+        if status_ret:
+            running_status = status_ret['Data']["TestStatus"] if status_ret else ""
+            report_id = status_ret['Data']["ReportID"] if status_ret else ""
+            test_id = status_ret['Data']["TestID"] if status_ret else ""
+            test_type = self.test_type
+            return report_id
+        else:
+            return ''
     def Monitor(self):
         while True:
             status_ret = self.client.get("/api/running/status")
@@ -7587,6 +7702,17 @@ class TestCase:
         if res.get("ErrorCode") == 0:
             self.case_id = res.get("Data")
             logger.info('Use case created successfully', res)
+        elif res.get("ErrorMessage") == "该测试用例名称已存在，请更换！":
+            params = {'TestName': case_config.get("TestName"), "DisplayName": case_config.get("DisplayName"), "TestType": case_config.get("TestType")}
+            test_id_ret = self.client.get("/api/case/get_test_id", params)
+            test_id = test_id_ret.get("Data")
+            if test_id:
+                update_res = self.client.put("/api/case/{}".format(test_id), case_config)
+                if update_res.get("ErrorCode") == 0:
+                    self.case_id = update_res.get("Data")
+                    logger.info('Use case created successfully', res)
+                else:
+                    raise Exception("Use case creation failed, Errormsg:" + res.get("ErrorMessage", ""))
         else:
             raise Exception("Use case creation failed, Errormsg:" + res.get("ErrorMessage", ""))
         time.sleep(1)
@@ -7596,6 +7722,7 @@ class TestCase:
 
         if res.get("ErrorCode") == 0:
             logger.info("Test case startup successful")
+            return res
         else:
             logger.error("Test case startup failed" + res.get("ErrorMessage", ""))
             raise Exception("Test case startup failed" + res.get("ErrorMessage", ""))
@@ -8339,7 +8466,7 @@ class CreateProject:
         except IOError as e:
             raise Exception(f"File write error: {str(e)}")
         except Exception as e:
-            raise  Exception(f"Unexpected error during log download: {str(e)}")
+            raise Exception(f"Unexpected error during log download: {str(e)}")
 
     def is_accessible(self):
         """
